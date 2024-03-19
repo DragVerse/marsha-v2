@@ -161,7 +161,7 @@ export const ALLOWED_APP_IDS = [
 ]
 
 // official
-export const TAPE_X_HANDLE = 'metadragverse'
+export const TAPE_X_HANDLE = 'dragverseapp'
 export const TAPE_GITHUB_HANDLE = 'dragverse'
 export const TAPE_LOGO = `${STATIC_ASSETS}/dragverse.webp`
 export const DRAGVERSE_LOGO = `${STATIC_ASSETS}/dragverse.svg`
