@@ -32,13 +32,12 @@ import { signOut } from '@lib/store/auth'
 import useProfileStore from '@lib/store/idb/profile'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useTheme } from 'next-themes'
 import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 const UserMenu = () => {
-// Removed or commented out since it's not in use
-// const { theme, setTheme } = useTheme();
+  // Removed or commented out since it's not in use
+  // const { theme, setTheme } = useTheme();
   const { push, asPath } = useRouter()
   const { address } = useAccount()
   const { activeProfile } = useProfileStore()
