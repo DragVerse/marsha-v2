@@ -30,6 +30,7 @@ module.exports = {
       colors: {
         // card bg in dark
         cod: '#18122D',
+        text: '#FCF1FC',
         // hover states
         smoke: '#18122D',
         gallery: '#18122D',

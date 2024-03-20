@@ -37,7 +37,8 @@ import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 const UserMenu = () => {
-  const { theme, setTheme } = useTheme()
+// Removed or commented out since it's not in use
+// const { theme, setTheme } = useTheme();
   const { push, asPath } = useRouter()
   const { address } = useAccount()
   const { activeProfile } = useProfileStore()
