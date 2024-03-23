@@ -35,7 +35,7 @@ const EmbedMedia: FC<Props> = ({ publicationId, isAudio }) => {
       <button
         type="button"
         onClick={() => openModal()}
-        className="rounded-full bg-gray-200 p-3 dark:bg-gray-800"
+        className="dark:bg-brand-250/50 rounded-full bg-gray-200 p-3"
       >
         <CodeOutline className="size-5" />
       </button>

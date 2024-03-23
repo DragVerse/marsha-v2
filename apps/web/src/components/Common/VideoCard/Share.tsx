@@ -39,7 +39,7 @@ const Share: FC<Props> = ({ publication }) => {
       <div className="no-scrollbar mb-4 flex flex-nowrap items-center space-x-3 overflow-x-auto">
         <EmbedMedia publicationId={publication.id} isAudio={isAudio} />
         <MirrorPublication video={publication}>
-          <div className="rounded-full bg-gray-200 p-3 dark:bg-gray-800">
+          <div className="dark:bg-brand-250/50 rounded-full bg-gray-200 p-3">
             <MirrorOutline className="size-5" />
           </div>
         </MirrorPublication>
@@ -81,7 +81,7 @@ const Share: FC<Props> = ({ publication }) => {
           href={getSharableLink('x', publication)}
           onClick={() => Tower.track(EVENTS.PUBLICATION.SHARE.X)}
         >
-          <div className="rounded-full bg-gray-200 p-3 dark:bg-gray-800">
+          <div className="dark:bg-brand-250/50 rounded-full bg-gray-200 p-3">
             {resolvedTheme === 'dark' ? (
               <img
                 src={imageCdn(`${TWITTER_ICON_URL}`, 'AVATAR')}

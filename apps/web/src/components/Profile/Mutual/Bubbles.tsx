@@ -57,7 +57,7 @@ const Bubbles: FC<Props> = ({ viewing, showSeparator }) => {
               </HoverableProfile>
             ))}
             {mutualFollowers.length > 4 && (
-              <div className="flex size-7 flex-none items-center justify-center rounded-full border border-gray-300 bg-gray-200 dark:border-gray-600 dark:bg-gray-800">
+              <div className="dark:bg-brand-250/50 flex size-7 flex-none items-center justify-center rounded-full border border-gray-300 bg-gray-200 dark:border-gray-600">
                 <span role="img" className="text-sm">
                   👀
                 </span>

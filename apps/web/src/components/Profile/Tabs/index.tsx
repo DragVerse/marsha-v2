@@ -31,7 +31,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
       <Tabs defaultValue={activeTab}>
         <TabsList>
           <TabsTrigger
-            className="rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white data-[state=active]:dark:bg-gray-800"
+            className="data-[state=active]:dark:bg-brand-250/50 rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white"
             onClick={() => {
               handleTabChange('videos')
               Tower.track(EVENTS.PROFILE.CLICK_PROFILE_VIDEOS)
@@ -41,7 +41,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
             Videos
           </TabsTrigger>
           <TabsTrigger
-            className="rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white data-[state=active]:dark:bg-gray-800"
+            className="data-[state=active]:dark:bg-brand-250/50 rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white"
             onClick={() => {
               handleTabChange('bytes')
               Tower.track(EVENTS.PROFILE.CLICK_PROFILE_BYTES)
@@ -51,7 +51,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
             Bytes
           </TabsTrigger>
           <TabsTrigger
-            className="rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white data-[state=active]:dark:bg-gray-800"
+            className="data-[state=active]:dark:bg-brand-250/50 rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white"
             onClick={() => {
               handleTabChange('channels')
               Tower.track(EVENTS.PROFILE.CLICK_OTHER_PROFILES)
@@ -61,7 +61,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
             Channels
           </TabsTrigger>
           <TabsTrigger
-            className="rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white data-[state=active]:dark:bg-gray-800"
+            className="data-[state=active]:dark:bg-brand-250/50 rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white"
             onClick={() => {
               handleTabChange('audio')
               Tower.track(EVENTS.PROFILE.CLICK_PROFILE_AUDIOS)

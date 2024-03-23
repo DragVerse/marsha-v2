@@ -173,13 +173,13 @@ const Bytes = () => {
       )}
       <div className="laptop:right-6 ultrawide:right-8 bottom-3 right-4 hidden flex-col space-y-2 md:absolute md:flex">
         <button
-          className="bg-gallery rounded-full p-3 focus:outline-none dark:bg-gray-800"
+          className="bg-gallery dark:bg-brand-250/50 rounded-full p-3 focus:outline-none"
           onClick={() => slider?.prev()}
         >
           <ChevronUpOutline className="size-5" />
         </button>
         <button
-          className="bg-gallery rounded-full p-3 focus:outline-none dark:bg-gray-800"
+          className="bg-gallery dark:bg-brand-250/50 rounded-full p-3 focus:outline-none"
           onClick={() => slider?.next()}
         >
           <ChevronDownOutline className="size-5" />

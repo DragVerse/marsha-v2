@@ -52,7 +52,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         ) : null}
         <div className="flex text-sm">
           {prefix ? (
-            <span className="inline-flex items-center rounded-l-lg bg-gray-200/80 px-3 dark:bg-gray-800">
+            <span className="dark:bg-brand-250/50 inline-flex items-center rounded-l-lg bg-gray-200/80 px-3">
               {prefix}
             </span>
           ) : null}
@@ -81,7 +81,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             />
           </motion.div>
           {suffix ? (
-            <span className="inline-flex items-center rounded-r-lg bg-gray-200/80 px-3 dark:bg-gray-800">
+            <span className="dark:bg-brand-250/50 inline-flex items-center rounded-r-lg bg-gray-200/80 px-3">
               {suffix}
             </span>
           ) : null}

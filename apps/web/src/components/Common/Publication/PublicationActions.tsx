@@ -30,13 +30,13 @@ const PublicationActions: FC<Props> = ({ publication }) => {
           publication={publication}
           textSize="inherit"
           iconSize="base"
-          className="flex items-center px-4 py-1 hover:bg-gray-200 dark:hover:bg-gray-800"
+          className="dark:hover:bg-brand-250/50 flex items-center px-4 py-1 hover:bg-gray-200"
         />
         {publication.operations.canComment !== TriStateValue.No ? (
           <>
             <button
               onClick={() => setShowTip(true)}
-              className="flex items-center space-x-1 px-4 py-1 hover:bg-gray-200 dark:hover:bg-gray-800"
+              className="dark:hover:bg-brand-250/50 flex items-center space-x-1 px-4 py-1 hover:bg-gray-200"
             >
               <TipOutline className="size-4 flex-none" />
               <span>Tip</span>
@@ -52,13 +52,13 @@ const PublicationActions: FC<Props> = ({ publication }) => {
           </>
         ) : null}
         <MirrorPublication video={publication}>
-          <button className="flex items-center space-x-1 px-4 py-1 hover:bg-gray-200 dark:hover:bg-gray-800">
+          <button className="dark:hover:bg-brand-250/50 flex items-center space-x-1 px-4 py-1 hover:bg-gray-200">
             <MirrorOutline className="size-4 flex-none" />
             <span>Mirror</span>
           </button>
         </MirrorPublication>
         <OpenActions publication={publication}>
-          <div className="flex items-center space-x-1 px-4 py-1 hover:bg-gray-200 dark:hover:bg-gray-800">
+          <div className="dark:hover:bg-brand-250/50 flex items-center space-x-1 px-4 py-1 hover:bg-gray-200">
             <CollectOutline className="size-4" />
             <span>Actions</span>
           </div>

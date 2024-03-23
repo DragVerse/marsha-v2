@@ -22,17 +22,17 @@ export const WatchShimmer = () => {
         <CardShimmer />
         <div className="animate-shimmer mt-3 flex flex-1 flex-col space-y-3.5">
           <div>
-            <div className="my-2 h-5 w-full rounded-md bg-gray-200 dark:bg-gray-800" />
+            <div className="dark:bg-brand-950 my-2 h-5 w-full rounded-md bg-gray-200" />
             <div className="flex items-center space-x-3">
-              <div className="h-3 w-1/6 rounded-md bg-gray-200 dark:bg-gray-800" />
-              <div className="h-3 w-1/6 rounded-md bg-gray-200 dark:bg-gray-800" />
-              <div className="h-3 w-1/6 rounded-md bg-gray-200 dark:bg-gray-800" />
+              <div className="dark:bg-brand-950 h-3 w-1/6 rounded-md bg-gray-200" />
+              <div className="dark:bg-brand-950 h-3 w-1/6 rounded-md bg-gray-200" />
+              <div className="dark:bg-brand-950 h-3 w-1/6 rounded-md bg-gray-200" />
             </div>
           </div>
           <div className="my-4 flex items-center justify-end space-x-3">
-            <div className="h-6 w-10 rounded-md bg-gray-200 dark:bg-gray-800" />
-            <div className="h-6 w-10 rounded-md bg-gray-200 dark:bg-gray-800" />
-            <div className="h-6 w-20 rounded-md bg-gray-200 dark:bg-gray-800" />
+            <div className="dark:bg-brand-950 h-6 w-10 rounded-md bg-gray-200" />
+            <div className="dark:bg-brand-950 h-6 w-10 rounded-md bg-gray-200" />
+            <div className="dark:bg-brand-950 h-6 w-20 rounded-md bg-gray-200" />
           </div>
         </div>
       </div>

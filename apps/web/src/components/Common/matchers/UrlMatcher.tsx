@@ -20,7 +20,7 @@ const Url = ({ children, url, ...props }: UrlProps) => {
     href?.includes('dragverse.app/u') ? (
     <Link
       href={href}
-      className="inline-flex items-center space-x-1 rounded-full bg-gray-200 px-2 text-sm font-medium dark:bg-gray-800"
+      className="dark:bg-brand-250/50 inline-flex items-center space-x-1 rounded-full bg-gray-200 px-2 text-sm font-medium"
     >
       <img
         src={`${DRAGVERSE_LOGO}`}

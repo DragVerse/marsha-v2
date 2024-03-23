@@ -94,7 +94,7 @@ const LatestBytes = () => {
                   className="inline-flex items-center space-x-1 px-3 py-1"
                 >
                   <img
-                    className="size-4 rounded-full bg-gray-200 dark:bg-gray-800"
+                    className="dark:bg-brand-250/50 size-4 rounded-full bg-gray-200"
                     src={getProfilePicture(byte.by, 'AVATAR')}
                     height={50}
                     width={50}

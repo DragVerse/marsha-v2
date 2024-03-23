@@ -5,7 +5,7 @@ const ButtonShimmer = ({ className = 'h-10' }) => {
     <div className="animate-shimmer w-full">
       <div
         className={tw(
-          'w-full rounded-lg bg-gray-200 dark:bg-gray-800',
+          'dark:bg-brand-250/50 w-full rounded-lg bg-gray-200',
           className
         )}
       />

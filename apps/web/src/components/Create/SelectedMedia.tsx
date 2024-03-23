@@ -161,7 +161,7 @@ const SelectedMedia = () => {
                     'h-[6px]',
                     uploadedMedia.percent !== 0
                       ? 'bg-brand-500'
-                      : 'bg-gray-300 dark:bg-gray-800'
+                      : 'dark:bg-brand-250/500/500/50 bg-gray-300'
                   )}
                   style={{
                     width: `${uploadedMedia.percent}%`

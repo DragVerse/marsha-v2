@@ -27,7 +27,7 @@ export const DropdownMenuSubContent = forwardRef<
       sideOffset={5}
       className={tw(
         sizeClasses,
-        'tape-border dark:bg-brand-850 rounded-md bg-white leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none dark:data-[highlighted]:bg-gray-800',
+        'tape-border dark:bg-brand-850 dark:data-[highlighted]:bg-brand-600 rounded-md bg-white leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none',
         className
       )}
       ref={ref}
@@ -57,7 +57,7 @@ export const DropdownMenuSubTrigger = forwardRef<
     <DropdownMenuPrimitive.SubTrigger
       className={tw(
         sizeClasses,
-        'relative select-none items-center rounded-md leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none dark:data-[highlighted]:bg-gray-800',
+        'dark:data-[highlighted]:bg-brand-600 relative select-none items-center rounded-md leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none',
         className
       )}
       ref={ref}
@@ -88,7 +88,7 @@ export const DropdownMenuItem = forwardRef<
     <DropdownMenuPrimitive.Item
       className={tw(
         sizeClasses,
-        'relative select-none items-center space-x-2 rounded-md leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none dark:hover:bg-gray-800 dark:data-[highlighted]:bg-gray-800',
+        'dark:hover:bg-brand-600/50 dark:data-[highlighted]:bg-brand-600/50 relative select-none items-center space-x-2 rounded-md leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none',
         className
       )}
       ref={ref}

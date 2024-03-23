@@ -11,7 +11,7 @@ const ThumbnailsShimmer = () => {
           key={`${e}_${i}`}
           className="tape-border animate-shimmer aspect-[16/9] h-full w-full rounded-md"
         >
-          <div className="h-full rounded-md bg-gray-200 dark:bg-gray-800" />
+          <div className="dark:bg-brand-950 h-full rounded-md bg-gray-200" />
         </div>
       ))}
     </>
