@@ -102,7 +102,7 @@ const GlobalSearch = () => {
 
   const Trigger = () => (
     <button
-      className="rounded-full bg-gray-100 p-2.5 outline-none dark:bg-gray-900"
+      className="rounded-full bg-gray-100 p-2.5 outline-none dark:bg-brand-250"
       onClick={() => setShowSearchBar(true)}
     >
       <SearchOutline className="size-3.5" />

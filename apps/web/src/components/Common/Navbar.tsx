@@ -96,7 +96,7 @@ const Navbar = () => {
                 href="/notifications"
                 className="relative hidden md:block"
               >
-                <div className="bg-brand-600 rounded-full p-2.5">
+                <div className="bg-brand-250 rounded-full p-2.5">
                   <BellOutline className="size-3.5" />
                 </div>
                 {lastOpenedNotificationId !== latestNotificationId ? (
