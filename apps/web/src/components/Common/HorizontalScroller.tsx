@@ -3,11 +3,15 @@ import type { FC, RefObject } from 'react'
 
 type Props = {
   heading: string
-  headingClassName?: string;
+  headingClassName?: string
   sectionRef: RefObject<HTMLDivElement>
 }
 
-const HorizontalScroller: FC<Props> = ({ heading, sectionRef, headingClassName }) => {
+const HorizontalScroller: FC<Props> = ({
+  heading,
+  sectionRef,
+  headingClassName
+}) => {
   const sectionOffsetWidth = sectionRef.current?.offsetWidth ?? 1000
   const scrollOffset = sectionOffsetWidth / 1.2
 
@@ -20,7 +24,7 @@ const HorizontalScroller: FC<Props> = ({ heading, sectionRef, headingClassName }
   return (
     <div className="flex items-center justify-between">
       <div className="flex items-center space-x-3 text-xl">
-      <h2 className={headingClassName}>{heading}</h2>
+        <h2 className={headingClassName}>{heading}</h2>
       </div>
       <div className="space-x-2">
         <button

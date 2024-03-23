@@ -27,7 +27,6 @@ const Navbar = () => {
     setLastOpenedNotificationId,
     lastOpenedNotificationId
   } = usePersistStore()
-
   return (
     <div className="ultrawide:px-8 laptop:px-6 dark:bg-brand-850/80 fixed top-0 z-10 flex h-14 w-full items-center bg-white/80 px-4 backdrop-blur-2xl">
       <div className="flex w-full items-center justify-between">
@@ -97,11 +96,11 @@ const Navbar = () => {
                 href="/notifications"
                 className="relative hidden md:block"
               >
-                <div className="rounded-full bg-gray-100 p-2.5 dark:bg-gray-900">
+                <div className="bg-brand-600 rounded-full p-2.5">
                   <BellOutline className="size-3.5" />
                 </div>
                 {lastOpenedNotificationId !== latestNotificationId ? (
-                  <span className="absolute right-0.5 top-0 h-2 w-2 rounded-full bg-red-500" />
+                  <span className="bg-brand-500 absolute right-0.5 top-0 h-2 w-2 rounded-full" />
                 ) : null}
               </Link>
               <Link href="/create" className="hidden md:block">

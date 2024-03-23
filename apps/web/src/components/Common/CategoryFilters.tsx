@@ -9,7 +9,7 @@ import HorizontalScroller from './HorizontalScroller'
 
 type Props = {
   heading?: string
-  headingClassName?: string; 
+  headingClassName?: string
 }
 
 const CategoryFilters: FC<Props> = ({ heading }) => {

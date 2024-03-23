@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        syne: ['Syne', 'sans-serif'],
+        syne: ['Syne', 'sans-serif']
       },
       keyframes: {
         shimmer: {
@@ -46,7 +46,7 @@ module.exports = {
           300: '#EB83EA',
           400: '#E748E6',
           500: '#EB83EA',
-          600: '#EB83EA',
+          600: '#473f8d',
           700: '#9A7CFF',
           800: '#815BFF',
           850: '#18122D',
