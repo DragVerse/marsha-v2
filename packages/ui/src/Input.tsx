@@ -72,7 +72,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
                   : suffix
                     ? 'rounded-l-lg'
                     : 'rounded-lg',
-                'w-full border-none bg-gray-100 px-3 py-2 focus:outline-none dark:bg-brand-250',
+                'dark:bg-brand-250 w-full border-none bg-gray-100 px-3 py-2 focus:outline-none',
                 className
               )}
               id={id}

@@ -25,7 +25,7 @@ const PublicationActions: FC<Props> = ({ publication }) => {
   const [showTip, setShowTip] = useState(false)
   return (
     <div className="mt-4 flex justify-end space-x-1">
-      <div className="tape-border flex items-center justify-end overflow-hidden rounded-full bg-gray-100 dark:bg-brand-600">
+      <div className="tape-border dark:bg-brand-600 flex items-center justify-end overflow-hidden rounded-full bg-gray-100">
         <PublicationReaction
           publication={publication}
           textSize="inherit"
@@ -65,7 +65,7 @@ const PublicationActions: FC<Props> = ({ publication }) => {
         </OpenActions>
       </div>
       <PublicationOptions publication={publication}>
-        <button className="tape-border flex items-center space-x-1 rounded-full bg-brand-600 p-2 hover:bg-brand-250 dark:bg-brand-600 dark:hover:bg-brand-250">
+        <button className="tape-border bg-brand-600 hover:bg-brand-250 dark:bg-brand-600 dark:hover:bg-brand-250 flex items-center space-x-1 rounded-full p-2">
           <ThreeDotsOutline className="size-4" />
         </button>
       </PublicationOptions>

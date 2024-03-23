@@ -46,8 +46,8 @@ const SettingsSidebar = () => {
         className={tw(
           'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
           isActivePath(SETTINGS)
-            ? 'bg-brand-600/50 font-bold dark:bg-brand-600/80/80'
-            : 'text-dust font-medium hover:bg-brand-600 dark:hover:bg-brand-600/50'
+            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
+            : 'text-dust hover:bg-brand-600 dark:hover:bg-brand-600/50 font-medium'
         )}
       >
         <UserOutline className="size-4" />
@@ -58,8 +58,8 @@ const SettingsSidebar = () => {
         className={tw(
           'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
           isActivePath(SETTINGS_FOLLOW)
-            ? 'bg-brand-600/50 font-bold dark:bg-brand-600/80/80'
-            : 'text-dust font-medium hover:bg-brand-600/50 dark:hover:bg-brand-600/50'
+            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
+            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
         )}
       >
         <SubscribeOutline className="size-4" />
@@ -70,8 +70,8 @@ const SettingsSidebar = () => {
         className={tw(
           'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
           isActivePath(SETTINGS_HANDLES)
-            ? 'bg-brand-600/50 font-bold dark:bg-brand-600/80/80'
-            : 'text-dust font-medium hover:bg-brand-600/50 dark:hover:bg-brand-600/50'
+            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
+            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
         )}
       >
         <MentionOutline className="size-4" />
@@ -82,8 +82,8 @@ const SettingsSidebar = () => {
         className={tw(
           'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
           isActivePath(SETTINGS_INTERESTS)
-            ? 'bg-brand-600/50 font-bold dark:bg-brand-600/80/80'
-            : 'text-dust font-medium hover:bg-brand-600/50 dark:hover:bg-brand-600/50'
+            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
+            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
         )}
       >
         <InterestsOutline className="size-4" />
@@ -95,8 +95,8 @@ const SettingsSidebar = () => {
           className={tw(
             'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
             isActivePath(SETTINGS_MANAGER)
-              ? 'bg-brand-600/50 font-bold dark:bg-brand-600/80/80'
-              : 'text-dust font-medium hover:bg-brand-600/50 dark:hover:bg-brand-600/50'
+              ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
+              : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
           )}
         >
           <ProfileManagerOutline className="size-4" />
@@ -108,8 +108,8 @@ const SettingsSidebar = () => {
         className={tw(
           'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
           isActivePath(SETTINGS_ALLOWANCE)
-            ? 'bg-brand-600/50 font-bold dark:bg-brand-600/80/80'
-            : 'text-dust font-medium hover:bg-brand-600/50 dark:hover:bg-brand-600/50'
+            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
+            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
         )}
       >
         <LockOutline className="size-4" />
@@ -120,8 +120,8 @@ const SettingsSidebar = () => {
         className={tw(
           'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
           isActivePath(SETTINGS_BLOCKED)
-            ? 'bg-brand-600/50 font-bold dark:bg-brand-600/80/80'
-            : 'text-dust font-medium hover:bg-brand-600/50 dark:hover:bg-brand-600/50'
+            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
+            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
         )}
       >
         <ProfileBanOutline className="size-4" />
@@ -132,8 +132,8 @@ const SettingsSidebar = () => {
         className={tw(
           'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
           isActivePath(SETTINGS_SESSIONS)
-            ? 'bg-brand-600/50 font-bold dark:bg-brand-600/80/80'
-            : 'text-dust font-medium hover:bg-brand-600/50 dark:hover:bg-brand-600/50'
+            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
+            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
         )}
       >
         <KeyOutline className="size-4" />

@@ -126,7 +126,7 @@ const ChooseThumbnail: FC<Props> = ({ file }) => {
               draggable={false}
             />
             {selectedThumbnailIndex === idx && (
-              <div className="absolute inset-0 grid place-items-center bg-gray-800 bg-opacity-50">
+              <div className="bg-brand- 600/80 absolute inset-0 grid place-items-center bg-opacity-50">
                 <CheckOutline className="text-brand-500 size-4" />
               </div>
             )}

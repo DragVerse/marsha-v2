@@ -64,7 +64,7 @@ const EmbedMedia: FC<Props> = ({ publicationId, isAudio }) => {
             <Tooltip content="Copy Code" placement="top">
               <button
                 type="button"
-                className="absolute right-2 top-2 rounded p-1 hover:bg-gray-100 dark:hover:bg-brand-250"
+                className="dark:hover:bg-brand-250 absolute right-2 top-2 rounded p-1 hover:bg-gray-100"
                 onClick={() => onCopyCode()}
               >
                 <CopyOutline className="size-4" />

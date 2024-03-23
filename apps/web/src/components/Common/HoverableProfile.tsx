@@ -50,7 +50,7 @@ const HoverableProfile: FC<Props> = ({ profile, children, pfp }) => {
           >
             <div className="absolute bottom-3 left-3 flex-none">
               <img
-                className="size-10 rounded-lg border-2 border-white bg-white object-cover dark:bg-brand-600"
+                className="dark:bg-brand-600 size-10 rounded-lg border-2 border-white bg-white object-cover"
                 src={getProfilePicture(profile, 'AVATAR')}
                 alt={getProfile(activeProfile)?.displayName}
                 draggable={false}

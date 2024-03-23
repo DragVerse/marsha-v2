@@ -36,7 +36,7 @@ const ThumbnailImage: FC<Props> = ({ video }) => {
     <img
       src={imageCdn(thumbnailUrl, isBytesVideo ? 'THUMBNAIL_V' : 'THUMBNAIL')}
       className={tw(
-        'h-full w-full rounded-lg bg-gray-100 object-center lg:h-full lg:w-full dark:bg-brand-250',
+        'dark:bg-brand-250 h-full w-full rounded-lg bg-gray-100 object-center lg:h-full lg:w-full',
         isBytesVideo ? 'object-contain' : 'object-cover'
       )}
       style={{

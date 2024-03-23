@@ -22,7 +22,7 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
             .replace('http://', '')}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
+          className="dark:bg-brand-250 rounded-lg bg-white bg-opacity-80 p-1.5"
         >
           <GlobeOutline className="size-4" />
         </Link>
@@ -32,7 +32,7 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
           href={`https://www.google.com/maps/search/?api=1&query=${location}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
+          className="dark:bg-brand-250 rounded-lg bg-white bg-opacity-80 p-1.5"
         >
           <LocationOutline className="size-4" />
         </Link>
@@ -44,7 +44,7 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
             .replace('http://open.spotify.com/', '')}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
+          className="dark:bg-brand-250 rounded-lg bg-white bg-opacity-80 p-1.5"
         >
           <img
             src={imageCdn(
@@ -66,7 +66,7 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
             .replace('http://youtube.com/', '')}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
+          className="dark:bg-brand-250 rounded-lg bg-white bg-opacity-80 p-1.5"
         >
           <img
             src={`${STATIC_ASSETS}/images/social/youtube.png`}
@@ -85,7 +85,7 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
             .replace('http://twitter.com/', '')}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="flex items-center justify-center rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
+          className="dark:bg-brand-250 flex items-center justify-center rounded-lg bg-white bg-opacity-80 p-1.5"
         >
           {resolvedTheme === 'dark' ? (
             <img
