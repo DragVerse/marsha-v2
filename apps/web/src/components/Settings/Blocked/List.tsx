@@ -219,7 +219,7 @@ const List = () => {
           >
             <div className="absolute bottom-2 left-2 flex-none">
               <img
-                className="size-8 rounded-full border-2 border-white bg-white object-cover dark:bg-gray-900"
+                className="size-8 rounded-full border-2 border-white bg-white object-cover dark:bg-brand-250"
                 src={getProfilePicture(profile, 'AVATAR')}
                 alt={getProfile(profile)?.displayName}
                 draggable={false}

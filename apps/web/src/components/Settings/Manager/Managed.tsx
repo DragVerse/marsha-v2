@@ -70,7 +70,7 @@ const Managed = () => {
                 >
                   <div className="absolute bottom-3 left-3 flex-none">
                     <img
-                      className="size-10 rounded-full border-2 border-white bg-white object-cover dark:bg-gray-900"
+                      className="size-10 rounded-full border-2 border-white bg-white object-cover dark:bg-brand-250"
                       src={getProfilePicture(profile, 'AVATAR')}
                       alt={getProfile(profile)?.displayName}
                       draggable={false}

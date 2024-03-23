@@ -103,7 +103,7 @@ const QueuedVideo: FC<Props> = ({ queuedVideo }) => {
           <img
             src={thumbnailUrl}
             className={tw(
-              'h-full w-full bg-gray-100 object-center md:rounded-xl lg:h-full lg:w-full dark:bg-gray-900',
+              'h-full w-full bg-gray-100 object-center md:rounded-xl lg:h-full lg:w-full dark:bg-brand-250000',
               uploadedMedia.isByteVideo ? 'object-contain' : 'object-cover'
             )}
             style={{

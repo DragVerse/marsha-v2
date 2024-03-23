@@ -85,7 +85,7 @@ const Video: FC<Props> = ({ video }) => {
           <img
             src={thumbnailUrl}
             className={tw(
-              'w-full bg-gray-100 object-center dark:bg-gray-900',
+              'w-full bg-gray-100 object-center dark:bg-brand-250',
               isBytesVideo ? 'object-contain' : 'object-cover'
             )}
             style={{
