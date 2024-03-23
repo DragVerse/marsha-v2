@@ -9,6 +9,7 @@ import HorizontalScroller from './HorizontalScroller'
 
 type Props = {
   heading?: string
+  headingClassName?: string; 
 }
 
 const CategoryFilters: FC<Props> = ({ heading }) => {
@@ -25,6 +26,7 @@ const CategoryFilters: FC<Props> = ({ heading }) => {
       <HorizontalScroller
         sectionRef={sectionRef}
         heading={heading ?? 'Explore The Garden🌱'}
+        headingClassName="font-syne font-extrabold"
       />
       <div
         ref={sectionRef}
