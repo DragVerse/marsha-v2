@@ -313,6 +313,7 @@ const CreateSteps = () => {
   })
 
   const createPost = async (metadataUri: string) => {
+    console.log("createPost metadataUri=", metadataUri)
     setUploadedMedia({
       buttonText: 'Posting...',
       loading: true
