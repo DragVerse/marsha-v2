@@ -67,7 +67,7 @@ and visit http://localhost:4783
 Build all dependencies from repository root,
 
 ```bash
-yarn build
+pnpm build
 ```
 
 To deploy on Vercel, use the following configuration:
