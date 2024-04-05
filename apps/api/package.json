@@ -10,19 +10,22 @@
     "lint": "eslint . --ext .js,.ts,.tsx --fix"
   },
   "dependencies": {
-    "@aws-sdk/client-sts": "3.535.0",
-    "@hono/zod-validator": "^0.2.0",
-    "hono": "^4.1.1",
-    "linkedom": "^0.16.9",
+    "@aws-sdk/client-sts": "3.540.0",
+    "@hono/zod-validator": "^0.2.1",
+    "base64url": "^3.0.1",
+    "hono": "^4.2.1",
+    "linkedom": "^0.16.11",
     "ua-parser-js": "^1.0.37",
-    "viem": "^2.8.9",
+    "viem": "^2.9.9",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240314.0",
-    "@dragverse/config": "*",
-    "@dragverse/generic": "*",
+    "@cloudflare/workers-types": "^4.20240403.0",
+    "@dragverse/config": "workspace:*",
+    "@dragverse/generic": "workspace:*",
     "@types/ua-parser-js": "^0.7.39",
-    "wrangler": "^3.34.2"
+    "prettier": "^3.2.5",
+    "typescript": "5.4.3",
+    "wrangler": "^3.45.0"
   }
 }

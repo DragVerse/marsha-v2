@@ -2,7 +2,7 @@ import {
   BONSAI_TOKEN_ADDRESS,
   CREATOR_VIDEO_CATEGORIES,
   IRYS_CURRENCY,
-  IRYS_NODE_URL
+  IRYS_NETWORK
 } from '@dragverse/constants'
 import { logger } from '@dragverse/generic'
 import type { IrysDataState, UploadedMedia } from '@dragverse/lens/custom-types'
@@ -92,7 +92,7 @@ const useAppStore = create<AppState>((set) => ({
   getIrysInstance: async (client: WalletClient) => {
     try {
       const instance = new WebIrys({
-        url: IRYS_NODE_URL,
+        network: IRYS_NETWORK,
         token: IRYS_CURRENCY,
         wallet: {
           name: 'viemv2',

@@ -1,6 +1,10 @@
 import HoverableProfile from '@components/Common/HoverableProfile'
 import { NoDataFound } from '@components/UIElements/NoDataFound'
-import { getProfile, getProfilePicture } from '@dragverse/generic'
+import {
+  getLennyPicture,
+  getProfile,
+  getProfilePicture
+} from '@dragverse/generic'
 import type { MutualFollowersRequest, Profile } from '@dragverse/lens'
 import { LimitType, useMutualFollowersQuery } from '@dragverse/lens'
 import { Spinner } from '@dragverse/ui'
@@ -74,6 +78,9 @@ const MutualFollowers: FC<Props> = ({ viewing }) => {
                   className="size-5 rounded-full"
                   draggable={false}
                   alt={getProfile(profile)?.displayName}
+                  onError={({ currentTarget }) => {
+                    currentTarget.src = getLennyPicture(profile?.id)
+                  }}
                 />
               }
             />

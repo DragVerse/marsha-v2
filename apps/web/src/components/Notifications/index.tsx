@@ -3,14 +3,13 @@ import NotificationsShimmer from '@components/Shimmers/NotificationsShimmer'
 import { NoDataFound } from '@components/UIElements/NoDataFound'
 import {
   INFINITE_SCROLL_ROOT_MARGIN,
-  LENS_CUSTOM_FILTERS,
   LENSTUBE_APP_ID,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID
 } from '@dragverse/constants'
 import { EVENTS, Tower } from '@dragverse/generic'
 import type { Notification, NotificationRequest } from '@dragverse/lens'
-import { useNotificationsQuery } from '@dragverse/lens'
+import { CustomFiltersType, useNotificationsQuery } from '@dragverse/lens'
 import { CustomNotificationsFilterEnum } from '@dragverse/lens/custom-types'
 import { Spinner } from '@dragverse/ui'
 import useNotificationStore from '@lib/store/notification'
@@ -41,7 +40,7 @@ const Notifications = () => {
 
   const request: NotificationRequest = {
     where: {
-      customFilters: LENS_CUSTOM_FILTERS,
+      customFilters: [CustomFiltersType.Gardeners],
       highSignalFilter:
         selectedNotificationsFilter ===
         CustomNotificationsFilterEnum.HIGH_SIGNAL,

@@ -8,14 +8,17 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
-    "@apollo/client": "3.9.7"
+    "@apollo/client": "3.9.10",
+    "@irys/sdk": "^0.1.21",
+    "@lens-protocol/metadata": "^1.1.6"
   },
   "devDependencies": {
+    "@dragverse/constants": "workspace:*",
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/fragment-matcher": "^5.0.2",
     "@graphql-codegen/typescript": "^4.0.6",
     "@graphql-codegen/typescript-operations": "^4.2.0",
     "@graphql-codegen/typescript-react-apollo": "^4.3.0",
-    "typescript": "5.4.2"
+    "typescript": "5.4.3"
   }
 }

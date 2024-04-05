@@ -1,6 +1,10 @@
 import Badge from '@components/Common/Badge'
 import InterweaveContent from '@components/Common/InterweaveContent'
-import { getProfile, getProfilePicture } from '@dragverse/generic'
+import {
+  getLennyPicture,
+  getProfile,
+  getProfilePicture
+} from '@dragverse/generic'
 import {
   LensTransactionStatusType,
   PublicationDocument,
@@ -120,6 +124,9 @@ const QueuedComment: FC<Props> = ({ queuedComment }) => {
             className="size-7 rounded-full"
             draggable={false}
             alt={getProfile(activeProfile)?.slug}
+            onError={({ currentTarget }) => {
+              currentTarget.src = getLennyPicture(activeProfile?.id)
+            }}
           />
         </Link>
         <div className="mr-2 flex flex-col items-start">

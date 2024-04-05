@@ -1,5 +1,9 @@
 import HoverableProfile from '@components/Common/HoverableProfile'
-import { getProfile, getProfilePicture } from '@dragverse/generic'
+import {
+  getLennyPicture,
+  getProfile,
+  getProfilePicture
+} from '@dragverse/generic'
 import type { FollowNotification, Profile } from '@dragverse/lens'
 import { FollowOutline } from '@dragverse/ui'
 import type { FC } from 'react'
@@ -23,6 +27,9 @@ const Followed: FC<Props> = ({ notification: { followers } }) => {
                 src={getProfilePicture(profile, 'AVATAR')}
                 draggable={false}
                 alt={getProfile(profile)?.displayName}
+                onError={({ currentTarget }) => {
+                  currentTarget.src = getLennyPicture(profile?.id)
+                }}
               />
             </HoverableProfile>
           ))}

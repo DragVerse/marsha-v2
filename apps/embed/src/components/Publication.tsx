@@ -6,13 +6,12 @@ import {
   tapeFont,
   videoPlayerTheme
 } from '@dragverse/browser'
-import { getPublication, isListenable } from '@dragverse/generic'
+import { getPublication } from '@dragverse/generic'
 import type { AnyPublication } from '@dragverse/lens'
 import { LivepeerConfig } from '@livepeer/react'
 import type { FC } from 'react'
 import { useEffect } from 'react'
 
-import Audio from './Audio'
 import Video from './Video'
 
 type Props = {
@@ -26,17 +25,12 @@ const Publication: FC<Props> = ({ publication }) => {
   }, [])
 
   const target = getPublication(publication)
-  const isAudio = isListenable(target)
 
   return (
     <div className={tapeFont.className}>
-      {isAudio ? (
-        <Audio audio={target} />
-      ) : (
-        <LivepeerConfig client={getLivepeerClient()} theme={videoPlayerTheme}>
-          <Video video={target} />
-        </LivepeerConfig>
-      )}
+      <LivepeerConfig client={getLivepeerClient()} theme={videoPlayerTheme}>
+        <Video video={target} />
+      </LivepeerConfig>
     </div>
   )
 }

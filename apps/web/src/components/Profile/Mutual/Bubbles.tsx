@@ -1,6 +1,10 @@
 import HoverableProfile from '@components/Common/HoverableProfile'
 import BubblesShimmer from '@components/Shimmers/BubblesShimmer'
-import { getProfile, getProfilePicture } from '@dragverse/generic'
+import {
+  getLennyPicture,
+  getProfile,
+  getProfilePicture
+} from '@dragverse/generic'
 import type { Profile } from '@dragverse/lens'
 import { LimitType, useMutualFollowersQuery } from '@dragverse/lens'
 import { Modal } from '@dragverse/ui'
@@ -53,6 +57,9 @@ const Bubbles: FC<Props> = ({ viewing, showSeparator }) => {
                   src={getProfilePicture(profile, 'AVATAR')}
                   draggable={false}
                   alt={getProfile(profile)?.slug}
+                  onError={({ currentTarget }) => {
+                    currentTarget.src = getLennyPicture(profile?.id)
+                  }}
                 />
               </HoverableProfile>
             ))}

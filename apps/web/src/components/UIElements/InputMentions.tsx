@@ -1,8 +1,11 @@
 import { tw, useDebounce, useOutsideClick } from '@dragverse/browser'
-import { LENS_CUSTOM_FILTERS } from '@dragverse/constants'
 import { getProfile, getProfilePicture } from '@dragverse/generic'
 import type { Profile } from '@dragverse/lens'
-import { LimitType, useSearchProfilesLazyQuery } from '@dragverse/lens'
+import {
+  CustomFiltersType,
+  LimitType,
+  useSearchProfilesLazyQuery
+} from '@dragverse/lens'
 import { Spinner, TextArea } from '@dragverse/ui'
 import type { ComponentProps, FC } from 'react'
 import React, { useEffect, useRef, useState } from 'react'
@@ -66,7 +69,7 @@ const InputMentions: FC<TextAreaProps> = ({
             query: keyword,
             limit: LimitType.Ten,
             where: {
-              customFilters: LENS_CUSTOM_FILTERS
+              customFilters: [CustomFiltersType.Gardeners]
             }
           }
         }

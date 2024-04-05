@@ -1,7 +1,6 @@
 import { NoDataFound } from '@components/UIElements/NoDataFound'
 import { tw, useDebounce, useOutsideClick } from '@dragverse/browser'
 import {
-  LENS_CUSTOM_FILTERS,
   LENSTUBE_APP_ID,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID,
@@ -15,6 +14,7 @@ import type {
   PublicationSearchRequest
 } from '@dragverse/lens'
 import {
+  CustomFiltersType,
   LimitType,
   PublicationMetadataMainFocusType,
   SearchPublicationType,
@@ -63,7 +63,7 @@ const GlobalSearch = () => {
         ]
       },
       publicationTypes: [SearchPublicationType.Post],
-      customFilters: LENS_CUSTOM_FILTERS
+      customFilters: [CustomFiltersType.Gardeners]
     }
   }
 
@@ -71,7 +71,7 @@ const GlobalSearch = () => {
     limit: LimitType.Ten,
     query: keyword,
     where: {
-      customFilters: LENS_CUSTOM_FILTERS
+      customFilters: [CustomFiltersType.Gardeners]
     }
   }
 
@@ -118,6 +118,7 @@ const GlobalSearch = () => {
         value={keyword}
         onChange={(event) => setKeyword(event.target.value)}
         placeholder="Search"
+        className="focus:outline-brand-400"
       />
       <div
         className={tw(
@@ -140,7 +141,10 @@ const GlobalSearch = () => {
                     <Profiles
                       results={profiles}
                       loading={profilesLoading}
-                      clearSearch={() => setKeyword('')}
+                      clearSearch={() => {
+                        setShowSearchBar(false)
+                        setKeyword('')
+                      }}
                     />
                   ) : (
                     <NoDataFound isCenter />
@@ -152,7 +156,10 @@ const GlobalSearch = () => {
                     <Publications
                       results={publications}
                       loading={publicationsLoading}
-                      clearSearch={() => setKeyword('')}
+                      clearSearch={() => {
+                        setShowSearchBar(false)
+                        setKeyword('')
+                      }}
                     />
                   ) : (
                     <NoDataFound isCenter />

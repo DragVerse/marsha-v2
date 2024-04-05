@@ -3,7 +3,6 @@ import ProfileSuggestion from '@components/UIElements/ProfileSuggestion'
 import { tw, useDebounce, useOutsideClick } from '@dragverse/browser'
 import {
   DRAGVERSE_ADMIN_ADDRESS,
-  LENS_CUSTOM_FILTERS,
   LENS_NAMESPACE_PREFIX,
   TAPE_APP_NAME
 } from '@dragverse/constants'
@@ -14,7 +13,11 @@ import {
   trimify
 } from '@dragverse/generic'
 import type { Profile, RecipientDataInput } from '@dragverse/lens'
-import { LimitType, useSearchProfilesLazyQuery } from '@dragverse/lens'
+import {
+  CustomFiltersType,
+  LimitType,
+  useSearchProfilesLazyQuery
+} from '@dragverse/lens'
 import {
   InfoOutline,
   Input,
@@ -71,7 +74,7 @@ const Splits: FC<Props> = ({ submitContainerRef }) => {
             limit: LimitType.Ten,
             query: searchKeyword,
             where: {
-              customFilters: LENS_CUSTOM_FILTERS
+              customFilters: [CustomFiltersType.Gardeners]
             }
           }
         }

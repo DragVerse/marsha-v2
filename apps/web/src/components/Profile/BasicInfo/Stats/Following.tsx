@@ -1,6 +1,11 @@
 import HoverableProfile from '@components/Common/HoverableProfile'
 import { NoDataFound } from '@components/UIElements/NoDataFound'
-import { formatNumber, getProfile, getProfilePicture } from '@dragverse/generic'
+import {
+  formatNumber,
+  getLennyPicture,
+  getProfile,
+  getProfilePicture
+} from '@dragverse/generic'
 import type { FollowingRequest, Profile, ProfileStats } from '@dragverse/lens'
 import { LimitType, useFollowingQuery } from '@dragverse/lens'
 import { Modal, Spinner } from '@dragverse/ui'
@@ -76,6 +81,9 @@ const Following: FC<Props> = ({ stats, profileId }) => {
                         className="size-5 rounded-full"
                         draggable={false}
                         alt={getProfile(profile)?.displayName}
+                        onError={({ currentTarget }) => {
+                          currentTarget.src = getLennyPicture(profile?.id)
+                        }}
                       />
                     }
                   />

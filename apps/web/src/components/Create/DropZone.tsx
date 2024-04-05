@@ -1,6 +1,5 @@
 import { tw, useDragAndDrop } from '@dragverse/browser'
 import {
-  ALLOWED_AUDIO_MIME_TYPES,
   ALLOWED_UPLOAD_MIME_TYPES,
   CREATOR_VIDEO_CATEGORIES
 } from '@dragverse/constants'
@@ -32,7 +31,6 @@ const DropZone = () => {
     try {
       if (file) {
         const preview = URL.createObjectURL(file)
-        const isAudio = ALLOWED_AUDIO_MIME_TYPES.includes(file?.type)
         const isUploadToIpfs = canUploadedToIpfs(
           file?.size || 0,
           activeProfile?.sponsor
@@ -42,10 +40,8 @@ const DropZone = () => {
           preview,
           mediaType: file?.type,
           file,
-          type: isAudio ? 'AUDIO' : 'VIDEO',
-          mediaCategory: isAudio
-            ? CREATOR_VIDEO_CATEGORIES[1]
-            : CREATOR_VIDEO_CATEGORIES[0],
+          type: 'VIDEO',
+          mediaCategory: CREATOR_VIDEO_CATEGORIES[0],
           isUploadToIpfs
         })
       }

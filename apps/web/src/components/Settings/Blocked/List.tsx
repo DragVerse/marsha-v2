@@ -11,6 +11,7 @@ import {
 } from '@dragverse/constants'
 import {
   checkLensManagerPermissions,
+  getLennyPicture,
   getProfile,
   getProfileCoverPicture,
   getProfilePicture,
@@ -223,6 +224,9 @@ const List = () => {
                 src={getProfilePicture(profile, 'AVATAR')}
                 alt={getProfile(profile)?.displayName}
                 draggable={false}
+                onError={({ currentTarget }) => {
+                  currentTarget.src = getLennyPicture(profile?.id)
+                }}
               />
             </div>
             <div className="absolute bottom-2 right-2 flex-none">

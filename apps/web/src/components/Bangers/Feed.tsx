@@ -1,15 +1,12 @@
 import BangersShimmer from '@components/Shimmers/BangersShimmer'
 import { NoDataFound } from '@components/UIElements/NoDataFound'
-import {
-  INFINITE_SCROLL_ROOT_MARGIN,
-  LENS_CUSTOM_FILTERS,
-  TAPE_APP_ID
-} from '@dragverse/constants'
+import { INFINITE_SCROLL_ROOT_MARGIN, TAPE_APP_ID } from '@dragverse/constants'
 import type {
   ExplorePublicationRequest,
   PrimaryPublication
 } from '@dragverse/lens'
 import {
+  CustomFiltersType,
   ExplorePublicationsOrderByType,
   ExplorePublicationType,
   LimitType,
@@ -30,7 +27,7 @@ const Feed = () => {
         publishedOn: [TAPE_APP_ID],
         mainContentFocus: [PublicationMetadataMainFocusType.Link]
       },
-      customFilters: LENS_CUSTOM_FILTERS
+      customFilters: [CustomFiltersType.Gardeners]
     },
     orderBy: ExplorePublicationsOrderByType.TopReacted,
     limit: LimitType.Fifty

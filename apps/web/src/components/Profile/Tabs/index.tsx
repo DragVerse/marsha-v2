@@ -64,7 +64,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
             className="data-[state=active]:dark:bg-brand-250/50 rounded-t-lg border-black px-4 py-1.5 text-sm font-medium data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white"
             onClick={() => {
               handleTabChange('audio')
-              Tower.track(EVENTS.PROFILE.CLICK_PROFILE_AUDIOS)
+              // Tower.track(EVENTS.PROFILE.CLICK_PROFILE_AUDIOS)
             }}
             value="audio"
           >
