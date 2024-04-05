@@ -1,8 +1,5 @@
 import CommentsShimmer from '@components/Shimmers/CommentsShimmer'
-import {
-  INFINITE_SCROLL_ROOT_MARGIN,
-  LENS_CUSTOM_FILTERS
-} from '@dragverse/constants'
+import { INFINITE_SCROLL_ROOT_MARGIN } from '@dragverse/constants'
 import type {
   AnyPublication,
   Comment,
@@ -11,6 +8,7 @@ import type {
 } from '@dragverse/lens'
 import {
   CommentRankingFilterType,
+  CustomFiltersType,
   LimitType,
   usePublicationsQuery
 } from '@dragverse/lens'
@@ -32,7 +30,7 @@ const NonRelevantComments: FC<Props> = ({ video, className }) => {
   const request: PublicationsRequest = {
     limit: LimitType.Fifty,
     where: {
-      customFilters: LENS_CUSTOM_FILTERS,
+      customFilters: [CustomFiltersType.Gardeners],
       commentOn: {
         id: video.id,
         ranking: {

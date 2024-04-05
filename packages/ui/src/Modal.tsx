@@ -46,7 +46,7 @@ export const Modal: FC<Props> = ({
               </Dialog.Title>
               {!locked && (
                 <button className="flex" onClick={() => setShow(false)}>
-                  <span className="cursor-pointer rounded p-1.5 hover:bg-gray-100 dark:hover:bg-gray-900">
+                  <span className="dark:hover:bg-brand-250 cursor-pointer rounded p-1.5 hover:bg-gray-100">
                     <TimesOutline outlined={false} className="size-3" />
                   </span>
                 </button>

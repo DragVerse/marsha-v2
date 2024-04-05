@@ -48,7 +48,6 @@ import {
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { v4 as uuidv4 } from 'uuid'
 import { useSignTypedData, useWriteContract } from 'wagmi'
 import type { z } from 'zod'
 import { object, string, union } from 'zod'
@@ -220,8 +219,6 @@ const BasicInfo = ({ profile }: Props) => {
     try {
       setLoading(true)
       const metadata: ProfileOptions = {
-        appId: TAPE_APP_ID,
-        id: uuidv4(),
         attributes: [
           ...otherAttributes,
           {

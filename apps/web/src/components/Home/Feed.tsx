@@ -6,54 +6,47 @@ import {
   ALLOWED_APP_IDS,
   INFINITE_SCROLL_ROOT_MARGIN,
   IS_MAINNET,
-  LENS_CUSTOM_FILTERS,
   TAPE_APP_ID
 } from '@dragverse/constants'
-import type {
-  ExplorePublicationRequest,
-  PrimaryPublication
-} from '@dragverse/lens'
+import type { PrimaryPublication, PublicationsRequest } from '@dragverse/lens'
 import {
-  ExplorePublicationType,
   LimitType,
   PublicationMetadataMainFocusType,
-  useExplorePublicationsQuery
+  PublicationType,
+  usePublicationsQuery
 } from '@dragverse/lens'
 import { Spinner } from '@dragverse/ui'
-import { getUnixTimestampForDaysAgo } from '@lib/formatTime'
-import { getRandomFeedOrder } from '@lib/getRandomFeedOrder'
 import useAppStore from '@lib/store'
+import useCuratedProfiles from '@lib/store/idb/curated'
 import { useInView } from 'react-cool-inview'
 
-const since = getUnixTimestampForDaysAgo(30)
-const orderBy = getRandomFeedOrder()
+// const since = getUnixTimestampForDaysAgo(30)
 
 const Feed = ({ showFilter = true }) => {
   const activeTagFilter = useAppStore((state) => state.activeTagFilter)
+  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles)
 
-  const request: ExplorePublicationRequest = {
+  const request: PublicationsRequest = {
     where: {
-      publicationTypes: [ExplorePublicationType.Post],
-      customFilters: LENS_CUSTOM_FILTERS,
       metadata: {
+        mainContentFocus: [PublicationMetadataMainFocusType.Video],
         publishedOn: IS_MAINNET ? [TAPE_APP_ID, ...ALLOWED_APP_IDS] : undefined,
         tags:
-          activeTagFilter !== 'all' ? { oneOf: [activeTagFilter] } : undefined,
-        mainContentFocus: [PublicationMetadataMainFocusType.Video]
+          activeTagFilter !== 'all' ? { oneOf: [activeTagFilter] } : undefined
       },
-      since
+      publicationTypes: [PublicationType.Post],
+      from: curatedProfiles
     },
-    orderBy,
     limit: LimitType.Fifty
   }
 
-  const { data, loading, error, fetchMore } = useExplorePublicationsQuery({
-    variables: { request }
+  const { data, loading, error, fetchMore } = usePublicationsQuery({
+    variables: { request },
+    skip: !curatedProfiles?.length
   })
 
-  const pageInfo = data?.explorePublications?.pageInfo
-  const videos = data?.explorePublications
-    ?.items as unknown as PrimaryPublication[]
+  const pageInfo = data?.publications?.pageInfo
+  const videos = data?.publications?.items as unknown as PrimaryPublication[]
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -74,7 +67,7 @@ const Feed = ({ showFilter = true }) => {
       {showFilter && <CategoryFilters />}
       <div>
         {loading && <TimelineShimmer />}
-        {!error && !loading && videos.length > 0 && (
+        {!error && !loading && videos?.length > 0 && (
           <>
             <Timeline videos={videos} />
             {pageInfo?.next && (

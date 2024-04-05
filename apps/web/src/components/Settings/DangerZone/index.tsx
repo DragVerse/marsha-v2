@@ -2,7 +2,11 @@ import Badge from '@components/Common/Badge'
 import HoverableProfile from '@components/Common/HoverableProfile'
 import MetaTags from '@components/Common/MetaTags'
 import Stats from '@components/Profile/BasicInfo/Stats'
-import { getProfile, getProfilePicture } from '@dragverse/generic'
+import {
+  getLennyPicture,
+  getProfile,
+  getProfilePicture
+} from '@dragverse/generic'
 import useProfileStore from '@lib/store/idb/profile'
 
 import Delete from './Delete'
@@ -27,6 +31,9 @@ const DangerZone = () => {
                 className="size-10 rounded-full"
                 alt={getProfile(activeProfile)?.displayName}
                 draggable={false}
+                onError={({ currentTarget }) => {
+                  currentTarget.src = getLennyPicture(activeProfile?.id)
+                }}
               />
             </HoverableProfile>
           </div>

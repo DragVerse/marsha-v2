@@ -13,8 +13,11 @@ type DropdownMenuSubContentProps = DropdownMenuPrimitive.MenuSubContentProps & {
   className?: string
   size?: 'sm' | 'md' | 'lg'
 }
-export const DropdownMenuSubContent = forwardRef<
-  ElementRef<typeof DropdownMenuPrimitive.SubContent>,
+export const DropdownMenuSubContent: React.ForwardRefExoticComponent<
+  DropdownMenuSubContentProps &
+    React.RefAttributes<HTMLElement | SVGElement | React.Component | null>
+> = forwardRef<
+  HTMLElement | SVGElement | React.Component | null,
   DropdownMenuSubContentProps
 >(({ children, className, size = 'sm', ...props }, ref) => {
   const sizeClasses = {
@@ -27,10 +30,10 @@ export const DropdownMenuSubContent = forwardRef<
       sideOffset={5}
       className={tw(
         sizeClasses,
-        'tape-border dark:bg-brand-850 rounded-md bg-white leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none dark:data-[highlighted]:bg-gray-800',
+        'tape-border z-10 rounded-md bg-white leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none dark:bg-black dark:data-[highlighted]:bg-gray-800',
         className
       )}
-      ref={ref}
+      ref={ref as React.Ref<HTMLDivElement>}
       {...props}
     >
       {children}
@@ -44,8 +47,11 @@ type DropdownMenuSubTriggerProps = DropdownMenuPrimitive.MenuSubTriggerProps & {
   className?: string
   size?: 'sm' | 'md' | 'lg'
 }
-export const DropdownMenuSubTrigger = forwardRef<
-  ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
+export const DropdownMenuSubTrigger: React.ForwardRefExoticComponent<
+  DropdownMenuSubTriggerProps &
+    React.RefAttributes<HTMLElement | SVGElement | React.Component | null>
+> = forwardRef<
+  HTMLElement | SVGElement | React.Component | null,
   DropdownMenuSubTriggerProps
 >(({ children, className, size = 'sm', ...props }, ref) => {
   const sizeClasses = {
@@ -57,10 +63,10 @@ export const DropdownMenuSubTrigger = forwardRef<
     <DropdownMenuPrimitive.SubTrigger
       className={tw(
         sizeClasses,
-        'relative select-none items-center rounded-md leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none dark:data-[highlighted]:bg-gray-800',
+        'dark:data-[highlighted]:bg-brand-600 relative select-none items-center rounded-md leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none',
         className
       )}
-      ref={ref}
+      ref={ref as React.Ref<HTMLDivElement>}
       {...props}
     >
       {children}
@@ -88,7 +94,7 @@ export const DropdownMenuItem = forwardRef<
     <DropdownMenuPrimitive.Item
       className={tw(
         sizeClasses,
-        'relative select-none items-center space-x-2 rounded-md leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none dark:hover:bg-gray-800 dark:data-[highlighted]:bg-gray-800',
+        'dark:hover:bg-brand-600/50 dark:data-[highlighted]:bg-brand-600/50 relative select-none items-center space-x-2 rounded-md leading-none data-[disabled]:pointer-events-none data-[highlighted]:bg-gray-200 data-[highlighted]:outline-none',
         className
       )}
       ref={ref}

@@ -23,14 +23,13 @@ https://user-images.githubusercontent.com/8083958/222954569-b88fde67-8b95-466d-a
 
 ## 🔭 What's inside?
 
-This turborepo uses [Yarn](https://classic.yarnpkg.com/) as a package manager. It includes the following packages/apps:
+This turborepo uses [Pnpm](https://pnpm.io/) as a package manager. It includes the following apps and packages:
 
 ### ✨ Apps
 
 | Name     | Description                         |
 | -------- | ----------------------------------- |
 | `web`    | NextJs dragverse website            |
-| `mobile` | React Native dragverse mobile app   |
 | `embed`  | NextJs application for video embeds |
 | `api`    | Cloudflare functions                |
 | `og`     | Open graph meta tags generator      |
@@ -45,20 +44,20 @@ This turborepo uses [Yarn](https://classic.yarnpkg.com/) as a package manager. I
 | `ui`             | UI components                             |
 | `constants`      | Constants for the entire application      |
 | `config`         | Shared lint config                        |
-| `permissionless` | Permissionless signup contracts           |
+| `contracts`      | Permissionless signup contracts           |
 
 ## ✨ Getting Started
 
 Install all dependencies from repository root,
 
 ```bash
-yarn install
+pnpm install
 ```
 
 Start the application,
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
 and visit http://localhost:4783
@@ -68,7 +67,7 @@ and visit http://localhost:4783
 Build all dependencies from repository root,
 
 ```bash
-yarn build
+pnpm build
 ```
 
 To deploy on Vercel, use the following configuration:

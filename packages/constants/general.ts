@@ -1,5 +1,4 @@
-import { CustomFiltersType } from '@dragverse/lens'
-import LensEndpoint from '@dragverse/lens/endpoints'
+import { LensEndpoint } from './endpoints'
 
 export const TAPE_APP_NAME = 'Dragverse'
 export const TAPE_APP_DESCRIPTION =
@@ -15,7 +14,8 @@ export const STATIC_ASSETS = 'https://dragverse.4everland.store'
 export const TAPE_WEBSITE_URL = IS_MAINNET
   ? 'https://dragverse.app'
   : 'https://testnet.dragverse.app'
-export const LENS_IMAGEKIT_SNAPSHOT_URL = 'https://ik.imagekit.io/lenstubeik'
+export const LENS_IMAGEKIT_SNAPSHOT_URL = 'https://ik.imagekit.io/ltxyz'
+export const TAPE_CURATOR_ID = '0x04298d'
 
 // infinite scroll
 export const INFINITE_SCROLL_ROOT_MARGIN = '800px'
@@ -125,18 +125,16 @@ export const WORKER_LIVEPEER_VIEWS_URL = `${TAPE_API_URL}/views`
 export const WORKER_IRYS_METADATA_UPLOAD_URL = `${TAPE_API_URL}/metadata`
 export const WORKER_LOGTAIL_INGEST_URL = `${TAPE_API_URL}/tail`
 export const WORKER_STS_TOKEN_URL = `${TAPE_API_URL}/sts`
-export const WORKER_RECS_URL = `${TAPE_API_URL}/recommendations`
 export const WORKER_DID_URL = `${TAPE_API_URL}/did`
 export const WORKER_TOWER_URL = `${TAPE_API_URL}/tower`
 export const WORKER_OEMBED_URL = `${TAPE_API_URL}/oembed`
 export const WORKER_VERIFIED_URL = `${TAPE_API_URL}/verified`
 export const WORKER_TOGGLES_URL = `${TAPE_API_URL}/toggles`
+export const WORKER_AVATAR_URL = `${TAPE_API_URL}/avatar`
 export const WORKER_ALLOWED_TOKENS_URL = `${TAPE_API_URL}/allowed-tokens`
 
 // irys
-export const IRYS_NODE_URL = IS_MAINNET
-  ? 'https://node1.irys.xyz'
-  : 'https://devnet.irys.xyz'
+export const IRYS_NETWORK = IS_MAINNET ? 'mainnet' : 'devnet'
 export const IRYS_CURRENCY = 'matic'
 export const ARWEAVE_GATEWAY_URL = 'https://gateway.irys.xyz'
 export const IRYS_CONNECT_MESSAGE = 'Estimating video upload cost...'
@@ -166,7 +164,7 @@ export const ALLOWED_APP_IDS = [
 ]
 
 // official
-export const TAPE_X_HANDLE = 'metadragverse'
+export const TAPE_X_HANDLE = 'dragverseapp'
 export const TAPE_GITHUB_HANDLE = 'dragverse'
 export const TAPE_LOGO = `${STATIC_ASSETS}/dragverse.webp`
 export const DRAGVERSE_LOGO = `${STATIC_ASSETS}/dragverse.svg`
@@ -206,7 +204,6 @@ export const DRAGVERSE_ADMIN_ADDRESS =
   '0x571f4905641E1E55f1f1ea56a9bbb797275afD01'
 
 // lens
-export const LENS_CUSTOM_FILTERS = [CustomFiltersType.Gardeners]
 export const ALLOWED_VIDEO_MIME_TYPES = [
   'video/mp4',
   'video/mpeg',
@@ -214,18 +211,7 @@ export const ALLOWED_VIDEO_MIME_TYPES = [
   'video/quicktime',
   'video/mov'
 ]
-export const ALLOWED_AUDIO_MIME_TYPES = [
-  'audio/mp3',
-  'audio/mpeg',
-  'audio/mp4',
-  'audio/wav',
-  'audio/vnd.wave',
-  'audio/webm'
-]
-export const ALLOWED_UPLOAD_MIME_TYPES = [
-  ...ALLOWED_AUDIO_MIME_TYPES,
-  ...ALLOWED_VIDEO_MIME_TYPES
-]
+export const ALLOWED_UPLOAD_MIME_TYPES = [...ALLOWED_VIDEO_MIME_TYPES]
 
 export const LENS_NAMESPACE_PREFIX = IS_MAINNET ? 'lens/' : 'test/'
 export const LEGACY_LENS_HANDLE_SUFFIX = IS_MAINNET ? '.lens' : '.test'

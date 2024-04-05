@@ -1,6 +1,7 @@
 import { TAPE_SIGNUP_PROXY_ABI } from '@dragverse/abis'
 import { DRAGVERSE_LOGO, TAPE_SIGNUP_PROXY_ADDRESS } from '@dragverse/constants'
 import {
+  getLennyPicture,
   getProfile,
   getProfileCoverPicture,
   getProfilePicture,
@@ -43,10 +44,13 @@ const Cover: FC<Props> = ({ profile }) => {
         <div className="container absolute bottom-4 mx-auto flex max-w-screen-xl items-end justify-between px-2 xl:px-0">
           <div className="relative">
             <img
-              className="laptop:size-32 rounded-small size-24 flex-none border-2 border-white bg-white shadow-2xl dark:bg-gray-900"
+              className="laptop:size-32 rounded-small dark:bg-brand-250 size-24 flex-none border-2 border-white bg-white shadow-2xl"
               src={getProfilePicture(profile, 'AVATAR_LG')}
               draggable={false}
               alt={getProfile(profile)?.slug}
+              onError={({ currentTarget }) => {
+                currentTarget.src = getLennyPicture(profile?.id)
+              }}
             />
             {Boolean(isMintedViaTape) && (
               <Tooltip content="Profile minted via Dragverse">

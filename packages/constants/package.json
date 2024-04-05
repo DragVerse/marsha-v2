@@ -9,9 +9,8 @@
     "typecheck": "tsc --pretty"
   },
   "devDependencies": {
-    "@dragverse/config": "*",
-    "@dragverse/lens": "*",
-    "@types/node": "^20.11.28",
-    "typescript": "^5.4.2"
+    "@dragverse/config": "workspace:*",
+    "@types/node": "^20.12.4",
+    "typescript": "^5.4.3"
   }
 }

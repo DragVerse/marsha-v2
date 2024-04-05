@@ -1,4 +1,9 @@
-import { formatNumber, getProfile, getProfilePicture } from '@dragverse/generic'
+import {
+  formatNumber,
+  getLennyPicture,
+  getProfile,
+  getProfilePicture
+} from '@dragverse/generic'
 import type { Profile } from '@dragverse/lens'
 import { UserOutline } from '@dragverse/ui'
 import Link from 'next/link'
@@ -33,6 +38,9 @@ const Profiles: FC<Props> = ({ results, loading, clearSearch }) => {
                   src={getProfilePicture(profile, 'AVATAR')}
                   draggable={false}
                   alt="pfp"
+                  onError={({ currentTarget }) => {
+                    currentTarget.src = getLennyPicture(profile?.id)
+                  }}
                 />
                 <div className="flex items-center space-x-1">
                   <p className="line-clamp-1 truncate text-base">

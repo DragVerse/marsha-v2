@@ -25,18 +25,18 @@ const PublicationActions: FC<Props> = ({ publication }) => {
   const [showTip, setShowTip] = useState(false)
   return (
     <div className="mt-4 flex justify-end space-x-1">
-      <div className="tape-border flex items-center justify-end overflow-hidden rounded-full bg-gray-100 dark:bg-gray-900">
+      <div className="tape-border dark:bg-brand-600 flex items-center justify-end overflow-hidden rounded-full bg-gray-100">
         <PublicationReaction
           publication={publication}
           textSize="inherit"
           iconSize="base"
-          className="flex items-center px-4 py-1 hover:bg-gray-200 dark:hover:bg-gray-800"
+          className="dark:hover:bg-brand-250/50 flex items-center px-4 py-1 hover:bg-gray-200"
         />
         {publication.operations.canComment !== TriStateValue.No ? (
           <>
             <button
               onClick={() => setShowTip(true)}
-              className="flex items-center space-x-1 px-4 py-1 hover:bg-gray-200 dark:hover:bg-gray-800"
+              className="dark:hover:bg-brand-250/50 flex items-center space-x-1 px-4 py-1 hover:bg-gray-200"
             >
               <TipOutline className="size-4 flex-none" />
               <span>Tip</span>
@@ -52,20 +52,20 @@ const PublicationActions: FC<Props> = ({ publication }) => {
           </>
         ) : null}
         <MirrorPublication video={publication}>
-          <button className="flex items-center space-x-1 px-4 py-1 hover:bg-gray-200 dark:hover:bg-gray-800">
+          <button className="dark:hover:bg-brand-250/50 flex items-center space-x-1 px-4 py-1 hover:bg-gray-200">
             <MirrorOutline className="size-4 flex-none" />
             <span>Mirror</span>
           </button>
         </MirrorPublication>
         <OpenActions publication={publication}>
-          <div className="flex items-center space-x-1 px-4 py-1 hover:bg-gray-200 dark:hover:bg-gray-800">
+          <div className="dark:hover:bg-brand-250/50 flex items-center space-x-1 px-4 py-1 hover:bg-gray-200">
             <CollectOutline className="size-4" />
             <span>Actions</span>
           </div>
         </OpenActions>
       </div>
       <PublicationOptions publication={publication}>
-        <button className="tape-border flex items-center space-x-1 rounded-full bg-gray-100 p-2 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800">
+        <button className="tape-border bg-brand-600 hover:bg-brand-250 dark:bg-brand-600 dark:hover:bg-brand-250 flex items-center space-x-1 rounded-full p-2">
           <ThreeDotsOutline className="size-4" />
         </button>
       </PublicationOptions>

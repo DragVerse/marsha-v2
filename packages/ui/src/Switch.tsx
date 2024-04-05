@@ -37,7 +37,7 @@ export const Switch = forwardRef<
       <PrimitiveSwitch.Root
         className={tw(
           sizeClasses,
-          'data-[state=checked]:bg-brand-850 relative cursor-default rounded-full bg-gray-200 outline-none dark:bg-gray-800',
+          'data-[state=checked]:bg-brand-850 dark:bg-brand-250 relative cursor-default rounded-full bg-gray-200 outline-none',
           className
         )}
         id={id}

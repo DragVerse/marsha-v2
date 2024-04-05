@@ -19,7 +19,7 @@ export const Badge = forwardRef<HTMLSpanElement, Props>(
         ref={ref}
         className={tw(
           sizeClasses,
-          'rounded-full bg-gray-200 font-medium dark:bg-gray-800',
+          'dark:bg-brand-250/50 rounded-full bg-gray-200 font-medium',
           className
         )}
         {...props}

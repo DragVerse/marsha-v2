@@ -1,7 +1,9 @@
+import Badge from '@components/Common/Badge'
 import ButtonShimmer from '@components/Shimmers/ButtonShimmer'
 import { ERROR_MESSAGE } from '@dragverse/constants'
 import {
   EVENTS,
+  getLennyPicture,
   getProfile,
   getProfilePicture,
   logger,
@@ -217,9 +219,13 @@ const Authenticate = () => {
                       <img
                         src={getProfilePicture(profile, 'AVATAR')}
                         className="size-4 rounded-full"
+                        onError={({ currentTarget }) => {
+                          currentTarget.src = getLennyPicture(profile?.id)
+                        }}
                         alt={getProfile(profile)?.displayName}
                       />
                       <span>{getProfile(profile).slugWithPrefix}</span>
+                      <Badge id={profile?.id} size="xs" />
                     </div>
                   </SelectItem>
                 ))}

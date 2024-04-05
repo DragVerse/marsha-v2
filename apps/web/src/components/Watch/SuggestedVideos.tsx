@@ -3,23 +3,18 @@ import {
   ALLOWED_APP_IDS,
   INFINITE_SCROLL_ROOT_MARGIN,
   IS_MAINNET,
-  LENS_CUSTOM_FILTERS,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID
 } from '@dragverse/constants'
-import type {
-  ExplorePublicationRequest,
-  MirrorablePublication
-} from '@dragverse/lens'
+import type { PrimaryPublication, PublicationsRequest } from '@dragverse/lens'
 import {
-  ExplorePublicationsOrderByType,
-  ExplorePublicationType,
   LimitType,
   PublicationMetadataMainFocusType,
-  useExplorePublicationsQuery
+  PublicationType,
+  usePublicationsQuery
 } from '@dragverse/lens'
 import { Spinner } from '@dragverse/ui'
-import { getUnixTimestampForDaysAgo } from '@lib/formatTime'
+import useCuratedProfiles from '@lib/store/idb/curated'
 import useProfileStore from '@lib/store/idb/profile'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
@@ -27,41 +22,37 @@ import { useInView } from 'react-cool-inview'
 
 import SuggestedVideoCard from './SuggestedVideoCard'
 
-const since = getUnixTimestampForDaysAgo(30)
-
-const request: ExplorePublicationRequest = {
-  limit: LimitType.Fifty,
-  orderBy: ExplorePublicationsOrderByType.TopReacted,
-  where: {
-    customFilters: LENS_CUSTOM_FILTERS,
-    publicationTypes: [ExplorePublicationType.Post],
-    metadata: {
-      publishedOn: IS_MAINNET
-        ? [TAPE_APP_ID, LENSTUBE_BYTES_APP_ID, ...ALLOWED_APP_IDS]
-        : undefined,
-      mainContentFocus: [PublicationMetadataMainFocusType.Video]
-    },
-    since
-  }
-}
-
 const SuggestedVideos = () => {
   const {
     query: { id }
   } = useRouter()
 
   const { activeProfile } = useProfileStore()
+  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles)
 
-  const { data, loading, error, fetchMore, refetch } =
-    useExplorePublicationsQuery({
-      variables: {
-        request
-      }
-    })
+  const request: PublicationsRequest = {
+    where: {
+      metadata: {
+        mainContentFocus: [PublicationMetadataMainFocusType.Video],
+        publishedOn: IS_MAINNET
+          ? [TAPE_APP_ID, LENSTUBE_BYTES_APP_ID, ...ALLOWED_APP_IDS]
+          : undefined
+      },
+      publicationTypes: [PublicationType.Post],
+      from: curatedProfiles
+    },
+    limit: LimitType.Fifty
+  }
 
-  const videos = data?.explorePublications
-    ?.items as unknown as MirrorablePublication[]
-  const pageInfo = data?.explorePublications?.pageInfo
+  const { data, loading, error, fetchMore, refetch } = usePublicationsQuery({
+    variables: {
+      request
+    },
+    skip: !curatedProfiles?.length
+  })
+
+  const videos = data?.publications?.items as PrimaryPublication[]
+  const pageInfo = data?.publications?.pageInfo
 
   useEffect(() => {
     refetch()

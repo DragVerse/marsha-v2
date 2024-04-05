@@ -2,6 +2,7 @@ import HoverableProfile from '@components/Common/HoverableProfile'
 import { BangersBubbles } from '@components/Shimmers/BangersShimmer'
 import { COMMON_REGEX } from '@dragverse/constants'
 import {
+  getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData
@@ -57,8 +58,11 @@ const Likes = ({ post }: { post: PrimaryPublication }) => {
               <img
                 className="z-[1] size-8 rounded-full"
                 src={getProfilePicture(profile)}
-                draggable={false}
                 alt={getProfile(profile)?.displayName}
+                onError={({ currentTarget }) => {
+                  currentTarget.src = getLennyPicture(profile?.id)
+                }}
+                draggable={false}
               />
             </HoverableProfile>
           )

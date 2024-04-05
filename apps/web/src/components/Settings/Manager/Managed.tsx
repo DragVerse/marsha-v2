@@ -3,6 +3,7 @@ import { NoDataFound } from '@components/UIElements/NoDataFound'
 import { INFINITE_SCROLL_ROOT_MARGIN } from '@dragverse/constants'
 import {
   formatNumber,
+  getLennyPicture,
   getProfile,
   getProfileCoverPicture,
   getProfilePicture,
@@ -70,10 +71,13 @@ const Managed = () => {
                 >
                   <div className="absolute bottom-3 left-3 flex-none">
                     <img
-                      className="size-10 rounded-full border-2 border-white bg-white object-cover dark:bg-gray-900"
+                      className="dark:bg-brand-250 size-10 rounded-full border-2 border-white bg-white object-cover"
                       src={getProfilePicture(profile, 'AVATAR')}
                       alt={getProfile(profile)?.displayName}
                       draggable={false}
+                      onError={({ currentTarget }) => {
+                        currentTarget.src = getLennyPicture(profile?.id)
+                      }}
                     />
                   </div>
                 </div>

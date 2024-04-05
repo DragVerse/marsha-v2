@@ -16,17 +16,22 @@ jobs:
 
       steps:
         - uses: actions/checkout@v4
-        - name: Setup Bun 🥟
-          uses: oven-sh/setup-bun@v1
+        - uses: pnpm/action-setup@v3
           with:
-            bun-version: latest
+            version: 8
+          
+        - uses: actions/setup-node@v4
+          with:
+            check-latest: true
+            node-version-file: '.nvmrc'
+            cache: 'pnpm'
  
         - name: Install dependencies 🧳
-          run: bun install
+          run: pnpm install
           
         - name: Check Lint 💅🏻
-          run: bun run lint && bun run typecheck
+          run: pnpm lint && pnpm typecheck
 
         - name: Run Build 🔨
-          run: bun run build
+          run: pnpm build
  

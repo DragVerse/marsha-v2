@@ -2,8 +2,8 @@ import Badge from '@components/Common/Badge'
 import InterweaveContent from '@components/Common/InterweaveContent'
 import CommentsShimmer from '@components/Shimmers/CommentsShimmer'
 import { tw } from '@dragverse/browser'
-import { LENS_CUSTOM_FILTERS } from '@dragverse/constants'
 import {
+  getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData
@@ -11,6 +11,7 @@ import {
 import {
   type Comment,
   CommentRankingFilterType,
+  CustomFiltersType,
   LimitType,
   type Profile,
   type PublicationsRequest,
@@ -85,7 +86,7 @@ const CommentReplies: FC<Props> = ({ comment, replyTo }) => {
   const request: PublicationsRequest = {
     limit: LimitType.Fifty,
     where: {
-      customFilters: LENS_CUSTOM_FILTERS,
+      customFilters: [CustomFiltersType.Gardeners],
       commentOn: {
         id: comment.id,
         ranking: {
@@ -139,6 +140,9 @@ const CommentReplies: FC<Props> = ({ comment, replyTo }) => {
                     className="size-8 rounded-full"
                     draggable={false}
                     alt={getProfile(comment.by)?.slug}
+                    onError={({ currentTarget }) => {
+                      currentTarget.src = getLennyPicture(comment.by?.id)
+                    }}
                   />
                 </Link>
                 <div className="mr-2 flex w-full flex-col items-start">

@@ -1,10 +1,7 @@
 import Alert from '@components/Common/Alert'
 import CommentsShimmer from '@components/Shimmers/CommentsShimmer'
 import { NoDataFound } from '@components/UIElements/NoDataFound'
-import {
-  INFINITE_SCROLL_ROOT_MARGIN,
-  LENS_CUSTOM_FILTERS
-} from '@dragverse/constants'
+import { INFINITE_SCROLL_ROOT_MARGIN } from '@dragverse/constants'
 import { getProfile } from '@dragverse/generic'
 import type {
   AnyPublication,
@@ -14,6 +11,7 @@ import type {
 } from '@dragverse/lens'
 import {
   CommentRankingFilterType,
+  CustomFiltersType,
   LimitType,
   TriStateValue,
   usePublicationsQuery
@@ -54,7 +52,7 @@ const PublicationComments: FC<Props> = ({ publication, hideTitle = false }) => {
   const request: PublicationsRequest = {
     limit: LimitType.Fifty,
     where: {
-      customFilters: LENS_CUSTOM_FILTERS,
+      customFilters: [CustomFiltersType.Gardeners],
       commentOn: {
         id: publication.id,
         ranking: {

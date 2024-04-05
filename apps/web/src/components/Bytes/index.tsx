@@ -1,27 +1,26 @@
 import MetaTags from '@components/Common/MetaTags'
 import { NoDataFound } from '@components/UIElements/NoDataFound'
 import {
+  ALLOWED_APP_IDS,
   INFINITE_SCROLL_ROOT_MARGIN,
-  LENS_CUSTOM_FILTERS,
-  LENSTUBE_BYTES_APP_ID,
+  IS_MAINNET,
   TAPE_APP_ID
 } from '@dragverse/constants'
 import { EVENTS, Tower } from '@dragverse/generic'
 import type {
   AnyPublication,
-  ExplorePublicationRequest,
-  PrimaryPublication
+  PrimaryPublication,
+  PublicationsRequest
 } from '@dragverse/lens'
 import {
-  ExplorePublicationsOrderByType,
-  ExplorePublicationType,
   LimitType,
   PublicationMetadataMainFocusType,
-  useExplorePublicationsLazyQuery,
-  usePublicationLazyQuery
+  PublicationType,
+  usePublicationLazyQuery,
+  usePublicationsLazyQuery
 } from '@dragverse/lens'
 import { ChevronDownOutline, ChevronUpOutline, Spinner } from '@dragverse/ui'
-import { getUnixTimestampForDaysAgo } from '@lib/formatTime'
+import useCuratedProfiles from '@lib/store/idb/curated'
 import { useKeenSlider } from 'keen-slider/react'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -30,25 +29,10 @@ import { useInView } from 'react-cool-inview'
 import ByteVideo from './ByteVideo'
 import { KeyboardControls, WheelControls } from './SliderPlugin'
 
-const since = getUnixTimestampForDaysAgo(30)
-
-const request: ExplorePublicationRequest = {
-  where: {
-    publicationTypes: [ExplorePublicationType.Post],
-    metadata: {
-      mainContentFocus: [PublicationMetadataMainFocusType.ShortVideo],
-      publishedOn: [TAPE_APP_ID, LENSTUBE_BYTES_APP_ID]
-    },
-    customFilters: LENS_CUSTOM_FILTERS,
-    since
-  },
-  orderBy: ExplorePublicationsOrderByType.Latest,
-  limit: LimitType.Fifty
-}
-
 const Bytes = () => {
   const router = useRouter()
   const [currentViewingId, setCurrentViewingId] = useState('')
+  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles)
 
   const [sliderRef, { current: slider }] = useKeenSlider(
     {
@@ -58,18 +42,30 @@ const Bytes = () => {
     [WheelControls, KeyboardControls]
   )
 
+  const request: PublicationsRequest = {
+    where: {
+      metadata: {
+        mainContentFocus: [PublicationMetadataMainFocusType.ShortVideo],
+        publishedOn: IS_MAINNET ? [TAPE_APP_ID, ...ALLOWED_APP_IDS] : undefined
+      },
+      publicationTypes: [PublicationType.Post],
+      from: curatedProfiles
+    },
+    limit: LimitType.Fifty
+  }
+
   const [
     fetchPublication,
     { data: singleByteData, loading: singleByteLoading }
   ] = usePublicationLazyQuery()
 
   const [fetchAllBytes, { data, loading, error, fetchMore }] =
-    useExplorePublicationsLazyQuery({
+    usePublicationsLazyQuery({
       variables: {
         request
       },
-      onCompleted: ({ explorePublications }) => {
-        const items = explorePublications?.items as unknown as AnyPublication[]
+      onCompleted: ({ publications }) => {
+        const items = publications?.items as unknown as AnyPublication[]
         const publicationId = router.query.id
         if (!publicationId && items[0]?.id) {
           const nextUrl = `${location.origin}/bytes/${items[0]?.id}`
@@ -78,20 +74,20 @@ const Bytes = () => {
       }
     })
 
-  const bytes = data?.explorePublications?.items as unknown as AnyPublication[]
-  const pageInfo = data?.explorePublications?.pageInfo
+  const bytes = data?.publications?.items as unknown as AnyPublication[]
+  const pageInfo = data?.publications?.pageInfo
   const singleByte = singleByteData?.publication as PrimaryPublication
 
   const fetchSingleByte = async () => {
     const publicationId = router.query.id
     if (!publicationId) {
-      return fetchAllBytes()
+      return curatedProfiles?.length ? fetchAllBytes() : null
     }
     await fetchPublication({
       variables: {
         request: { forId: publicationId }
       },
-      onCompleted: () => fetchAllBytes(),
+      onCompleted: () => (curatedProfiles?.length ? fetchAllBytes() : null),
       fetchPolicy: 'network-only'
     })
   }
@@ -102,7 +98,7 @@ const Bytes = () => {
       Tower.track(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.BYTES })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady])
+  }, [router.isReady, curatedProfiles.length])
 
   const { observe } = useInView({
     threshold: 0.25,
@@ -173,13 +169,13 @@ const Bytes = () => {
       )}
       <div className="laptop:right-6 ultrawide:right-8 bottom-3 right-4 hidden flex-col space-y-2 md:absolute md:flex">
         <button
-          className="bg-gallery rounded-full p-3 focus:outline-none dark:bg-gray-800"
+          className="bg-gallery dark:bg-brand-250/50 rounded-full p-3 focus:outline-none"
           onClick={() => slider?.prev()}
         >
           <ChevronUpOutline className="size-5" />
         </button>
         <button
-          className="bg-gallery rounded-full p-3 focus:outline-none dark:bg-gray-800"
+          className="bg-gallery dark:bg-brand-250/50 rounded-full p-3 focus:outline-none"
           onClick={() => slider?.next()}
         >
           <ChevronDownOutline className="size-5" />

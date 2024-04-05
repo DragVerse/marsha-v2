@@ -1,6 +1,7 @@
 import { ADMIN_IDS } from '@dragverse/constants'
 import {
   EVENTS,
+  getLennyPicture,
   getProfile,
   getProfilePicture,
   Tower
@@ -32,12 +33,12 @@ import { signOut } from '@lib/store/auth'
 import useProfileStore from '@lib/store/idb/profile'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useTheme } from 'next-themes'
 import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
 const UserMenu = () => {
-  const { theme, setTheme } = useTheme()
+  // Removed or commented out since it's not in use
+  // const { theme, setTheme } = useTheme();
   const { push, asPath } = useRouter()
   const { address } = useAccount()
   const { activeProfile } = useProfileStore()
@@ -85,6 +86,9 @@ const UserMenu = () => {
             src={getProfilePicture(activeProfile, 'AVATAR')}
             alt={getProfile(activeProfile)?.displayName}
             draggable={false}
+            onError={({ currentTarget }) => {
+              currentTarget.src = getLennyPicture(activeProfile?.id)
+            }}
           />
         </div>
       }
@@ -96,6 +100,9 @@ const UserMenu = () => {
               src={getProfilePicture(activeProfile, 'AVATAR')}
               alt={getProfile(activeProfile)?.displayName}
               className="h-8 w-8 rounded-full"
+              onError={({ currentTarget }) => {
+                currentTarget.src = getLennyPicture(activeProfile?.id)
+              }}
             />
             <p className="line-clamp-1 font-semibold">
               {getProfile(activeProfile)?.slug}
@@ -151,8 +158,13 @@ const UserMenu = () => {
                               <img
                                 src={getProfilePicture(profile)}
                                 className="size-4 rounded-full"
-                                draggable={false}
                                 alt={getProfile(activeProfile)?.displayName}
+                                onError={({ currentTarget }) => {
+                                  currentTarget.src = getLennyPicture(
+                                    profile?.id
+                                  )
+                                }}
+                                draggable={false}
                               />
                               <p className="whitespace-nowrap">
                                 {getProfile(profile)?.slug}

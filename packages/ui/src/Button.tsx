@@ -38,9 +38,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       'px-8 py-4 text-base': size === 'lg'
     }
     const variantClasses = {
-      'hover:bg-gray-700 border border-transparent bg-gray-800 text-gray-100 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-gray-200':
+      'hover:bg-gray-700 border border-transparent bg-brand-600 text-gray-100 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-gray-200':
         variant === 'primary',
-      'border border-gray-200 dark:border-gray-800 dark:hover:bg-gray-800 hover:bg-gray-100 bg-white dark:bg-brand-850':
+      'border border-gray-200 dark:border-gray-800 dark:hover:bg-brand-600 hover:bg-gray-100 bg-white dark:bg-brand-850':
         variant === 'secondary',
       'hover:bg-red-500 dark:hover:bg-red-500 border border-transparent bg-red-600 text-white dark:bg-red-700 dark:text-white':
         variant === 'danger'

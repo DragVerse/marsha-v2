@@ -7,23 +7,23 @@
     "dev": "next dev --port 4002",
     "build": "next build",
     "export": "next export",
-    "start": "yarn build && next start --port 4002",
+    "start": "pnpm build && next start --port 4002",
     "typecheck": "tsc --pretty",
     "lint": "eslint . --ext .js,.ts,.tsx --fix"
   },
   "dependencies": {
-    "next": "14.1.3",
+    "next": "14.1.4",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
-    "@dragverse/config": "*",
-    "@dragverse/constants": "*",
-    "@dragverse/generic": "*",
-    "@dragverse/lens": "*",
-    "@types/node": "^20.11.28",
-    "@types/react": "^18.2.66",
-    "@types/react-dom": "^18.2.22",
-    "typescript": "^5.4.2"
+    "@dragverse/config": "workspace:*",
+    "@dragverse/constants": "workspace:*",
+    "@dragverse/generic": "workspace:*",
+    "@dragverse/lens": "workspace:*",
+    "@types/node": "^20.12.4",
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.24",
+    "typescript": "^5.4.3"
   }
 }

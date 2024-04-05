@@ -13,7 +13,7 @@ const Logo = () => {
           className="-mb-0.5 h-20"
           alt="dragverse"
           height={30}
-          width={110}
+          width={80}
           draggable={false}
         />
       ) : (
@@ -21,7 +21,7 @@ const Logo = () => {
           src={`${TAPE_LOGO}`}
           className="-mb-0.5 h-20"
           height={30}
-          width={110}
+          width={80}
           alt="dragverse"
           draggable={false}
         />

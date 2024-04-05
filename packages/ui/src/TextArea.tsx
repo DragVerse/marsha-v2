@@ -53,7 +53,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           <textarea
             className={tw(
               { 'placeholder:text-red-500': error },
-              'w-full rounded-lg border-none bg-gray-100 px-3 py-2 focus:outline-none dark:bg-gray-900',
+              'dark:bg-brand-250 w-full rounded-lg border-none bg-gray-100 px-3 py-2 focus:outline-none',
               className
             )}
             id={id}

@@ -1,5 +1,6 @@
 import HoverableProfile from '@components/Common/HoverableProfile'
 import {
+  getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData
@@ -29,6 +30,9 @@ const Commented: FC<Props> = ({ notification: { comment } }) => {
                 src={getProfilePicture(comment.by, 'AVATAR')}
                 draggable={false}
                 alt={getProfile(comment.by)?.slug}
+                onError={({ currentTarget }) => {
+                  currentTarget.src = getLennyPicture(comment.by?.id)
+                }}
               />
             </HoverableProfile>
           </span>

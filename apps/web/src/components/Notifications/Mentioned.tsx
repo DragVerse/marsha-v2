@@ -1,5 +1,6 @@
 import HoverableProfile from '@components/Common/HoverableProfile'
 import {
+  getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData
@@ -31,6 +32,9 @@ const Mentioned: FC<Props> = ({ notification: { publication } }) => {
                 src={getProfilePicture(publication.by, 'AVATAR')}
                 draggable={false}
                 alt={getProfile(publication.by)?.displayName}
+                onError={({ currentTarget }) => {
+                  currentTarget.src = getLennyPicture(publication.by?.id)
+                }}
               />
             </HoverableProfile>
           </span>

@@ -1,6 +1,7 @@
 import { tw, useAverageColor } from '@dragverse/browser'
 import { STATIC_ASSETS } from '@dragverse/constants'
 import {
+  getLennyPicture,
   getProfile,
   getProfilePicture,
   imageCdn,
@@ -103,7 +104,7 @@ const QueuedVideo: FC<Props> = ({ queuedVideo }) => {
           <img
             src={thumbnailUrl}
             className={tw(
-              'h-full w-full bg-gray-100 object-center md:rounded-xl lg:h-full lg:w-full dark:bg-gray-900',
+              'dark:bg-brand-250000 h-full w-full bg-gray-100 object-center md:rounded-xl lg:h-full lg:w-full',
               uploadedMedia.isByteVideo ? 'object-contain' : 'object-cover'
             )}
             style={{
@@ -121,6 +122,9 @@ const QueuedVideo: FC<Props> = ({ queuedVideo }) => {
             src={getProfilePicture(activeProfile, 'AVATAR')}
             alt={getProfile(activeProfile)?.slug}
             draggable={false}
+            onError={({ currentTarget }) => {
+              currentTarget.src = getLennyPicture(activeProfile?.id)
+            }}
           />
           <div className="grid flex-1">
             <div className="flex w-full min-w-0 items-start justify-between space-x-1.5 pb-1">

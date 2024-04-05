@@ -16,7 +16,7 @@ const SensitiveWarning: FC<Props> = ({ acceptWarning }) => {
         <div>
           <button
             type="button"
-            className="mt-5 rounded-md bg-gray-800 px-5 py-2 text-sm font-medium text-white outline-none"
+            className="bg-brand-250/50 mt-5 rounded-md px-5 py-2 text-sm font-medium text-white outline-none"
             onClick={() => acceptWarning()}
           >
             I understand & wish to proceed

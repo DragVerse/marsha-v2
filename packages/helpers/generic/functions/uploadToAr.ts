@@ -1,6 +1,5 @@
 import { WORKER_IRYS_METADATA_UPLOAD_URL } from '@dragverse/constants'
 import type {
-  AudioMetadata,
   LinkMetadata,
   LiveStreamMetadata,
   ProfileMetadata,
@@ -14,7 +13,6 @@ import { logger } from '../logger'
 export const uploadToAr = async (
   data:
     | VideoMetadata
-    | AudioMetadata
     | ProfileMetadata
     | TextOnlyMetadata
     | LinkMetadata

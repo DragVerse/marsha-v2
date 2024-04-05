@@ -3,54 +3,48 @@ import HoverableProfile from '@components/Common/HoverableProfile'
 import LatestBytesShimmer from '@components/Shimmers/LatestBytesShimmer'
 import {
   FALLBACK_THUMBNAIL_URL,
-  LENS_CUSTOM_FILTERS,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID
 } from '@dragverse/constants'
 import {
+  getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData,
   getThumbnailUrl,
   imageCdn
 } from '@dragverse/generic'
-import type {
-  ExplorePublicationRequest,
-  PrimaryPublication
-} from '@dragverse/lens'
+import type { PrimaryPublication, PublicationsRequest } from '@dragverse/lens'
 import {
-  ExplorePublicationType,
   LimitType,
   PublicationMetadataMainFocusType,
-  useExplorePublicationsQuery
+  PublicationType,
+  usePublicationsQuery
 } from '@dragverse/lens'
-import { getUnixTimestampForDaysAgo } from '@lib/formatTime'
-import { getRandomFeedOrder } from '@lib/getRandomFeedOrder'
+import useCuratedProfiles from '@lib/store/idb/curated'
 import Link from 'next/link'
 
-const since = getUnixTimestampForDaysAgo(30)
-const orderBy = getRandomFeedOrder()
-
-const request: ExplorePublicationRequest = {
-  where: {
-    publicationTypes: [ExplorePublicationType.Post],
-    customFilters: LENS_CUSTOM_FILTERS,
-    metadata: {
-      mainContentFocus: [PublicationMetadataMainFocusType.ShortVideo],
-      publishedOn: [TAPE_APP_ID, LENSTUBE_BYTES_APP_ID]
-    },
-    since
-  },
-  orderBy,
-  limit: LimitType.Fifty
-}
-
 const LatestBytes = () => {
-  const { data, error, loading } = useExplorePublicationsQuery({
-    variables: { request }
+  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles)
+
+  const request: PublicationsRequest = {
+    where: {
+      metadata: {
+        mainContentFocus: [PublicationMetadataMainFocusType.ShortVideo],
+        publishedOn: [TAPE_APP_ID, LENSTUBE_BYTES_APP_ID]
+      },
+      publicationTypes: [PublicationType.Post],
+      from: curatedProfiles
+    },
+    limit: LimitType.Fifty
+  }
+
+  const { data, error, loading } = usePublicationsQuery({
+    variables: { request },
+    skip: !curatedProfiles?.length
   })
 
-  const bytes = data?.explorePublications?.items as PrimaryPublication[]
+  const bytes = data?.publications?.items as PrimaryPublication[]
 
   if (loading) {
     return <LatestBytesShimmer />
@@ -94,12 +88,15 @@ const LatestBytes = () => {
                   className="inline-flex items-center space-x-1 px-3 py-1"
                 >
                   <img
-                    className="size-4 rounded-full bg-gray-200 dark:bg-gray-800"
+                    className="dark:bg-brand-250/50 size-4 rounded-full bg-gray-200"
                     src={getProfilePicture(byte.by, 'AVATAR')}
                     height={50}
                     width={50}
                     alt={`${getProfile(byte.by)?.slug}'s PFP`}
                     draggable={false}
+                    onError={({ currentTarget }) => {
+                      currentTarget.src = getLennyPicture(byte.by?.id)
+                    }}
                   />
                   <span className="flex items-center space-x-1 font-medium">
                     <span>{getProfile(byte.by)?.slug}</span>

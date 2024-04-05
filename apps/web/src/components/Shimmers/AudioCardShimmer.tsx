@@ -6,7 +6,7 @@ export const AudioCardShimmer = ({ rounded = true }) => {
       <div className="animate-shimmer flex flex-col space-x-2">
         <div
           className={tw(
-            'h-24 w-full bg-gray-200 md:h-40 dark:bg-gray-800',
+            'dark:bg-brand-250/50 h-24 w-full bg-gray-200 md:h-40',
             rounded && 'rounded-large'
           )}
         />
