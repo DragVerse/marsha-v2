@@ -30,7 +30,6 @@ This turborepo uses [Pnpm](https://pnpm.io/) as a package manager. It includes t
 | Name     | Description                         |
 | -------- | ----------------------------------- |
 | `web`    | NextJs dragverse website            |
-| `mobile` | React Native dragverse mobile app   |
 | `embed`  | NextJs application for video embeds |
 | `api`    | Cloudflare functions                |
 | `og`     | Open graph meta tags generator      |
