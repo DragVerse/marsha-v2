@@ -41,9 +41,13 @@ const SelectedMedia = () => {
 
   const onClickVideo = () => {
     setInteracted(true)
-    mediaRef.current?.paused
-      ? mediaRef.current?.play()
-      : mediaRef.current?.pause()
+    if (mediaRef.current) {
+      if (mediaRef.current.paused) {
+        mediaRef.current.play()
+      } else {
+        mediaRef.current.pause()
+      }
+    }
   }
 
   return (
