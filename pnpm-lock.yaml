@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@privy-io/react-auth':
+        specifier: ^1.60.6
+        version: 1.60.6(@babel/core@7.24.4)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
     devDependencies:
       husky:
         specifier: ^9.0.11
@@ -502,7 +506,7 @@ importers:
     dependencies:
       '@apollo/client':
         specifier: 3.9.10
-        version: 3.9.10(graphql@16.8.1)
+        version: 3.9.10(graphql@16.8.1)(react-dom@18.2.0)(react@18.2.0)
       '@irys/sdk':
         specifier: ^0.1.21
         version: 0.1.21(arweave@1.15.0)
@@ -628,7 +632,7 @@ packages:
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
 
-  /@apollo/client@3.9.10(graphql@16.8.1):
+  /@apollo/client@3.9.10(graphql@16.8.1)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-w8i/Lk1P0vvWZF0Xb00XPonn79/0rgRJ1vopBlVudVuy9QP29/NZXK0rI2xJIN6VrKuEqJZaVGJC+7k23I2sfA==}
     peerDependencies:
       graphql: ^15.0.0 || ^16.0.0
@@ -655,7 +659,9 @@ packages:
       hoist-non-react-statics: 3.3.2
       optimism: 0.18.0
       prop-types: 15.8.1
-      rehackt: 0.0.6
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      rehackt: 0.0.6(react@18.2.0)
       response-iterator: 0.2.6
       symbol-observable: 4.0.0
       ts-invariant: 0.10.3
@@ -5980,6 +5986,79 @@ packages:
       - zod
     dev: false
 
+  /@privy-io/react-auth@1.60.6(@babel/core@7.24.4)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-xfDp/Gbtim7RLoW+y6Em9vQXqTWBDfWOrNw4hsOPNdaFLcK+FEt9nbESxAONucKB9xykOJ4fLigMwsqMyAfC0g==}
+    peerDependencies:
+      react: ^18
+      react-dom: ^18
+    dependencies:
+      '@coinbase/wallet-sdk': 3.9.3
+      '@ethersproject/abstract-signer': 5.7.0
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/bytes': 5.7.0
+      '@ethersproject/contracts': 5.7.0
+      '@ethersproject/logger': 5.7.0
+      '@ethersproject/providers': 5.7.2
+      '@ethersproject/strings': 5.7.0
+      '@ethersproject/transactions': 5.7.0
+      '@ethersproject/units': 5.7.0
+      '@headlessui/react': 1.7.18(react-dom@18.2.0)(react@18.2.0)
+      '@heroicons/react': 2.1.3(react@18.2.0)
+      '@marsidev/react-turnstile': 0.4.1(react-dom@18.2.0)(react@18.2.0)
+      '@metamask/eth-sig-util': 6.0.2
+      '@simplewebauthn/browser': 9.0.1
+      '@walletconnect/ethereum-provider': 2.11.2(@types/react@18.2.74)(encoding@0.1.13)(react@18.2.0)
+      '@walletconnect/modal': 2.6.2(@types/react@18.2.74)(react@18.2.0)
+      base64-js: 1.5.1
+      dotenv: 16.4.5
+      encoding: 0.1.13
+      eventemitter3: 5.0.1
+      fast-password-entropy: 1.1.1
+      jose: 4.15.5
+      js-cookie: 3.0.5
+      libphonenumber-js: 1.10.60
+      lokijs: 1.5.12
+      md5: 2.3.0
+      mipd: 0.0.5(typescript@5.4.3)(zod@3.22.4)
+      ofetch: 1.3.4
+      pino-pretty: 10.3.1
+      qrcode: 1.5.3
+      react: 18.2.0
+      react-device-detect: 2.2.3(react-dom@18.2.0)(react@18.2.0)
+      react-dom: 18.2.0(react@18.2.0)
+      react-use: 17.5.0(react-dom@18.2.0)(react@18.2.0)
+      secure-password-utilities: 0.2.1
+      styled-components: 5.3.11(@babel/core@7.24.4)(react-dom@18.2.0)(react-is@18.2.0)(react@18.2.0)
+      tinycolor2: 1.6.0
+      uuid: 9.0.1
+      web3-core: 1.10.4(encoding@0.1.13)
+      web3-core-helpers: 1.10.3
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@babel/core'
+      - '@capacitor/preferences'
+      - '@netlify/blobs'
+      - '@planetscale/database'
+      - '@react-native-async-storage/async-storage'
+      - '@types/react'
+      - '@upstash/redis'
+      - '@vercel/kv'
+      - bufferutil
+      - ioredis
+      - react-is
+      - supports-color
+      - typescript
+      - uWebSockets.js
+      - utf-8-validate
+      - zod
+    dev: false
+
   /@privy-io/wagmi@0.2.2(@privy-io/react-auth@1.60.1)(react-dom@18.2.0)(react@18.2.0)(viem@2.9.9)(wagmi@2.5.18):
     resolution: {integrity: sha512-ZkA46fyyoPHlk4Ycb2K+J9MqHTcgFxc7pOu27y8AgugD0og2aj4nPxKEPMhRmIqiRWARbJvp6hH8V+Yto/IumQ==}
     peerDependencies:
@@ -8702,7 +8781,7 @@ packages:
       '@safe-global/safe-apps-provider': 0.18.1(typescript@5.4.3)(zod@3.22.4)
       '@safe-global/safe-apps-sdk': 8.1.0(typescript@5.4.3)(zod@3.22.4)
       '@wagmi/core': 2.6.15(@types/react@18.2.74)(react@18.2.0)(typescript@5.4.3)(viem@2.9.9)(zod@3.22.4)
-      '@walletconnect/ethereum-provider': 2.11.2(@types/react@18.2.74)(encoding@0.1.13)(react@18.2.0)
+      '@walletconnect/ethereum-provider': 2.11.2(@types/react@18.2.74)(react@18.2.0)
       '@walletconnect/modal': 2.6.2(@types/react@18.2.74)(react@18.2.0)
       typescript: 5.4.3
       viem: 2.9.9(typescript@5.4.3)(zod@3.22.4)
@@ -8806,6 +8885,41 @@ packages:
     dev: false
 
   /@walletconnect/ethereum-provider@2.11.2(@types/react@18.2.74)(encoding@0.1.13)(react@18.2.0):
+    resolution: {integrity: sha512-BUDqee0Uy2rCZVkW5Ao3q6Ado/3fePYnFdryVF+YL6bPhj+xQZ5OfKodl+uvs7Rwq++O5wTX2RqOTzpW7+v+Mg==}
+    dependencies:
+      '@walletconnect/jsonrpc-http-connection': 1.0.7(encoding@0.1.13)
+      '@walletconnect/jsonrpc-provider': 1.0.13
+      '@walletconnect/jsonrpc-types': 1.0.3
+      '@walletconnect/jsonrpc-utils': 1.0.8
+      '@walletconnect/modal': 2.6.2(@types/react@18.2.74)(react@18.2.0)
+      '@walletconnect/sign-client': 2.11.2(encoding@0.1.13)
+      '@walletconnect/types': 2.11.2
+      '@walletconnect/universal-provider': 2.11.2(encoding@0.1.13)
+      '@walletconnect/utils': 2.11.2
+      events: 3.3.0
+    transitivePeerDependencies:
+      - '@azure/app-configuration'
+      - '@azure/cosmos'
+      - '@azure/data-tables'
+      - '@azure/identity'
+      - '@azure/keyvault-secrets'
+      - '@azure/storage-blob'
+      - '@capacitor/preferences'
+      - '@netlify/blobs'
+      - '@planetscale/database'
+      - '@react-native-async-storage/async-storage'
+      - '@types/react'
+      - '@upstash/redis'
+      - '@vercel/kv'
+      - bufferutil
+      - encoding
+      - ioredis
+      - react
+      - uWebSockets.js
+      - utf-8-validate
+    dev: false
+
+  /@walletconnect/ethereum-provider@2.11.2(@types/react@18.2.74)(react@18.2.0):
     resolution: {integrity: sha512-BUDqee0Uy2rCZVkW5Ao3q6Ado/3fePYnFdryVF+YL6bPhj+xQZ5OfKodl+uvs7Rwq++O5wTX2RqOTzpW7+v+Mg==}
     dependencies:
       '@walletconnect/jsonrpc-http-connection': 1.0.7(encoding@0.1.13)
@@ -16822,7 +16936,7 @@ packages:
     dependencies:
       jsesc: 0.5.0
 
-  /rehackt@0.0.6:
+  /rehackt@0.0.6(react@18.2.0):
     resolution: {integrity: sha512-l3WEzkt4ntlEc/IB3/mF6SRgNHA6zfQR7BlGOgBTOmx7IJJXojDASav+NsgXHFjHn+6RmwqsGPFgZpabWpeOdw==}
     peerDependencies:
       '@types/react': '*'
@@ -16832,6 +16946,8 @@ packages:
         optional: true
       react:
         optional: true
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /relay-runtime@12.0.0:
