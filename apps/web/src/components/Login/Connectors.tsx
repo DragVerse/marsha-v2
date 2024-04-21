@@ -1,45 +1,62 @@
-import { useConnectWallet, usePrivy, useLogin, useLogout } from '@privy-io/react-auth'
-import { Button, Callout, WarningOutline } from '@dragverse/ui'
-import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
-import useProfileStore from '@lib/store/idb/profile'
-import { memo, useState } from 'react'
-import { EVENTS, Tower } from '@dragverse/generic'
+import {
+  useConnectWallet,
+  useLogin,
+  useSignMessage
+} from '@privy-io/react-auth'
+import { useState } from 'react'
+
 import Authenticate from './Authenticate'
 
 const Connectors = () => {
-  const { login } = useLogin({
-    onComplete: (user, isNewUser, wasAlreadyAuthenticated, loginMethod) => {
-      console.log('Login successful');
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+
+  const { signMessage } = useSignMessage({
+    onSuccess: (signature) => {
+      console.log('Signature obtained:', signature)
+      setIsAuthenticated(true) // Update the state to show Authenticate component
     },
-    onError: (error) => {
-      console.error('Login failed:', error);
-    }
-  });
-  const { logout } = useLogout();
+    onError: (error) => console.error('Signing failed:', error)
+  })
 
-  const handleLogin = async () => {
+  // Define triggerSignMessage before useLogin
+  const triggerSignMessage = async () => {
     try {
-      await login();
+      const message = 'Please sign this message to continue'
+      await signMessage(message)
     } catch (error) {
-      console.error('Error during login:', error);
+      console.error('Error during signing:', error)
     }
-  };
+  }
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Error during logout:', error);
+  // Now using triggerSignMessage within useLogin's onComplete callback
+  const { login } = useLogin({
+    onComplete: async () => {
+      // Added async keyword since we are calling an async function within
+      console.log('Login successful')
+      await triggerSignMessage() // Call triggerSignMessage here after login is successful
+    },
+    onError: (error) => console.error('Login failed:', error)
+  })
+
+  const { connectWallet } = useConnectWallet()
+
+  const handleConnect = async () => {
+    if (!isAuthenticated) {
+      try {
+        await connectWallet()
+        await login()
+      } catch (error) {
+        console.error('Error during wallet connection:', error)
+      }
     }
-  };
+  }
 
   return (
-    <div className="flex flex-col gap-6">
-      <Button onClick={handleLogin}>Connect Wallet 👛</Button>
-      <Button onClick={handleLogout}>Disconnect Wallet👛</Button>
-      <Authenticate /> {/* Handles the authentication UI */}
+    <div>
+      <button onClick={handleConnect}>Connect Wallet</button>
+      {isAuthenticated && <Authenticate />}
     </div>
-  );
-};
+  )
+}
 
-export default memo(Connectors);
+export default Connectors
