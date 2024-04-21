@@ -27,10 +27,11 @@ import {
 } from '@dragverse/ui'
 import { signIn, signOut } from '@lib/store/auth'
 import useProfileStore from '@lib/store/idb/profile'
+import { usePrivy, useSignMessage } from '@privy-io/react-auth'
 import { useRouter } from 'next/router'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAccount, useSignMessage } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import Signup from './Signup'
 
@@ -98,9 +99,7 @@ const Authenticate = () => {
     ? [lastLogin, ...remainingProfiles]
     : remainingProfiles
 
-  const { signMessageAsync } = useSignMessage({
-    mutation: { onError }
-  })
+  const { signMessage } = useSignMessage()
 
   const [loadChallenge] = useChallengeLazyQuery({
     // if cache old challenge persist issue (InvalidSignature)
@@ -109,48 +108,46 @@ const Authenticate = () => {
   })
   const [authenticate] = useAuthenticateMutation()
 
+  const privy = usePrivy()
+
   const handleSign = useCallback(async () => {
     if (!isConnected) {
-      signOut()
-      return toast.error('Please connect to your wallet')
+      signOut();
+      return toast.error('Please connect to your wallet');
     }
     try {
-      setLoading(true)
+      setLoading(true);
       const challenge = await loadChallenge({
-        variables: { request: { for: selectedProfileId, signedBy: address } }
-      })
+        variables: { request: { for: selectedProfileId, signedBy: address } },
+      });
       if (!challenge?.data?.challenge?.text) {
-        return toast.error(ERROR_MESSAGE)
+        return toast.error(ERROR_MESSAGE);
       }
-      const signature = await signMessageAsync({
-        message: challenge?.data?.challenge?.text
-      })
+      const signature = await signMessage(challenge?.data?.challenge?.text);
       if (!signature) {
-        return
+        return;
       }
       const result = await authenticate({
         variables: {
-          request: { id: challenge.data?.challenge.id, signature }
-        }
-      })
-      const accessToken = result.data?.authenticate.accessToken
-      const refreshToken = result.data?.authenticate.refreshToken
-      signIn({ accessToken, refreshToken })
+          request: { id: challenge.data?.challenge.id, signature },
+        },
+      });
+      const accessToken = result.data?.authenticate.accessToken;
+      const refreshToken = result.data?.authenticate.refreshToken;
+      signIn({ accessToken, refreshToken });
       if (profilesManaged.length === 0) {
-        setActiveProfile(null)
-        toast.error('No profile found')
+        setActiveProfile(null);
+        toast.error('No profile found');
       } else {
-        const profile = profilesManaged.find(
-          (profile) => profile.id === selectedProfileId
-        )
+        const profile = profilesManaged.find((profile) => profile.id === selectedProfileId);
         if (profile) {
           setActiveProfile(profile)
         }
         const next = router.query?.next as string
         if (next && next.startsWith('/') && !next.startsWith('//')) {
-          router.push(next)
+          router.push(next);
         } else {
-          router.push('/')
+          router.push('/');
         }
       }
       resetApolloStore()

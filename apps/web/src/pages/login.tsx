@@ -32,11 +32,7 @@ const Login = () => {
           <CardBorders />
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Welcome to Dragverse</h2>
-            <p>
-              Connect your wallet and Lens account.👛 New to the scene? No
-              worries! Grab your Lens account right here and let the magic
-              begin.✨
-            </p>
+            <p>Connect purse 👛 or create account to start ✨</p>
           </div>
           <Connectors />
         </div>
