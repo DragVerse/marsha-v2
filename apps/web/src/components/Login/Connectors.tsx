@@ -1,10 +1,10 @@
+import { Button } from '@dragverse/ui'
 import {
   useConnectWallet,
   useLogin,
   useSignMessage
 } from '@privy-io/react-auth'
 import { useState } from 'react'
-import toast from 'react-hot-toast'
 
 import Authenticate from './Authenticate'
 
@@ -32,20 +32,11 @@ const Connectors = () => {
   // Now using triggerSignMessage within useLogin's onComplete callback
   const { login } = useLogin({
     onComplete: async () => {
+      // Added async keyword since we are calling an async function within
       console.log('Login successful')
-      toast.success('Login successful!')
-      await triggerSignMessage()
-      setIsAuthenticated(true)
+      await triggerSignMessage() // Call triggerSignMessage here after login is successful
     },
-    onError: (error: any) => {
-      // Type assertion if you know the structure includes 'message'
-      console.error('Login failed:', error)
-      // Use optional chaining in case 'message' is undefined
-      toast.error(
-        `Login failed: ${error.message || 'An unknown error occurred'}`
-      )
-      setIsAuthenticated(false)
-    }
+    onError: (error) => console.error('Login failed:', error)
   })
 
   const { connectWallet } = useConnectWallet()
@@ -63,7 +54,7 @@ const Connectors = () => {
 
   return (
     <div>
-      <button onClick={handleConnect}>Connect Wallet</button>
+      <button type="button" onClick={handleConnect}>Connect Wallet</button>
       {isAuthenticated && <Authenticate />}
     </div>
   )
