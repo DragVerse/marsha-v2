@@ -1,10 +1,11 @@
+import { Button } from '@dragverse/ui'
 import {
   useConnectWallet,
   useLogin,
   useSignMessage
 } from '@privy-io/react-auth'
 import { useState } from 'react'
-import { Button } from '@dragverse/ui'
+
 import Authenticate from './Authenticate'
 
 const Connectors = () => {
