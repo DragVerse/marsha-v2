@@ -27,11 +27,10 @@ import {
 } from '@dragverse/ui'
 import { signIn, signOut } from '@lib/store/auth'
 import useProfileStore from '@lib/store/idb/profile'
-import { useSignMessage } from '@privy-io/react-auth'
 import { useRouter } from 'next/router'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'
-import { useAccount } from 'wagmi'
+import { useAccount, useSignMessage } from 'wagmi'
 
 import Signup from './Signup'
 
@@ -99,7 +98,9 @@ const Authenticate = () => {
     ? [lastLogin, ...remainingProfiles]
     : remainingProfiles
 
-  const { signMessage } = useSignMessage()
+  const { signMessageAsync } = useSignMessage({
+    mutation: { onError }
+  })
 
   const [loadChallenge] = useChallengeLazyQuery({
     // if cache old challenge persist issue (InvalidSignature)
@@ -121,7 +122,9 @@ const Authenticate = () => {
       if (!challenge?.data?.challenge?.text) {
         return toast.error(ERROR_MESSAGE)
       }
-      const signature = await signMessage(challenge?.data?.challenge?.text)
+      const signature = await signMessageAsync({
+        message: challenge?.data?.challenge?.text
+      })
       if (!signature) {
         return
       }

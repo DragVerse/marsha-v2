@@ -14,7 +14,7 @@ const Connectors = () => {
   const { signMessage } = useSignMessage({
     onSuccess: (signature) => {
       console.log('Signature obtained:', signature)
-      setIsAuthenticated(true) // Update the state to show Authenticate component
+      setIsAuthenticated(true) // Ensure this is being set correctly
     },
     onError: (error) => console.error('Signing failed:', error)
   })

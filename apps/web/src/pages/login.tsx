@@ -1,5 +1,6 @@
 import Logo from '@components/Common/Logo'
 import MetaTags from '@components/Common/MetaTags'
+import Authenticate from '@components/Login/Authenticate'
 import CardBorders from '@components/Login/CardBorders'
 import Connectors from '@components/Login/Connectors'
 import { EVENTS, Tower } from '@dragverse/generic'
@@ -8,7 +9,11 @@ import Link from 'next/link'
 import { useEffect } from 'react'
 
 const BackgroundComets = dynamic(
-  () => import('@components/Login/BackgroundComets')
+  () => import('@components/Login/BackgroundComets'),
+  {
+    ssr: false,
+    loading: () => <p>Loading...</p> // Optional: Display a loading text or spinner
+  }
 )
 
 const Login = () => {
@@ -18,13 +23,15 @@ const Login = () => {
 
   return (
     <div className="dark:bg-brand-850 relative flex h-screen w-screen overflow-hidden bg-[#FAFAFA]">
-      <MetaTags title="Login" />
+      <MetaTags title="🗝 Login to Dragverse" />
       <div className="grid h-full w-full place-items-center">
         <BackgroundComets />
 
         <div className="ultrawide:p-8 laptop:p-6 fixed top-0 z-10 flex h-16 w-full items-center justify-between p-4">
-          <Link href="/">
-            <Logo />
+          <Link href="/" passHref>
+            <a aria-label="Home">
+              <Logo />
+            </a>
           </Link>
         </div>
 
@@ -32,9 +39,13 @@ const Login = () => {
           <CardBorders />
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Welcome to Dragverse</h2>
-            <p>Connect purse 👛 or create account to start ✨</p>
+            <p>
+              Connect your purse or create an account to start your journey in
+              Dragverse.
+            </p>
           </div>
           <Connectors />
+          <Authenticate />
         </div>
       </div>
     </div>
