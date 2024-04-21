@@ -1,11 +1,10 @@
-import { Button } from '@dragverse/ui'
 import {
   useConnectWallet,
   useLogin,
   useSignMessage
 } from '@privy-io/react-auth'
 import { useState } from 'react'
-
+import { Button } from '@dragverse/ui'
 import Authenticate from './Authenticate'
 
 const Connectors = () => {
@@ -54,7 +53,9 @@ const Connectors = () => {
 
   return (
     <div>
-      <button type="button" onClick={handleConnect}>Connect Wallet</button>
+      <Button type="button" onClick={handleConnect}>
+        Connect Wallet
+      </Button>
       {isAuthenticated && <Authenticate />}
     </div>
   )

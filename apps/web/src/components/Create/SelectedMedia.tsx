@@ -9,7 +9,7 @@ import { Badge, Input, Tooltip } from '@dragverse/ui'
 import { getTimeFromSeconds } from '@lib/formatTime'
 import useAppStore from '@lib/store'
 import useProfileStore from '@lib/store/idb/profile'
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 import ChooseThumbnail from './ChooseThumbnail'
 import UploadMethod from './UploadMethod'
@@ -17,7 +17,6 @@ import UploadMethod from './UploadMethod'
 const SelectedMedia = () => {
   const mediaRef = useRef<HTMLVideoElement>(null)
   const [interacted, setInteracted] = useState(false)
-  const [posterPreview, setPosterPreview] = useState('')
   const activeProfile = useProfileStore((state) => state.activeProfile)
   const uploadedMedia = useAppStore((state) => state.uploadedMedia)
   const setUploadedMedia = useAppStore((state) => state.setUploadedMedia)
