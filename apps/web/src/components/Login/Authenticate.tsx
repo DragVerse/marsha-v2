@@ -27,7 +27,7 @@ import {
 } from '@dragverse/ui'
 import { signIn, signOut } from '@lib/store/auth'
 import useProfileStore from '@lib/store/idb/profile'
-import { useSignMessage } from '@privy-io/react-auth'
+import { usePrivy, useSignMessage } from '@privy-io/react-auth'
 import { useRouter } from 'next/router'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import toast from 'react-hot-toast'

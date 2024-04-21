@@ -4,6 +4,7 @@ import {
   useSignMessage
 } from '@privy-io/react-auth'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 import Authenticate from './Authenticate'
 
@@ -31,11 +32,20 @@ const Connectors = () => {
   // Now using triggerSignMessage within useLogin's onComplete callback
   const { login } = useLogin({
     onComplete: async () => {
-      // Added async keyword since we are calling an async function within
       console.log('Login successful')
-      await triggerSignMessage() // Call triggerSignMessage here after login is successful
+      toast.success('Login successful!')
+      await triggerSignMessage()
+      setIsAuthenticated(true)
     },
-    onError: (error) => console.error('Login failed:', error)
+    onError: (error: any) => {
+      // Type assertion if you know the structure includes 'message'
+      console.error('Login failed:', error)
+      // Use optional chaining in case 'message' is undefined
+      toast.error(
+        `Login failed: ${error.message || 'An unknown error occurred'}`
+      )
+      setIsAuthenticated(false)
+    }
   })
 
   const { connectWallet } = useConnectWallet()
