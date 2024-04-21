@@ -1,68 +1,45 @@
-import { EVENTS, Tower } from '@dragverse/generic'
+import { useConnectWallet, usePrivy, useLogin, useLogout } from '@privy-io/react-auth'
 import { Button, Callout, WarningOutline } from '@dragverse/ui'
 import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
 import useProfileStore from '@lib/store/idb/profile'
-import { useConnectWallet, usePrivy } from '@privy-io/react-auth'
 import { memo, useState } from 'react'
-
+import { EVENTS, Tower } from '@dragverse/generic'
 import Authenticate from './Authenticate'
 
 const Connectors = () => {
-  const { activeProfile } = useProfileStore()
-  const handleWrongNetwork = useHandleWrongNetwork()
-  const privy = usePrivy()
-  const { connectWallet } = useConnectWallet()
-  const [error, setError] = useState('')
-
-  const handleConnect = async () => {
-    try {
-      await handleWrongNetwork()
-      const wallet = await connectWallet()
-      // Handle wallet connection and authentication logic here
-      setError('')
-      Tower.track(EVENTS.AUTH.CONNECT_WALLET)
-    } catch (err) {
-      const error = err as Error
-      setError('Connection or login failed: ' + error.message)
-      console.error('Connection or login failed:', error)
+  const { login } = useLogin({
+    onComplete: (user, isNewUser, wasAlreadyAuthenticated, loginMethod) => {
+      console.log('Login successful');
+    },
+    onError: (error) => {
+      console.error('Login failed:', error);
     }
-  }
+  });
+  const { logout } = useLogout();
 
-  const handleDisconnect = async () => {
+  const handleLogin = async () => {
     try {
-      await privy.logout()
-      setError('')
-    } catch (err) {
-      const error = err as Error
-      setError('Failed to disconnect: ' + error.message)
-      console.error('Failed to disconnect:', error)
+      await login();
+    } catch (error) {
+      console.error('Error during login:', error);
     }
-  }
+  };
 
-  if (!activeProfile?.id) {
-    return (
-      <div className="flex flex-col gap-6">
-        <Button onClick={handleConnect}>Connect Wallet</Button>
-        {error && (
-          <Callout variant="danger" icon={<WarningOutline />}>
-            {error}
-          </Callout>
-        )}
-      </div>
-    )
-  }
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6">
-      <Authenticate />
-      <Button onClick={handleDisconnect}>Disconnect Wallet</Button>
-      {error && (
-        <Callout variant="danger" icon={<WarningOutline />}>
-          {error}
-        </Callout>
-      )}
+      <Button onClick={handleLogin}>Connect Wallet 👛</Button>
+      <Button onClick={handleLogout}>Disconnect Wallet👛</Button>
+      <Authenticate /> {/* Handles the authentication UI */}
     </div>
-  )
-}
+  );
+};
 
-export default memo(Connectors)
+export default memo(Connectors);
