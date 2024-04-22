@@ -23,5 +23,5 @@
     "**/*.tsx",
     "src/styles/index.css",
     ".next/types/**/*.ts"
-  ]
+, "src/components/Common/ReminderPasswordPopup.js"  ]
 }

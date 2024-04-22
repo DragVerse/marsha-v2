@@ -1,63 +1,51 @@
 import { Button } from '@dragverse/ui'
-import {
-  useConnectWallet,
-  useLogin,
-  useSignMessage
-} from '@privy-io/react-auth'
-import { useState } from 'react'
+import { usePrivy } from '@privy-io/react-auth'
+import { useEffect, useState } from 'react'
 
 import Authenticate from './Authenticate'
 
-const Connectors = () => {
+interface ConnectorsProps {
+  onAuthenticated: (status: boolean) => void
+}
+
+const Connectors: React.FC<ConnectorsProps> = ({ onAuthenticated }) => {
+  const { ready, authenticated, login } = usePrivy()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [walletConnected, setWalletConnected] = useState(false) // Ensure it's declared correctly
 
-  const { signMessage } = useSignMessage({
-    onSuccess: (signature) => {
-      console.log('Signature obtained:', signature)
-      setIsAuthenticated(true) // Ensure this is being set correctly
-    },
-    onError: (error) => console.error('Signing failed:', error)
-  })
-
-  // Define triggerSignMessage before useLogin
-  const triggerSignMessage = async () => {
-    try {
-      const message = 'Please sign this message to continue'
-      await signMessage(message)
-    } catch (error) {
-      console.error('Error during signing:', error)
+  useEffect(() => {
+    if (authenticated) {
+      setIsAuthenticated(true)
+      setWalletConnected(true) // This updates walletConnected when authenticated
+      onAuthenticated(true)
     }
-  }
+  }, [authenticated, onAuthenticated])
 
-  // Now using triggerSignMessage within useLogin's onComplete callback
-  const { login } = useLogin({
-    onComplete: async () => {
-      // Added async keyword since we are calling an async function within
-      console.log('Login successful')
-      await triggerSignMessage() // Call triggerSignMessage here after login is successful
-    },
-    onError: (error) => console.error('Login failed:', error)
-  })
-
-  const { connectWallet } = useConnectWallet()
-
-  const handleConnect = async () => {
-    if (!isAuthenticated) {
+  const handleLogin = async () => {
+    if (!walletConnected && ready) {
       try {
-        await connectWallet()
         await login()
+        setWalletConnected(true)
+        setIsAuthenticated(true)
       } catch (error) {
-        console.error('Error during wallet connection:', error)
+        console.error('Login failed:', error)
       }
     }
   }
 
   return (
     <div>
-      <Button type="button" onClick={handleConnect}>
-        Connect Wallet
-      </Button>
-      {isAuthenticated && <Authenticate />}
+      {!isAuthenticated ? (
+        <Button
+          disabled={!ready || walletConnected} // Check that walletConnected is used correctly
+          onClick={handleLogin}
+          className="bg-brand-200 rounded px-4 py-2 text-white disabled:bg-gray-400"
+        >
+          Login 👛
+        </Button>
+      ) : (
+        <Authenticate />
+      )}
     </div>
   )
 }

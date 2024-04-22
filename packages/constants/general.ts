@@ -117,7 +117,7 @@ export const LIVEPEER_STUDIO_API_KEY = IS_PRODUCTION
 
 // privy
 export const PRIVY_APP_ID = IS_PRODUCTION
-  ? 'clt93hfel08df9kmxfmnb7t3r'
+  ? 'cluxpw8z700qricqh0nu9urw5'
   : 'clt93hfel08df9kmxfmnb7t3r'
 
 // workers

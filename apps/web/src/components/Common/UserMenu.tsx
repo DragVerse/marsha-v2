@@ -7,11 +7,7 @@ import {
   Tower
 } from '@dragverse/generic'
 import type { Profile } from '@dragverse/lens'
-import {
-  LimitType,
-  useProfilesManagedQuery,
-  useRevokeAuthenticationMutation
-} from '@dragverse/lens'
+import { useProfilesManagedQuery } from '@dragverse/lens'
 import {
   BookmarkOutline,
   ChevronRightOutline,
@@ -28,28 +24,24 @@ import {
   SwitchProfileOutline,
   UserOutline
 } from '@dragverse/ui'
-import getCurrentSession from '@lib/getCurrentSession'
-import { signOut } from '@lib/store/auth'
 import useProfileStore from '@lib/store/idb/profile'
-import Link from 'next/link'
+import { usePrivy } from '@privy-io/react-auth'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
+import React, { useMemo, useState } from 'react'
+
+import ReminderPasswordPopup from '../Common/ReminderPasswordPopup'
 
 const UserMenu = () => {
-  // Removed or commented out since it's not in use
-  // const { theme, setTheme } = useTheme();
-  const { push, asPath } = useRouter()
-  const { address } = useAccount()
+  const router = useRouter()
+  const { logout } = usePrivy()
   const { activeProfile } = useProfileStore()
+  const [loading, setLoading] = useState(false)
+  const [showReminder, setShowReminder] = useState(false)
 
   const { data } = useProfilesManagedQuery({
-    variables: {
-      request: { for: address, includeOwned: true, limit: LimitType.Fifty },
-      lastLoggedInProfileRequest: { for: address }
-    },
-    skip: !address
+    skip: !activeProfile?.id // Only fetch if there is an active profile
   })
+
   const profilesManagedWithoutActiveProfile = useMemo(() => {
     if (!data?.profilesManaged?.items) {
       return []
@@ -59,161 +51,119 @@ const UserMenu = () => {
     ) as Profile[]
   }, [data?.profilesManaged, activeProfile])
 
+  const handleLogout = async () => {
+    setLoading(true)
+    try {
+      await logout()
+      Tower.track(EVENTS.AUTH.SIGN_OUT)
+      router.push('/') // Redirect to homepage or login page
+    } catch (error) {
+      console.error('Logout failed:', error)
+    } finally {
+      setLoading(false)
+      setShowReminder(false)
+    }
+  }
+
   const isAdmin = ADMIN_IDS.includes(activeProfile?.id)
 
-  const [revokeAuthentication, { loading }] = useRevokeAuthenticationMutation()
-
-  const onClickSignout = async () => {
-    const authorizationId = getCurrentSession().authorizationId
-    if (authorizationId) {
-      await revokeAuthentication({
-        variables: {
-          request: { authorizationId }
-        }
-      })
-    }
-    signOut()
-    Tower.track(EVENTS.AUTH.SIGN_OUT)
-    location.reload()
+  const onClickSignout = () => {
+    setShowReminder(true)
   }
 
   return (
-    <DropdownMenu
-      trigger={
-        <div className="ring-brand-500 size-[34px] rounded-full hover:ring-2">
-          <img
-            className="h-full w-full flex-none rounded-full object-cover"
-            src={getProfilePicture(activeProfile, 'AVATAR')}
-            alt={getProfile(activeProfile)?.displayName}
-            draggable={false}
-            onError={({ currentTarget }) => {
-              currentTarget.src = getLennyPicture(activeProfile?.id)
-            }}
-          />
-        </div>
-      }
-    >
-      <div className="w-44">
-        <Link href={getProfile(activeProfile)?.link}>
-          <div className="flex items-center gap-2 px-2 py-1 pb-3">
+    <>
+      <DropdownMenu
+        trigger={
+          <div className="ring-brand-500 size-[34px] rounded-full hover:ring-2">
             <img
+              className="h-full w-full flex-none rounded-full object-cover"
               src={getProfilePicture(activeProfile, 'AVATAR')}
               alt={getProfile(activeProfile)?.displayName}
-              className="h-8 w-8 rounded-full"
-              onError={({ currentTarget }) => {
-                currentTarget.src = getLennyPicture(activeProfile?.id)
-              }}
+              onError={({ currentTarget }) =>
+                (currentTarget.src = getLennyPicture(activeProfile?.id))
+              }
             />
-            <p className="line-clamp-1 font-semibold">
-              {getProfile(activeProfile)?.slug}
-            </p>
           </div>
-        </Link>
+        }
+      >
         {isAdmin && (
-          <DropdownMenuItem onClick={() => push('/mod')}>
+          <DropdownMenuItem onClick={() => router.push('/admin')}>
             <div className="flex items-center gap-2">
               <GraphOutline className="size-4" />
               <p className="whitespace-nowrap">Mod</p>
             </div>
           </DropdownMenuItem>
         )}
-        {activeProfile && (
-          <>
-            <DropdownMenuItem
-              onClick={() => push(getProfile(activeProfile)?.link)}
-            >
+        <DropdownMenuItem
+          onClick={() => router.push(`/profile/${activeProfile?.id}`)}
+        >
+          <div className="flex items-center gap-2">
+            <UserOutline className="size-4" />
+            <p className="whitespace-nowrap">My Profile</p>
+          </div>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push('/bookmarks')}>
+          <div className="flex items-center gap-2">
+            <BookmarkOutline className="size-4" />
+            <p className="whitespace-nowrap">Bookmarks</p>
+          </div>
+        </DropdownMenuItem>
+        {profilesManagedWithoutActiveProfile.length > 0 && (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="flex justify-between">
               <div className="flex items-center gap-2">
-                <UserOutline className="size-4" />
-                <p className="whitespace-nowrap">My Profile</p>
+                <SwitchProfileOutline className="size-4" />
+                <p className="whitespace-nowrap">Switch Profile</p>
               </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => push('/bookmarks')}>
-              <div className="flex items-center gap-2">
-                <BookmarkOutline className="size-4" />
-                <p className="whitespace-nowrap">Bookmarks</p>
-              </div>
-            </DropdownMenuItem>
-
-            {profilesManagedWithoutActiveProfile.length ? (
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex justify-between">
-                  <div className="flex items-center gap-2">
-                    <SwitchProfileOutline className="size-4" />
-                    <p className="whitespace-nowrap">Switch Profile</p>
-                  </div>
-                  <ChevronRightOutline className="size-2.5" />
-                </DropdownMenuSubTrigger>
-                <DropdownMenuPortal>
-                  <DropdownMenuSubContent>
-                    {profilesManagedWithoutActiveProfile?.map(
-                      (profile) =>
-                        profile.id !== activeProfile.id && (
-                          <DropdownMenuItem
-                            key={profile.id}
-                            onClick={() =>
-                              push(`/login?as=${profile.id}&next=${asPath}`)
-                            }
-                          >
-                            <div className="flex items-center gap-2">
-                              <img
-                                src={getProfilePicture(profile)}
-                                className="size-4 rounded-full"
-                                alt={getProfile(activeProfile)?.displayName}
-                                onError={({ currentTarget }) => {
-                                  currentTarget.src = getLennyPicture(
-                                    profile?.id
-                                  )
-                                }}
-                                draggable={false}
-                              />
-                              <p className="whitespace-nowrap">
-                                {getProfile(profile)?.slug}
-                              </p>
-                            </div>
-                          </DropdownMenuItem>
-                        )
-                    )}
-                  </DropdownMenuSubContent>
-                </DropdownMenuPortal>
-              </DropdownMenuSub>
-            ) : null}
-          </>
+              <ChevronRightOutline className="size-2.5" />
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                {profilesManagedWithoutActiveProfile.map((profile) => (
+                  <DropdownMenuItem
+                    key={profile.id}
+                    onClick={() => router.push(`/profile/${profile.id}`)}
+                  >
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={getProfilePicture(profile)}
+                        className="size-4 rounded-full"
+                        alt={getProfile(profile)?.displayName}
+                        onError={({ currentTarget }) => {
+                          currentTarget.src = getLennyPicture(profile?.id)
+                        }}
+                        draggable={false}
+                      />
+                      <span>{getProfile(profile)?.slug}</span>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
         )}
-        <DropdownMenuItem onClick={() => push('/settings')}>
+        <DropdownMenuItem onClick={() => router.push('/settings')}>
           <div className="flex items-center gap-2">
             <CogOutline className="size-4" />
             <p className="whitespace-nowrap">My Settings</p>
           </div>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        {/* <DropdownMenuItem
-          onClick={() => {
-            const selected = theme === 'dark' ? 'light' : 'dark'
-            setTheme(selected)
-            Tower.track(EVENTS.SYSTEM.TOGGLE_THEME, {
-              selected_theme: selected
-            })
-          }}
-        >
-          <div className="flex items-center gap-2">
-            {theme === 'dark' ? (
-              <SunOutline className="size-4" />
-            ) : (
-              <MoonOutline className="size-4" />
-            )}
-            <p className="whitespace-nowrap">
-              {theme === 'light' ? `Switch to Dark` : `Switch to Light`}
-            </p>
-          </div>
-        </DropdownMenuItem> */}
-        <DropdownMenuItem disabled={loading} onClick={() => onClickSignout()}>
+        <DropdownMenuItem disabled={loading} onClick={onClickSignout}>
           <div className="flex items-center gap-2 text-red-500">
             <HandWaveOutline className="size-4" />
             <p className="whitespace-nowrap">Sign out</p>
           </div>
         </DropdownMenuItem>
-      </div>
-    </DropdownMenu>
+      </DropdownMenu>
+      {showReminder && (
+        <ReminderPasswordPopup
+          onConfirm={handleLogout}
+          onClose={() => setShowReminder(false)}
+        />
+      )}
+    </>
   )
 }
 
