@@ -2,7 +2,8 @@ import { tw } from '@dragverse/browser'
 import {
   FALLBACK_THUMBNAIL_URL,
   LENSTUBE_BYTES_APP_ID,
-  STATIC_ASSETS
+  STATIC_ASSETS,
+  TAPE_BYTES_APP_ID
 } from '@dragverse/constants'
 import {
   getIsSensitiveContent,
@@ -31,10 +32,14 @@ const Publications: FC<Props> = ({ results, loading, clearSearch }) => {
           publication.id
         )
         const isBytesVideo =
-          publication.publishedOn?.id === LENSTUBE_BYTES_APP_ID
+          publication.publishedOn?.id === LENSTUBE_BYTES_APP_ID ||
+          publication.publishedOn?.id === TAPE_BYTES_APP_ID
         const thumbnailUrl = isSensitiveContent
           ? `${STATIC_ASSETS}/images/sensor-blur.webp`
-          : getThumbnailUrl(publication.metadata, true)
+          : getThumbnailUrl(publication.metadata, isBytesVideo)
+        const validThumbnailUrl = thumbnailUrl
+          ? imageCdn(thumbnailUrl, isBytesVideo ? 'THUMBNAIL_V' : 'THUMBNAIL')
+          : FALLBACK_THUMBNAIL_URL
 
         return (
           <div
@@ -43,7 +48,6 @@ const Publications: FC<Props> = ({ results, loading, clearSearch }) => {
           >
             <Link
               href={`/watch/${publication?.id}`}
-              key={publication?.id}
               onClick={() => clearSearch()}
               className="flex flex-col justify-center space-y-1 py-2"
             >
@@ -53,14 +57,13 @@ const Publications: FC<Props> = ({ results, loading, clearSearch }) => {
                     'h-16 w-28 flex-none rounded-md bg-gray-300 object-center dark:bg-gray-700',
                     isBytesVideo ? 'object-contain' : 'object-cover'
                   )}
-                  src={imageCdn(
-                    thumbnailUrl,
-                    isBytesVideo ? 'THUMBNAIL_V' : 'THUMBNAIL'
-                  )}
+                  src={validThumbnailUrl}
                   alt="thumbnail"
                   draggable={false}
                   onError={({ currentTarget }) => {
-                    currentTarget.src = FALLBACK_THUMBNAIL_URL
+                    if (!currentTarget.src.endsWith(FALLBACK_THUMBNAIL_URL)) {
+                      currentTarget.src = FALLBACK_THUMBNAIL_URL
+                    }
                   }}
                 />
                 <div className="space-y-0.5">
