@@ -3,10 +3,10 @@ import useProfileStore from '@lib/store/idb/profile'
 import { useRef } from 'react'
 
 import GitcoinAlert from './GitcoinAlert'
-import JoinWaitlist from './JoinWaitlist'
 import LatestBytes from './LatestBytes'
 import LensManagerAlert from './LensManagerAlert'
 import WelcomeAlert from './WelcomeAlert'
+import WelcomeSuccess from './WelcomeSuccess'
 
 const TopSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -24,7 +24,7 @@ const TopSection = () => {
         className="no-scrollbar laptop:pt-6 relative flex items-start space-x-4 overflow-x-auto overflow-y-hidden scroll-smooth pt-4"
       >
         {!activeProfile?.id && <WelcomeAlert />}
-        {!activeProfile?.id && <JoinWaitlist />}
+        {activeProfile?.id && <WelcomeSuccess />}
         <GitcoinAlert />
         <LensManagerAlert />
         <LatestBytes />

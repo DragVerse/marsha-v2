@@ -1,7 +1,7 @@
 import { Button } from '@dragverse/ui'
 import Link from 'next/link'
 
-const WelcomeSuccess = () => {
+const JoinWaitlist = () => {
   return (
     <div className="tape-border rounded-large ultrawide:h-[400px] relative flex h-[350px] w-full flex-none overflow-hidden sm:w-[300px] lg:w-[500px]">
       <div className="bg-brand-250 absolute inset-0 h-full w-full" />
@@ -25,4 +25,4 @@ const WelcomeSuccess = () => {
   )
 }
 
-export default WelcomeSuccess
+export default JoinWaitlist

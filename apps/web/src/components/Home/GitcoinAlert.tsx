@@ -18,7 +18,7 @@ const GitcoinAlert = () => {
 
       <div className="ultrawide:p-8 relative flex h-full flex-col justify-end space-y-4 p-4 text-left md:p-6">
         <div className="text-3xl">
-          Thank you for your support during the GG{GITCOIN_LIVE_ROUND} Round⚡
+          Donate to GG{GITCOIN_LIVE_ROUND} Round⚡
         </div>
         <p className="md:text-md max-w-2xl text-sm lg:text-lg">
           WE SEE YOU, GROWER! 🌱⚡ These funds allow us to keep working on our
@@ -26,7 +26,10 @@ const GitcoinAlert = () => {
           how to use the dApp.
         </p>
         <div className="flex">
-          <Link href="/gitcoin" target="_blank">
+          <Link
+            href="/gitcoin"
+            target="https://explorer.gitcoin.co/#/round/42161/25/50"
+          >
             <Button>Contribute</Button>
           </Link>
         </div>
