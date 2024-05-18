@@ -11,12 +11,12 @@ interface ConnectorsProps {
 const Connectors: React.FC<ConnectorsProps> = ({ onAuthenticated }) => {
   const { ready, authenticated, login } = usePrivy()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [walletConnected, setWalletConnected] = useState(false) // Ensure it's declared correctly
+  const [walletConnected, setWalletConnected] = useState(false)
 
   useEffect(() => {
     if (authenticated) {
       setIsAuthenticated(true)
-      setWalletConnected(true) // This updates walletConnected when authenticated
+      setWalletConnected(true)
       onAuthenticated(true)
     }
   }, [authenticated, onAuthenticated])
@@ -36,13 +36,15 @@ const Connectors: React.FC<ConnectorsProps> = ({ onAuthenticated }) => {
   return (
     <div>
       {!isAuthenticated ? (
-        <Button
-          disabled={!ready || walletConnected} // Check that walletConnected is used correctly
-          onClick={handleLogin}
-          className="bg-brand-200 rounded px-4 py-2 text-white disabled:bg-gray-400"
-        >
-          Login 👛
-        </Button>
+        <div>
+          <Button
+            disabled={!ready || walletConnected}
+            onClick={handleLogin}
+            className="bg-brand-200 rounded px-4 py-2 text-white disabled:bg-gray-400"
+          >
+            Login
+          </Button>
+        </div>
       ) : (
         <Authenticate />
       )}
