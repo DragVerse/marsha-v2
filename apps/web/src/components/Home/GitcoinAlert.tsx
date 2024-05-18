@@ -19,7 +19,7 @@ const GitcoinAlert = () => {
         </div>
         <p className="md:text-md max-w-2xl text-sm lg:text-lg">
           Thank you to all the donors and the 800+ growers who enjoyed Drag
-          performances during the Let’s GROW DAO Livestream!
+          performances during the Let’s GROW DAO Livestream!💃
         </p>
         <div className="flex">
           <Link
