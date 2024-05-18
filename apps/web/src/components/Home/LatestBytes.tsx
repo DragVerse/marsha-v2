@@ -1,6 +1,7 @@
 import Badge from '@components/Common/Badge'
 import HoverableProfile from '@components/Common/HoverableProfile'
 import LatestBytesShimmer from '@components/Shimmers/LatestBytesShimmer'
+import useCuratedProfiles from '@lib/store/idb/curated'
 import {
   FALLBACK_THUMBNAIL_URL,
   LENSTUBE_BYTES_APP_ID,
@@ -22,8 +23,8 @@ import {
   PublicationType,
   usePublicationsQuery
 } from '@dragverse/lens'
-import useCuratedProfiles from '@lib/store/idb/curated'
 import Link from 'next/link'
+import React from 'react'
 
 const LatestBytes = () => {
   const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles)
@@ -89,7 +90,7 @@ const LatestBytes = () => {
                   className="inline-flex items-center space-x-1 px-3 py-1"
                 >
                   <img
-                    className="dark:bg-brand-250/50 size-4 rounded-full bg-gray-200"
+                    className="size-4 rounded-full bg-gray-200 dark:bg-gray-800"
                     src={getProfilePicture(byte.by, 'AVATAR')}
                     height={50}
                     width={50}
