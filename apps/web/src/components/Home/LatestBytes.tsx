@@ -1,7 +1,6 @@
 import Badge from '@components/Common/Badge'
 import HoverableProfile from '@components/Common/HoverableProfile'
 import LatestBytesShimmer from '@components/Shimmers/LatestBytesShimmer'
-import useCuratedProfiles from '@lib/store/idb/curated'
 import {
   FALLBACK_THUMBNAIL_URL,
   LENSTUBE_BYTES_APP_ID,
@@ -23,6 +22,7 @@ import {
   PublicationType,
   usePublicationsQuery
 } from '@dragverse/lens'
+import useCuratedProfiles from '@lib/store/idb/curated'
 import Link from 'next/link'
 import React from 'react'
 
