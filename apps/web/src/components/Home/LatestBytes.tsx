@@ -2,6 +2,7 @@ import Badge from '@components/Common/Badge'
 import HoverableProfile from '@components/Common/HoverableProfile'
 import LatestBytesShimmer from '@components/Shimmers/LatestBytesShimmer'
 import {
+  ALLOWED_APP_IDS,
   FALLBACK_THUMBNAIL_URL,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID,
@@ -33,7 +34,12 @@ const LatestBytes = () => {
     where: {
       metadata: {
         mainContentFocus: [PublicationMetadataMainFocusType.ShortVideo],
-        publishedOn: [TAPE_APP_ID, LENSTUBE_BYTES_APP_ID, TAPE_BYTES_APP_ID]
+        publishedOn: [
+          TAPE_APP_ID,
+          LENSTUBE_BYTES_APP_ID,
+          TAPE_BYTES_APP_ID,
+          ...ALLOWED_APP_IDS
+        ]
       },
       publicationTypes: [PublicationType.Post],
       from: curatedProfiles
