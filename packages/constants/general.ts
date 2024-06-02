@@ -30,7 +30,7 @@ export const IMAGE_TRANSFORMATIONS = {
 
 // lens
 export const MAINNET_API_URL = LensEndpoint.Mainnet
-export const TESTNET_API_URL = LensEndpoint.Staging
+export const TESTNET_API_URL = LensEndpoint.Testnet
 export const LENS_API_URL = IS_MAINNET ? MAINNET_API_URL : TESTNET_API_URL
 
 // api urls
@@ -44,7 +44,7 @@ export const TAPE_API_URL = IS_PRODUCTION
 // tape addresses
 export const TAPE_SIGNUP_PROXY_ADDRESS = IS_MAINNET
   ? '0xD0f6d9676d36F5f4AF5765fCb78c388B51577327'
-  : '0xb9F635c498CdC2dBf95B3A916b007fD16c5506ED'
+  : '0xe6869F02F97229E95116A9647b1b005140c80A49'
 
 // lens addresses
 export const LENS_PERMISSIONLESS_CREATOR_ADDRESS = IS_MAINNET
@@ -85,17 +85,18 @@ export const TESTNET_ALLOWED_TOKENS = [
 // polygon
 export const POLYGON_RPC_URL = IS_MAINNET
   ? 'https://rpc.ankr.com/polygon'
-  : 'https://rpc.ankr.com/polygon_mumbai'
+  : 'https://rpc.ankr.com/polygon_amoy'
 export const POLYGONSCAN_URL = IS_MAINNET
   ? 'https://polygonscan.com'
-  : 'https://mumbai.polygonscan.com'
+  : 'https://amoy.polygonscan.com'
 export const ETHERSCAN_URL = IS_MAINNET
   ? 'https://etherscan.io'
   : 'https://goerli.etherscan.io'
-export const POLYGON_CHAIN_ID = IS_MAINNET ? 137 : 80001
+export const POLYGON_CHAIN_ID = IS_MAINNET ? 137 : 80002
 
 // ipfs
 export const IPFS_FREE_UPLOAD_LIMIT = IS_MAINNET ? 6000 : 0 // in MB
+export const IPFS_FREE_UPLOAD_MAX_LIMIT = IS_MAINNET ? 10000 : 0 // in MB
 export const IPFS_GATEWAY_URL = 'https://gw.ipfs-lens.dev/ipfs'
 export const EVER_ENDPOINT = 'https://endpoint.4everland.co'
 export const EVER_REGION = 'us-west-2'
@@ -222,20 +223,8 @@ export const HEY_WEBSITE_URL = IS_MAINNET
   : 'https://testnet.hey.xyz'
 
 // banners
-export const SHOW_GITCOIN_BANNER = true
-export const GITCOIN_LIVE_ROUND = 20
-
-// open actions
-export const ZORA_MAINNET_CHAINS = ['eth', 'oeth', 'base', 'zora']
-export const FEATURED_ZORA_COLLECTS = [
-  'https://zora.co/collect/zora:0x4e18d1be29f54d6c11935939e36c9988897c145e',
-  'https://zora.co/collect/eth:0x5ec5a9b979a7fd4835a7ce9bdf3090209ec0fc8a/1',
-  'https://zora.co/collect/eth:0x0bc2a24ce568dad89691116d5b34deb6c203f342/193',
-  'https://zora.co/collect/eth:0x7ad18982781ae3d68d1c964f61b872fb2f899021',
-  'https://zora.co/collect/zora:0xc8b408c889baeed2704168de3b3b8795158ca187',
-  'https://zora.co/collect/zora:0xd4889d519b1ab9b2fa8634e0271118de480f6d32',
-  'https://zora.co/collect/zora:0xab821ed94191628354078bcbb206512914eb42e1'
-]
+export const SHOW_GITCOIN_BANNER = false
+export const GITCOIN_LIVE_ROUND = 21
 
 export const TAPEXYZ_WEBSITE_URL = IS_MAINNET
   ? 'https://tape.xyz'

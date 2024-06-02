@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  getLivepeerClient,
-  setFingerprint,
-  tapeFont,
-  videoPlayerTheme
-} from '@dragverse/browser'
+import { getLivepeerClient, setFingerprint, tapeFont } from '@dragverse/browser'
 import { getPublication } from '@dragverse/generic'
 import type { AnyPublication } from '@dragverse/lens'
 import { LivepeerConfig } from '@livepeer/react'
@@ -28,7 +23,7 @@ const Publication: FC<Props> = ({ publication }) => {
 
   return (
     <div className={tapeFont.className}>
-      <LivepeerConfig client={getLivepeerClient()} theme={videoPlayerTheme}>
+      <LivepeerConfig client={getLivepeerClient()}>
         <Video video={target} />
       </LivepeerConfig>
     </div>

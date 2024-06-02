@@ -12,18 +12,18 @@
     "lint": "eslint . --ext .js,.ts,.tsx --fix"
   },
   "dependencies": {
-    "next": "14.1.4",
-    "react": "^18",
-    "react-dom": "^18"
+    "next": "14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@dragverse/config": "workspace:*",
     "@dragverse/constants": "workspace:*",
     "@dragverse/generic": "workspace:*",
     "@dragverse/lens": "workspace:*",
-    "@types/node": "^20.12.4",
-    "@types/react": "^18.2.74",
-    "@types/react-dom": "^18.2.24",
-    "typescript": "^5.4.3"
+    "@types/node": "^20.12.13",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.4.5"
   }
 }

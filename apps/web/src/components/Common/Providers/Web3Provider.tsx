@@ -1,7 +1,7 @@
 import { WC_PROJECT_ID } from '@dragverse/constants'
 import { type FC, type ReactNode } from 'react'
 import { createConfig, http, WagmiProvider } from 'wagmi'
-import { polygon, polygonMumbai } from 'wagmi/chains'
+import { polygon, polygonAmoy } from 'wagmi/chains'
 import { injected, walletConnect } from 'wagmi/connectors'
 
 const connectors = [
@@ -14,10 +14,10 @@ const connectors = [
 
 const wagmiConfig = createConfig({
   connectors,
-  chains: [polygon, polygonMumbai],
+  chains: [polygon, polygonAmoy],
   transports: {
     [polygon.id]: http(),
-    [polygonMumbai.id]: http()
+    [polygonAmoy.id]: http()
   }
 })
 

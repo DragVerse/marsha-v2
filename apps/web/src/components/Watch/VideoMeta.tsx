@@ -4,15 +4,12 @@ import MirroredList from '@components/Common/MirroredList'
 import {
   getLennyPicture,
   getProfile,
-  getProfilePicture,
-  getPublicationMediaCid
+  getProfilePicture
 } from '@dragverse/generic'
 import type { PrimaryPublication } from '@dragverse/lens'
 import { CollectOutline, MirrorOutline, Modal } from '@dragverse/ui'
 import type { FC } from 'react'
 import { useState } from 'react'
-
-import ViewCount from './ViewCount'
 
 type Props = {
   video: PrimaryPublication
@@ -61,7 +58,7 @@ const VideoMeta: FC<Props> = ({ video }) => {
           </div>
         </Modal>
 
-        <ViewCount cid={getPublicationMediaCid(video.metadata)} />
+        {/* <ViewCount cid={getPublicationMediaCid(video.metadata)} /> */}
         <button
           type="button"
           onClick={() => setShowCollectsModal(true)}

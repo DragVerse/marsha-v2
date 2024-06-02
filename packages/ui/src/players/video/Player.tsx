@@ -1,3 +1,4 @@
+import { videoPlayerTheme } from '@dragverse/browser'
 import { ARWEAVE_GATEWAY_URL, IPFS_GATEWAY_URL } from '@dragverse/constants'
 import type { AspectRatio } from '@livepeer/react'
 import { Player } from '@livepeer/react'
@@ -34,6 +35,7 @@ const PlayerInstance: FC<PlayerProps> = ({
 }) => {
   return (
     <Player
+      theme={videoPlayerTheme}
       src={
         url?.includes(ARWEAVE_GATEWAY_URL)
           ? url.replace(`${ARWEAVE_GATEWAY_URL}/`, 'ar://')

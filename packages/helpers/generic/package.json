@@ -8,15 +8,15 @@
     "typecheck": "tsc --pretty"
   },
   "dependencies": {
-    "@lens-protocol/metadata": "^1.1.6",
+    "@lens-protocol/metadata": "^1.2.0",
+    "axios": "^1.7.2",
     "dayjs-twitter": "^0.5.0",
-    "viem": "^2.9.9",
-    "axios": "^1.6.7"
+    "viem": "^2.13.1"
   },
   "devDependencies": {
+    "@dragverse/config": "workspace:*",
     "@dragverse/constants": "workspace:*",
     "@dragverse/lens": "workspace:*",
-    "@dragverse/config": "workspace:*",
-    "typescript": "5.4.3"
+    "typescript": "5.4.5"
   }
 }

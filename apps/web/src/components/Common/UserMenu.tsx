@@ -36,6 +36,8 @@ import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
+import Badge from './Badge'
+
 const UserMenu = () => {
   // Removed or commented out since it's not in use
   // const { theme, setTheme } = useTheme();
@@ -166,9 +168,12 @@ const UserMenu = () => {
                                 }}
                                 draggable={false}
                               />
-                              <p className="whitespace-nowrap">
-                                {getProfile(profile)?.slug}
-                              </p>
+                              <div className="flex items-center space-x-1">
+                                <span className="whitespace-nowrap">
+                                  {getProfile(profile)?.slug}
+                                </span>
+                                <Badge id={profile?.id} size="xs" />
+                              </div>
                             </div>
                           </DropdownMenuItem>
                         )

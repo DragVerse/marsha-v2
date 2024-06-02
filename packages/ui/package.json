@@ -20,9 +20,9 @@
     "@radix-ui/react-switch": "^1.0.3",
     "@radix-ui/react-tabs": "^1.0.4",
     "@tippyjs/react": "^4.2.6",
-    "framer-motion": "^11.0.24",
+    "framer-motion": "^11.2.9",
     "next-themes": "^0.3.0",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "tippy.js": "^6.3.7"
   },
   "devDependencies": {
@@ -30,7 +30,7 @@
     "@dragverse/config": "workspace:*",
     "@dragverse/constants": "workspace:*",
     "@dragverse/generic": "workspace:*",
-    "@types/react": "^18.2.74",
-    "typescript": "5.4.3"
+    "@types/react": "^18.3.3",
+    "typescript": "5.4.5"
   }
 }

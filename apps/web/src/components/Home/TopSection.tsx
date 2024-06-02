@@ -7,6 +7,7 @@ import LatestBytes from './LatestBytes'
 import LensManagerAlert from './LensManagerAlert'
 import WelcomeAlert from './WelcomeAlert'
 import WelcomeSuccess from './WelcomeSuccess'
+import ZorbAlert from './ZorbAlert'
 
 const TopSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
@@ -27,6 +28,7 @@ const TopSection = () => {
         {activeProfile?.id && <WelcomeSuccess />}
         <GitcoinAlert />
         <LensManagerAlert />
+        <ZorbAlert />
         <LatestBytes />
       </div>
     </div>

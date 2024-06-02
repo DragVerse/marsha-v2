@@ -1,6 +1,5 @@
-import type { CodegenConfig } from '@graphql-codegen/cli'
-
-import { LensEndpoint } from '@dragverse/constants'
+import { LensEndpoint } from '@dragverse/constants';
+import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
   overwrite: true,
