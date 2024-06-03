@@ -15,7 +15,7 @@ export const TAPE_WEBSITE_URL = IS_MAINNET
   ? 'https://dragverse.app'
   : 'https://testnet.dragverse.app'
 export const LENS_IMAGEKIT_SNAPSHOT_URL = 'https://ik.imagekit.io/ltxyz'
-export const TAPE_CURATOR_ID = '0x04298d'
+export const TAPE_CURATOR_ID = '0x01b89c'
 
 // infinite scroll
 export const INFINITE_SCROLL_ROOT_MARGIN = '800px'
