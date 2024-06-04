@@ -3,7 +3,9 @@ import type { NextPage } from 'next'
 import { useTheme } from 'next-themes'
 import { useEffect } from 'react'
 
-import Feed from './Feed'
+import BottomSection from './BottomSection'
+import HeroSection from './HeroSection'
+import MidSection from './MidSection'
 import TopSection from './TopSection'
 
 const Home: NextPage = () => {
@@ -15,8 +17,10 @@ const Home: NextPage = () => {
 
   return (
     <div className="max-w-screen-ultrawide container mx-auto">
+      <BottomSection />
+      <HeroSection />
       <TopSection />
-      <Feed />
+      <MidSection />
     </div>
   )
 }
