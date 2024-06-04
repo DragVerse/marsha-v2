@@ -9,7 +9,7 @@ const DecentralandAlert: React.FC = () => {
       rel="noopener noreferrer"
     >
       <img
-        src="https://static.wixstatic.com/media/707696_71820dafe39f4acbbab6b3c11ed819f7~mv2.jpg"
+        src="/assets/dragverse-decentraland.png"
         alt="Play on Decentraland"
         className="absolute inset-0 h-full w-full object-cover"
       />

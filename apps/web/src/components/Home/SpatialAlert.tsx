@@ -9,7 +9,7 @@ const SpatialAlert: React.FC = () => {
       rel="noopener noreferrer"
     >
       <img
-        src="https://static.wixstatic.com/media/707696_50615b4a0f21492d91ff969dc7702460~mv2.jpg"
+        src="/assets/dragverse-spatial.png"
         alt="Play on Spatial"
         className="absolute inset-0 h-full w-full object-cover"
       />

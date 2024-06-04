@@ -9,7 +9,7 @@ const HyperfyAlert: React.FC = () => {
       rel="noopener noreferrer"
     >
       <img
-        src="https://static.wixstatic.com/media/707696_13bc8603b6144e60933071e2e9605d20~mv2.jpg"
+        src="/assets/dragverse-hyperfy.jpg"
         alt="Play on Hyperfy"
         className="absolute inset-0 h-full w-full object-cover"
       />
