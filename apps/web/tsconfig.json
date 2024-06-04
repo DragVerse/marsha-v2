@@ -21,6 +21,8 @@
     "next-env.d.ts",
     "src/**/*.ts",
     "src/**/*.tsx",
+    "/**/*.ts",
+    "/**/*.tsx",
     "src/styles/index.css",
     ".next/types/**/*.ts"
 , "src/components/Common/ReminderPasswordPopup.js"  ]
