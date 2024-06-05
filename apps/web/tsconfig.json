@@ -1,4 +1,5 @@
 {
+  "$schema": "./tsconfig-schema.json",
   "extends": "@dragverse/config/react.tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
