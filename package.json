@@ -1,4 +1,5 @@
 {
+  "$schema": "./package-schema.json",
   "name": "dragverse",
   "description": "Empowering drag creators to Talk, Amplify, Post, Explore",
   "version": "2.0.2-beta",
@@ -21,14 +22,16 @@
     "typecheck": "turbo run typecheck --parallel",
     "api:deploy": "turbo run worker:deploy --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean:next": "rimraf .next",
-    "clean:all": "rimraf .next node_modules pnpm-lock.yaml && pnpm store prune && pnpm install"
+    "clean:next": "npx rimraf .next",
+    "clean:cache": "pnpm store prune",
+    "clean:node_modules": "npx rimraf node_modules pnpm-lock.yaml",
+    "clean:all": "pnpm run clean:next && pnpm run clean:cache"
   },
   "devDependencies": {
     "husky": "^9.0.11",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "turbo": "1.13.3",
-    "rimraf": "^5.0.0"
+    "rimraf": "^5.0.7",
+    "turbo": "1.13.3"
   },
   "eslintConfig": {
     "root": true
@@ -41,4 +44,3 @@
     "@privy-io/react-auth": "^1.60.6"
   }
 }
-
