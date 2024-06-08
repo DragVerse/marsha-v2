@@ -22,9 +22,9 @@
     "typecheck": "turbo run typecheck --parallel",
     "api:deploy": "turbo run worker:deploy --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean:next": "npx rimraf .next",
+    "clean:next": "npx rimraf apps/web/.next",
     "clean:cache": "pnpm store prune",
-    "clean:node_modules": "npx rimraf node_modules pnpm-lock.yaml",
+    "clean:node_modules": "npx rimraf packages/ui/node_modules && rimraf packages/ui/pnpm-lock.yaml",
     "clean:all": "pnpm run clean:next && pnpm run clean:cache"
   },
   "devDependencies": {
