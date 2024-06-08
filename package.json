@@ -20,12 +20,15 @@
     "lint": "turbo run lint --parallel",
     "typecheck": "turbo run typecheck --parallel",
     "api:deploy": "turbo run worker:deploy --parallel",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "clean:next": "rimraf .next",
+    "clean:all": "rimraf .next node_modules pnpm-lock.yaml && pnpm store prune && pnpm install"
   },
   "devDependencies": {
     "husky": "^9.0.11",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "turbo": "1.13.3"
+    "turbo": "1.13.3",
+    "rimraf": "^5.0.0"
   },
   "eslintConfig": {
     "root": true
@@ -38,3 +41,4 @@
     "@privy-io/react-auth": "^1.60.6"
   }
 }
+

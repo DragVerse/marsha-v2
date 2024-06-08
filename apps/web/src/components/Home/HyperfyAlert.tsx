@@ -3,7 +3,7 @@ import React from 'react'
 const HyperfyAlert: React.FC = () => {
   return (
     <a
-      href="https://hyperfy.io/drag"
+      href="https://hyperfy.io/dragverse"
       className="tape-border rounded-large ultrawide:h-[400px] relative flex h-[350px] w-full flex-none overflow-hidden sm:w-[300px] lg:w-[500px]"
       target="_blank"
       rel="noopener noreferrer"

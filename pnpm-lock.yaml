@@ -18,6 +18,9 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: ^0.5.14
         version: 0.5.14(prettier@3.2.5)
+      rimraf:
+        specifier: ^5.0.7
+        version: 5.0.7
       turbo:
         specifier: 1.13.3
         version: 1.13.3
@@ -26,7 +29,7 @@ importers:
     dependencies:
       '@aws-sdk/client-sts':
         specifier: 3.583.0
-        version: 3.583.0(@aws-sdk/client-sso-oidc@3.583.0)
+        version: 3.583.0
       '@hono/zod-validator':
         specifier: ^0.2.1
         version: 0.2.1(hono@4.4.2)(zod@3.23.8)
@@ -835,7 +838,7 @@ packages:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
       '@aws-sdk/client-sso-oidc': 3.583.0(@aws-sdk/client-sts@3.583.0)
-      '@aws-sdk/client-sts': 3.583.0(@aws-sdk/client-sso-oidc@3.583.0)
+      '@aws-sdk/client-sts': 3.583.0
       '@aws-sdk/core': 3.582.0
       '@aws-sdk/credential-provider-node': 3.583.0(@aws-sdk/client-sso-oidc@3.583.0)(@aws-sdk/client-sts@3.583.0)
       '@aws-sdk/middleware-bucket-endpoint': 3.577.0
@@ -899,7 +902,7 @@ packages:
     dependencies:
       '@aws-crypto/sha256-browser': 3.0.0
       '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sts': 3.583.0(@aws-sdk/client-sso-oidc@3.583.0)
+      '@aws-sdk/client-sts': 3.583.0
       '@aws-sdk/core': 3.582.0
       '@aws-sdk/credential-provider-node': 3.583.0(@aws-sdk/client-sso-oidc@3.583.0)(@aws-sdk/client-sts@3.583.0)
       '@aws-sdk/middleware-host-header': 3.577.0
@@ -986,7 +989,7 @@ packages:
     transitivePeerDependencies:
       - aws-crt
 
-  /@aws-sdk/client-sts@3.583.0(@aws-sdk/client-sso-oidc@3.583.0):
+  /@aws-sdk/client-sts@3.583.0:
     resolution: {integrity: sha512-xDMxiemPDWr9dY2Q4AyixkRnk/hvS6fs6OWxuVCz1WO47YhaAfOsEGAgQMgDLLaOfj/oLU5D14uTNBEPGh4rBA==}
     engines: {node: '>=16.0.0'}
     dependencies:
@@ -1031,7 +1034,6 @@ packages:
       '@smithy/util-utf8': 3.0.0
       tslib: 2.6.2
     transitivePeerDependencies:
-      - '@aws-sdk/client-sso-oidc'
       - aws-crt
 
   /@aws-sdk/core@3.582.0:
@@ -1075,7 +1077,7 @@ packages:
     peerDependencies:
       '@aws-sdk/client-sts': ^3.583.0
     dependencies:
-      '@aws-sdk/client-sts': 3.583.0(@aws-sdk/client-sso-oidc@3.583.0)
+      '@aws-sdk/client-sts': 3.583.0
       '@aws-sdk/credential-provider-env': 3.577.0
       '@aws-sdk/credential-provider-process': 3.577.0
       '@aws-sdk/credential-provider-sso': 3.583.0(@aws-sdk/client-sso-oidc@3.583.0)
@@ -1142,7 +1144,7 @@ packages:
     peerDependencies:
       '@aws-sdk/client-sts': ^3.577.0
     dependencies:
-      '@aws-sdk/client-sts': 3.583.0(@aws-sdk/client-sso-oidc@3.583.0)
+      '@aws-sdk/client-sts': 3.583.0
       '@aws-sdk/types': 3.577.0
       '@smithy/property-provider': 3.1.0
       '@smithy/types': 3.0.0
@@ -13177,6 +13179,7 @@ packages:
 
   /glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
     dependencies:
       fs.realpath: 1.0.0
       inflight: 1.0.6
@@ -17253,9 +17256,18 @@ packages:
 
   /rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
     dependencies:
       glob: 7.2.3
+
+  /rimraf@5.0.7:
+    resolution: {integrity: sha512-nV6YcJo5wbLW77m+8KjH8aB/7/rxQy9SZ0HY5shnwULfS+9nmTtVXAJET5NdZmCzA4fPI/Hm1wo/Po/4mopOdg==}
+    engines: {node: '>=14.18'}
+    hasBin: true
+    dependencies:
+      glob: 10.3.12
+    dev: true
 
   /ripemd160@2.0.2:
     resolution: {integrity: sha512-ii4iagi25WusVoiC4B4lq7pbXfAp3D9v5CwfkY33vffw2+pkDjY1D8GaN7spsxvCSx8dkPqOZCEZyfxcmJG2IA==}
