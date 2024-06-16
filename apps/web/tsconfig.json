@@ -1,5 +1,4 @@
 {
-  "$schema": "./tsconfig-schema.json",
   "extends": "@dragverse/config/react.tsconfig.json",
   "compilerOptions": {
     "baseUrl": ".",
@@ -20,8 +19,6 @@
   },
   "include": [
     "next-env.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
     "**/*.ts",
     "**/*.tsx",
     "src/styles/index.css",

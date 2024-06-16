@@ -1,7 +1,6 @@
 {
-  "$schema": "./package-schema.json",
   "name": "dragverse",
-  "description": "Empowering drag creators to Talk, Amplify, Post, Explore",
+  "description": "At Dragverse, we're not just building the next generation of the internet; we're redefining social media as a vibrant ecosystem where the art of drag and the rich diversity of the LGBTQIA+ community—and its allies—are the stars.",
   "version": "2.0.2-beta",
   "private": true,
   "workspaces": [
@@ -21,16 +20,11 @@
     "lint": "turbo run lint --parallel",
     "typecheck": "turbo run typecheck --parallel",
     "api:deploy": "turbo run worker:deploy --parallel",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "clean:next": "npx rimraf apps/web/.next",
-    "clean:cache": "pnpm store prune",
-    "clean:node_modules": "npx rimraf packages/ui/node_modules && rimraf packages/ui/pnpm-lock.yaml",
-    "clean:all": "pnpm run clean:next && pnpm run clean:cache"
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
     "husky": "^9.0.11",
     "prettier-plugin-tailwindcss": "^0.5.14",
-    "rimraf": "^5.0.7",
     "turbo": "1.13.3"
   },
   "eslintConfig": {
@@ -39,8 +33,5 @@
   "engines": {
     "node": ">=16.18.1 <=19.0.0"
   },
-  "packageManager": "pnpm@9.1.1",
-  "dependencies": {
-    "@privy-io/react-auth": "^1.60.6"
-  }
+  "packageManager": "pnpm@9.1.1"
 }
