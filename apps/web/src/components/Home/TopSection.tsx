@@ -2,12 +2,16 @@ import HorizontalScroller from '@components/Common/HorizontalScroller'
 import useProfileStore from '@lib/store/idb/profile'
 import { useRef } from 'react'
 
-import HottestTea from './HottestTea'
-import LatestBytes from './LatestBytes'
+import EngageBox from './EngageBox'
+import EnjoyBox from './EnjoyBox'
+import ExploreBox from './ExploreBox'
+import LogoHero from './LogoHero'
+import WelcomeBox from './WelcomeBox'
+import WelcomeSuccess from './WelcomeSuccess'
 
 const TopSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const { activeProfile } = useProfileStore()
+  const activeProfile = useProfileStore((state) => state.activeProfile)
 
   return (
     <div className="flex flex-col">
@@ -18,10 +22,14 @@ const TopSection = () => {
       />
       <div
         ref={sectionRef}
-        className="no-scrollbar laptop:pt-6 relative flex items-start space-x-4 overflow-x-auto overflow-y-hidden scroll-smooth pb-6 pt-4"
+        className="no-scrollbar laptop:pt-6 relative flex items-start space-x-4 overflow-x-auto overflow-y-hidden scroll-smooth pt-6"
       >
-        <HottestTea />
-        <LatestBytes />
+        <LogoHero />
+        {!activeProfile?.id && <WelcomeBox />}
+        {activeProfile?.id && <WelcomeSuccess />}
+        <ExploreBox />
+        <EnjoyBox />
+        <EngageBox />
       </div>
     </div>
   )

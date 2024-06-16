@@ -17,10 +17,10 @@ const Home: NextPage = () => {
 
   return (
     <div className="max-w-screen-ultrawide container mx-auto">
-      <BottomSection />
-      <HeroSection />
       <TopSection />
+      <HeroSection />
       <MidSection />
+      <BottomSection />
     </div>
   )
 }

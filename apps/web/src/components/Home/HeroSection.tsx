@@ -1,5 +1,4 @@
 import HorizontalScroller from '@components/Common/HorizontalScroller'
-import useProfileStore from '@lib/store/idb/profile'
 import { useRef } from 'react'
 
 import DecentralandAlert from './DecentralandAlert'
@@ -9,8 +8,6 @@ import SpatialAlert from './SpatialAlert'
 
 const HeroSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const { activeProfile } = useProfileStore()
-
   return (
     <div className="flex flex-col">
       <HorizontalScroller
