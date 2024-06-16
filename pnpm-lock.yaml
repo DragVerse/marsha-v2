@@ -594,6 +594,9 @@ importers:
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
+      wavesurfer.js:
+        specifier: ^7.7.15
+        version: 7.7.15
     devDependencies:
       '@dragverse/browser':
         specifier: workspace:*
@@ -19101,6 +19104,10 @@ packages:
     resolution: {integrity: sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==}
     dependencies:
       makeerror: 1.0.12
+
+  /wavesurfer.js@7.7.15:
+    resolution: {integrity: sha512-qJE7sZ5qnFG9wBtU9+jBpYn7faWXZHEz1I25Xnf4EhGqqS2rFj/hxTtbIaETynalPajxC1xXd/9TnDHWO+mARA==}
+    dev: false
 
   /wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
