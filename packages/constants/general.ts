@@ -116,6 +116,13 @@ export const LIVEPEER_STUDIO_API_KEY = IS_PRODUCTION
   ? '6a7a905f-72d9-4303-adda-09679b3f5f8c'
   : 'cf2eb693-e25c-42fe-b5d9-a8ce29124ae6'
 
+// livestream
+export const DRAGVERSE_LIVESTREAM_PLAYBACK_ID = 'b15bdkzvzbpnhk64'
+export const DRAGVERSE_LIVESTREAM_PLAYBACK_URL =
+  'https://livepeercdn.studio/hls/b15bdkzvzbpnhk64/index.m3u8'
+export const DRAGVERSE_LIVESTREAM_STREAM_ID =
+  'b15bafcf-995d-4992-99ec-b52162a50ac8'
+
 // privy
 export const PRIVY_APP_ID = IS_PRODUCTION
   ? 'cluxpw8z700qricqh0nu9urw5'

@@ -3,11 +3,16 @@ import MetaTags from '@components/Common/MetaTags'
 import VideoCard from '@components/Common/VideoCard'
 import TimelineShimmer from '@components/Shimmers/TimelineShimmer'
 import { NoDataFound } from '@components/UIElements/NoDataFound'
+import Livestream from '@components/Watch/Livestream'
 import {
+  DRAGVERSE_LIVESTREAM_PLAYBACK_ID,
+  DRAGVERSE_LIVESTREAM_PLAYBACK_URL,
+  DRAGVERSE_LIVESTREAM_STREAM_ID,
   INFINITE_SCROLL_ROOT_MARGIN,
   LENSTUBE_APP_ID,
   LENSTUBE_BYTES_APP_ID,
-  TAPE_APP_ID
+  TAPE_APP_ID,
+  TAPE_LOGO
 } from '@dragverse/constants'
 import { EVENTS, Tower } from '@dragverse/generic'
 import type { FeedItem, FeedRequest, PrimaryPublication } from '@dragverse/lens'
@@ -74,6 +79,14 @@ const Feed = () => {
 
   return (
     <div className="max-w-screen-ultrawide container mx-auto">
+      <Livestream
+        video={{
+          playbackId: DRAGVERSE_LIVESTREAM_PLAYBACK_ID,
+          playbackUrl: DRAGVERSE_LIVESTREAM_PLAYBACK_URL,
+          thumbnailUrl: TAPE_LOGO,
+          streamId: DRAGVERSE_LIVESTREAM_STREAM_ID
+        }}
+      />
       <MetaTags title="Your Feed" />
       <CategoryFilters heading="Your Feed" />
       {loading && <TimelineShimmer className="laptop:pt-6 pt-4" />}
