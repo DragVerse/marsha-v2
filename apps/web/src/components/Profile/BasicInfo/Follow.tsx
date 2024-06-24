@@ -1,3 +1,4 @@
+// apps/web/src/components/Profile/BasicInfo/Follow.tsx
 import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
 import {
   ERROR_MESSAGE,
@@ -28,6 +29,9 @@ import { useState } from 'react'
 import toast from 'react-hot-toast'
 import { useSignTypedData, useWriteContract } from 'wagmi'
 
+import TipEmbed from '../../Watch/OpenActions/Unknown/Tip/TipEmbed'
+import styles from './Follow.module.css'
+
 type Props = {
   profile: Profile
   onSubscribe: () => void
@@ -35,6 +39,7 @@ type Props = {
 
 const Follow: FC<Props> = ({ profile, onSubscribe }) => {
   const [loading, setLoading] = useState(false)
+  const [showTipEmbed, setShowTipEmbed] = useState(false)
   const { activeProfile } = useProfileStore()
   const { canUseLensManager, canBroadcast } =
     checkLensManagerPermissions(activeProfile)
@@ -167,10 +172,26 @@ const Follow: FC<Props> = ({ profile, onSubscribe }) => {
     })
   }
 
+  const toggleTipEmbed = () => {
+    setShowTipEmbed((prev) => !prev)
+  }
+
+  const closeTipEmbed = () => {
+    setShowTipEmbed(false)
+  }
+
   return (
-    <Button disabled={loading} loading={loading} onClick={() => follow()}>
-      Follow
-    </Button>
+    <div className={styles.container}>
+      <Button disabled={loading} loading={loading} onClick={() => follow()}>
+        Follow
+      </Button>
+      <Button className={styles.tipButton} onClick={toggleTipEmbed}>
+        Tip
+      </Button>
+      {showTipEmbed && (
+        <TipEmbed publicationId={profile.id} onClose={closeTipEmbed} />
+      )}
+    </div>
   )
 }
 
