@@ -11,6 +11,7 @@ const Login = () => {
 
   useEffect(() => {
     Tower.track(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.LOGIN })
+    setIsAuthenticated(false)
   }, [])
 
   const handleAuthentication = (status: boolean) => {
