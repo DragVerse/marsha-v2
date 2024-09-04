@@ -1,21 +1,22 @@
 import Logo from '@components/Common/Logo'
 import MetaTags from '@components/Common/MetaTags'
-import Authenticate from '@components/Login/Authenticate'
-import Connectors from '@components/Login/Connectors'
 import { EVENTS, Tower } from '@dragverse/generic'
+import { usePrivy } from '@privy-io/react-auth'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 const Login = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const { login, authenticated, ready } = usePrivy()
 
   useEffect(() => {
     Tower.track(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.LOGIN })
-    setIsAuthenticated(false)
   }, [])
 
-  const handleAuthentication = (status: boolean) => {
-    setIsAuthenticated(status)
+  const handleLogin = async () => {
+    if (!authenticated) {
+      await login()
+    }
+    // After successful login, you can redirect or perform other actions
   }
 
   return (
@@ -36,10 +37,13 @@ const Login = () => {
               The most ✨ iconic ✨ version of yourself online
             </p>
           </div>
-          {!isAuthenticated ? (
-            <Connectors onAuthenticated={handleAuthentication} />
-          ) : (
-            <Authenticate />
+          {ready && (
+            <button
+              onClick={handleLogin}
+              className="w-full rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+            >
+              {authenticated ? 'Connected' : 'Login with Privy'}
+            </button>
           )}
         </div>
       </div>
