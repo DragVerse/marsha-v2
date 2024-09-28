@@ -46,7 +46,7 @@ const VideoCard: FC<Props> = ({ video }) => {
             }}
           />
 
-          <div className="flex w-full flex-col justify-between gap-1">
+          <div className="flex w-full flex-col justify-between gap-1 text-white">
             <div className="flex w-full min-w-0 items-start justify-between space-x-1.5">
               <Link className="line-clamp-2 break-words font-bold" href={href}>
                 {getPublicationData(metadata)?.title}

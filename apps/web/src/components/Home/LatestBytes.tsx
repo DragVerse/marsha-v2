@@ -106,7 +106,7 @@ const LatestBytes = () => {
                       currentTarget.src = getLennyPicture(byte.by?.id);
                     }}
                   />
-                  <span className="flex items-center space-x-1 font-medium">
+                  <span className="flex items-center space-x-1 font-medium text-white">
                     <span>{getProfile(byte.by)?.slug}</span>
                     <Badge id={byte.by.id} size="xs" />
                   </span>

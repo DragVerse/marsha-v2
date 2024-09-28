@@ -27,20 +27,20 @@ const ByteActions: FC<Props> = ({ video }) => {
       <div className="items-center pt-2.5 md:flex md:flex-col">
         <div className="pb-2">
           <PublicationReaction
-            className="w-7"
+            className="w-7 text-white"
             publication={video}
             iconSize="lg"
             isVertical
           />
         </div>
         <div className="space-y-4 py-2">
-          <div className="w-full text-center">
+          <div className="w-full text-center text-white">
             <button
               type="button"
               className="w-7"
               onClick={() => setShowCommentsModal(true)}
             >
-              <div className="flex flex-col items-center text-black dark:text-white">
+              <div className="flex flex-col items-center text-white dark:text-white">
                 <CommentOutline className="size-5" />
                 <span className="pt-1 text-xs">
                   {video.stats.comments || "Wdyt"}
@@ -55,7 +55,7 @@ const ByteActions: FC<Props> = ({ video }) => {
               <ByteComments video={video} />
             </Modal>
           </div>
-          <div className="w-full text-center">
+          <div className="w-full text-center text-white">
             <MirrorPublication video={video}>
               <button type="button" className="w-7">
                 <div className="flex flex-col items-center">
@@ -68,7 +68,7 @@ const ByteActions: FC<Props> = ({ video }) => {
             </MirrorPublication>
           </div>
           <OpenActions publication={video}>
-            <div className="w-full text-center">
+            <div className="w-full text-center text-white">
               <button type="button" className="w-7">
                 <div className="flex flex-col items-center">
                   <CollectOutline className="size-5" />

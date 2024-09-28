@@ -34,7 +34,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
       <Tabs defaultValue={activeTab}>
         <TabsList>
           <TabsTrigger
-            className="rounded-t-lg border-black px-4 py-1.5 font-medium text-sm data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white data-[state=active]:dark:bg-gray-800"
+            className="rounded-t-lg border-transparent border-b-2 px-4 py-1.5 font-medium text-sm text-white hover:bg-brand-800 data-[state=active]:border-white data-[state=active]:bg-brand-850 data-[state=active]:text-white dark:hover:bg-brand-900"
             onClick={() => {
               handleTabChange("videos");
               addEventToQueue(EVENTS.PROFILE.CLICK_PROFILE_VIDEOS);
@@ -44,7 +44,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
             Videos
           </TabsTrigger>
           <TabsTrigger
-            className="rounded-t-lg border-black px-4 py-1.5 font-medium text-sm data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white data-[state=active]:dark:bg-gray-800"
+            className="rounded-t-lg border-transparent border-b-2 px-4 py-1.5 font-medium text-sm text-white hover:bg-brand-800 data-[state=active]:border-white data-[state=active]:bg-brand-850 data-[state=active]:text-white dark:hover:bg-brand-900"
             onClick={() => {
               handleTabChange("bytes");
               addEventToQueue(EVENTS.PROFILE.CLICK_PROFILE_BYTES);
@@ -54,7 +54,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
             Bytes
           </TabsTrigger>
           <TabsTrigger
-            className="rounded-t-lg border-black px-4 py-1.5 font-medium text-sm data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white data-[state=active]:dark:bg-brand-250/50"
+            className="rounded-t-lg border-transparent border-b-2 px-4 py-1.5 font-medium text-sm text-white hover:bg-brand-800 data-[state=active]:border-white data-[state=active]:bg-brand-850 data-[state=active]:text-white dark:hover:bg-brand-900"
             onClick={() => {
               handleTabChange("channels");
               // Tower.track(EVENTS.PROFILE.CLICK_OTHER_PROFILES)
@@ -64,7 +64,7 @@ const ProfileTabs: FC<Props> = ({ profile }) => {
             Channels
           </TabsTrigger>
           <TabsTrigger
-            className="rounded-t-lg border-black px-4 py-1.5 font-medium text-sm data-[state=active]:border-b data-[state=active]:bg-gray-100 dark:border-white data-[state=active]:dark:bg-brand-250/50"
+            className="rounded-t-lg border-transparent border-b-2 px-4 py-1.5 font-medium text-sm text-white hover:bg-brand-800 data-[state=active]:border-white data-[state=active]:bg-brand-850 data-[state=active]:text-white dark:hover:bg-brand-900"
             onClick={() => {
               handleTabChange("audio");
               // Tower.track(EVENTS.PROFILE.CLICK_PROFILE_AUDIOS)

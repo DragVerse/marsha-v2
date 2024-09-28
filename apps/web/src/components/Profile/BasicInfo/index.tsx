@@ -245,7 +245,7 @@ const BasicInfo: FC<Props> = ({ profile }) => {
           </div>
         </Callout>
       )}
-      <div className="flex flex-1 flex-wrap justify-between pt-4 pb-1 md:gap-5">
+      <div className="flex flex-1 flex-wrap justify-between pt-4 pb-1 text-white md:gap-5">
         <div className="flex flex-col items-start">
           <p className="flex items-center space-x-1.5 font-bold text-lg md:text-3xl">
             <span>{getProfile(profile)?.displayName}</span>
@@ -367,7 +367,7 @@ const BasicInfo: FC<Props> = ({ profile }) => {
           <FollowActions profile={profile} />
         </div>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-white">
         {profile.metadata?.bio && (
           <div className="line-clamp-5">
             <InterweaveContent

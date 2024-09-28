@@ -16,9 +16,13 @@ export const NoDataFound = ({
 }: Props) => {
   return (
     <div
-      className={tw("flex flex-col space-y-6 rounded-lg p-6", className, {
-        "items-center justify-center": isCenter
-      })}
+      className={tw(
+        "flex flex-col space-y-6 rounded-lg p-6 text-white",
+        className,
+        {
+          "items-center justify-center": isCenter
+        }
+      )}
     >
       {withImage && (
         <img

@@ -1,6 +1,10 @@
 import useSw from "@/hooks/useSw";
 import { useCopyToClipboard } from "@dragverse/browser";
-import { STATIC_ASSETS, TAPE_WEBSITE_URL } from "@dragverse/constants";
+import {
+  STATIC_ASSETS,
+  TAPE_WEBSITE_URL,
+  TWITTER_ICON_URL
+} from "@dragverse/constants";
 import { EVENTS, getSharableLink, imageCdn } from "@dragverse/generic";
 import type { PrimaryPublication } from "@dragverse/lens";
 import { CopyOutline, MirrorOutline, Tooltip } from "@dragverse/ui";
@@ -63,10 +67,7 @@ const Share: FC<Props> = ({ publication }) => {
           <div className="rounded-full bg-gray-200 p-3 dark:bg-gray-800">
             {resolvedTheme === "dark" ? (
               <img
-                src={imageCdn(
-                  `${STATIC_ASSETS}/images/social/x-white.png`,
-                  "AVATAR"
-                )}
+                src={imageCdn(`${TWITTER_ICON_URL}`, "AVATAR")}
                 className="size-4"
                 height={16}
                 width={16}
@@ -75,10 +76,7 @@ const Share: FC<Props> = ({ publication }) => {
               />
             ) : (
               <img
-                src={imageCdn(
-                  `${STATIC_ASSETS}/images/social/x-black.png`,
-                  "AVATAR"
-                )}
+                src={imageCdn(`${TWITTER_ICON_URL}`, "AVATAR")}
                 className="size-4"
                 height={16}
                 width={16}
