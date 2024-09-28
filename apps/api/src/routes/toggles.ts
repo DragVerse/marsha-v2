@@ -1,53 +1,57 @@
-import { zValidator } from '@hono/zod-validator'
-import { Hono } from 'hono'
-import { cache } from 'hono/cache'
-import { object, string } from 'zod'
+import { CACHE_CONTROL, ERROR_MESSAGE, REDIS_KEYS } from "@dragverse/constants";
+import { REDIS_EXPIRY, dragverseDb, rGet, rSet } from "@dragverse/server";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { object, string } from "zod";
 
-import { ERROR_MESSAGE } from '@/helpers/constants'
-
-type Bindings = {
-  TAPE_DB: D1Database
-}
-
-const app = new Hono<{ Bindings: Bindings }>()
-app.get(
-  '*',
-  cache({
-    cacheName: 'verified',
-    cacheControl: 'max-age=300'
-  })
-)
+const app = new Hono();
 
 app.get(
-  '/:profileId',
+  "/:profileId",
   zValidator(
-    'param',
+    "param",
     object({
       profileId: string()
     })
   ),
   async (c) => {
-    const { profileId } = c.req.param()
+    const { profileId } = c.req.param();
+    c.header("Cache-Control", CACHE_CONTROL.FOR_FIVE_MINUTE);
+
+    const cacheKey = `${REDIS_KEYS.PROFILE_TOGGLES}:${profileId}`;
+    const cachedValue = await rGet(cacheKey);
+    if (cachedValue) {
+      console.info("CACHE HIT");
+      return c.json({ success: true, toggles: JSON.parse(cachedValue) });
+    }
+    console.info("CACHE MISS");
 
     try {
-      const result = await c.env.TAPE_DB.prepare(
-        'SELECT suspended, limited, flagged FROM ProfileRestriction WHERE profileId = ?'
-      )
-        .bind(profileId)
-        .first()
+      const result = await dragverseDb.profile.findUnique({
+        where: {
+          profileId
+        },
+        select: {
+          isSuspended: true,
+          isLimited: true
+        }
+      });
 
+      const toggles = {
+        suspended: Boolean(result?.isSuspended),
+        limited: Boolean(result?.isLimited)
+      };
+
+      await rSet(cacheKey, JSON.stringify(toggles), REDIS_EXPIRY.ONE_DAY);
       return c.json({
         success: true,
-        restrictions: {
-          suspended: Boolean(result?.suspended),
-          limited: Boolean(result?.limited),
-          flagged: Boolean(result?.flagged)
-        }
-      })
-    } catch {
-      return c.json({ success: false, message: ERROR_MESSAGE })
+        toggles
+      });
+    } catch (error) {
+      console.error("[TOGGLES] Error:", error);
+      return c.json({ success: false, message: ERROR_MESSAGE });
     }
   }
-)
+);
 
-export default app
+export default app;

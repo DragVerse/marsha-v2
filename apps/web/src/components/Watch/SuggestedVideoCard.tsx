@@ -1,43 +1,45 @@
-import HoverableProfile from '@components/Common/HoverableProfile'
-import PublicationOptions from '@components/Common/Publication/PublicationOptions'
-import { tw, useAverageColor } from '@dragverse/browser'
+import { formatTimeFromSeconds, getShortHandTime } from "@/lib/formatTime";
+import { tw, useAverageColor } from "@dragverse/browser";
 import {
   FALLBACK_THUMBNAIL_URL,
   LENSTUBE_BYTES_APP_ID,
   STATIC_ASSETS
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
   formatNumber,
   getIsSensitiveContent,
   getPublicationData,
   getThumbnailUrl,
   imageCdn
-} from '@dragverse/generic'
-import type { MirrorablePublication } from '@dragverse/lens'
-import { CommentOutline, HeartOutline } from '@dragverse/ui'
-import { getShortHandTime, getTimeFromSeconds } from '@lib/formatTime'
-import Link from 'next/link'
-import type { FC } from 'react'
-import React from 'react'
+} from "@dragverse/generic";
+import type { MirrorablePublication } from "@dragverse/lens";
+import { CommentOutline, HeartOutline } from "@dragverse/ui";
+import Link from "next/link";
+import { type FC, memo } from "react";
+import HoverableProfile from "../Common/HoverableProfile";
+import PublicationOptions from "../Common/Publication/PublicationOptions";
 
 type Props = {
-  video: MirrorablePublication
-}
+  video: MirrorablePublication;
+};
 
 const SuggestedVideoCard: FC<Props> = ({ video }) => {
-  const isBytesVideo = video.publishedOn?.id === LENSTUBE_BYTES_APP_ID
-  const isSensitiveContent = getIsSensitiveContent(video.metadata, video.id)
+  const isBytesVideo = video.publishedOn?.id === LENSTUBE_BYTES_APP_ID;
+  const isSensitiveContent = getIsSensitiveContent(video.metadata);
   const thumbnailUrl = isSensitiveContent
     ? `${STATIC_ASSETS}/images/sensor-blur.webp`
-    : getThumbnailUrl(video.metadata, true)
+    : getThumbnailUrl(video.metadata, true);
 
-  const { color: backgroundColor } = useAverageColor(thumbnailUrl, isBytesVideo)
-  const videoDuration = getPublicationData(video.metadata)?.asset?.duration
+  const { color: backgroundColor } = useAverageColor(
+    thumbnailUrl,
+    isBytesVideo
+  );
+  const videoDuration = getPublicationData(video.metadata)?.asset?.duration;
 
   return (
     <div className="group flex justify-between">
       <div className="flex justify-between">
-        <div className="rounded-small flex-none overflow-hidden">
+        <div className="flex-none overflow-hidden rounded-small">
           <Link
             href={`/watch/${video.id}`}
             className="cursor-pointer rounded-md"
@@ -45,24 +47,24 @@ const SuggestedVideoCard: FC<Props> = ({ video }) => {
             <div className="relative">
               <img
                 className={tw(
-                  'h-24 w-44 bg-gray-300 object-center dark:bg-gray-700',
-                  isBytesVideo ? 'object-contain' : 'object-cover'
+                  "h-24 w-44 bg-gray-300 object-center dark:bg-gray-700",
+                  isBytesVideo ? "object-contain" : "object-cover"
                 )}
                 src={imageCdn(
                   thumbnailUrl,
-                  isBytesVideo ? 'THUMBNAIL_V' : 'THUMBNAIL'
+                  isBytesVideo ? "THUMBNAIL_V" : "THUMBNAIL"
                 )}
                 style={{ backgroundColor: `${backgroundColor}95` }}
                 alt="thumbnail"
                 draggable={false}
                 onError={({ currentTarget }) => {
-                  currentTarget.src = FALLBACK_THUMBNAIL_URL
+                  currentTarget.src = FALLBACK_THUMBNAIL_URL;
                 }}
               />
               {!isSensitiveContent && videoDuration ? (
                 <div>
-                  <span className="bg-brand-850 absolute bottom-1 right-1 rounded px-1 text-[10px] text-white">
-                    {getTimeFromSeconds(String(videoDuration))}
+                  <span className="absolute right-1 bottom-1 rounded bg-black px-1 text-[10px] text-white">
+                    {formatTimeFromSeconds(String(videoDuration))}
                   </span>
                 </div>
               ) : null}
@@ -75,7 +77,7 @@ const SuggestedVideoCard: FC<Props> = ({ video }) => {
               <Link
                 href={`/watch/${video.id}`}
                 className="line-clamp-2 font-medium"
-                title={getPublicationData(video.metadata)?.title ?? ''}
+                title={getPublicationData(video.metadata)?.title ?? ""}
               >
                 {getPublicationData(video.metadata)?.title}
               </Link>
@@ -103,7 +105,7 @@ const SuggestedVideoCard: FC<Props> = ({ video }) => {
         <PublicationOptions publication={video} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default React.memo(SuggestedVideoCard)
+export default memo(SuggestedVideoCard);

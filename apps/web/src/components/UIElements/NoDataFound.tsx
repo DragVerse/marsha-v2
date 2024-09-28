@@ -1,16 +1,23 @@
-import { tw } from '@dragverse/browser'
-import { TAPE_LOGO } from '@dragverse/constants'
+import { tw } from "@dragverse/browser";
+import { TAPE_LOGO } from "@dragverse/constants";
+
+type Props = {
+  text?: string;
+  withImage?: boolean;
+  isCenter?: boolean;
+  className?: string;
+};
 
 export const NoDataFound = ({
-  text = 'No Data Found',
+  text = "Zero trace!",
   withImage = false,
   isCenter = false,
-  className = ''
-}) => {
+  className = ""
+}: Props) => {
   return (
     <div
-      className={tw('flex flex-col space-y-6 rounded-lg p-6', className, {
-        'items-center justify-center': isCenter
+      className={tw("flex flex-col space-y-6 rounded-lg p-6", className, {
+        "items-center justify-center": isCenter
       })}
     >
       {withImage && (
@@ -23,12 +30,12 @@ export const NoDataFound = ({
         />
       )}
       <div
-        className={tw('text-sm font-medium', {
-          'text-center': isCenter
+        className={tw("font-medium text-sm", {
+          "text-center": isCenter
         })}
       >
         {text}
       </div>
     </div>
-  )
-}
+  );
+};

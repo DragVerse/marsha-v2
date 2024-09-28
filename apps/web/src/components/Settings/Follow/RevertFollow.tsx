@@ -1,138 +1,136 @@
-import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
+import useHandleWrongNetwork from "@/hooks/useHandleWrongNetwork";
+import usePendingTxn from "@/hooks/usePendingTxn";
+import useSw from "@/hooks/useSw";
+import useProfileStore from "@/lib/store/idb/profile";
+import useNonceStore from "@/lib/store/nonce";
+import { LENSHUB_PROXY_ABI } from "@dragverse/abis";
 import {
   ERROR_MESSAGE,
   LENSHUB_PROXY_ADDRESS,
   REQUESTING_SIGNATURE_MESSAGE
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
-  checkLensManagerPermissions,
   EVENTS,
-  getSignature,
-  Tower
-} from '@dragverse/generic'
-import type {
-  CreateSetFollowModuleBroadcastItemResult,
-  Profile
-} from '@dragverse/lens'
+  checkLensManagerPermissions,
+  getSignature
+} from "@dragverse/generic";
 import {
+  type CreateSetFollowModuleBroadcastItemResult,
   FollowModuleType,
+  type Profile,
   useBroadcastOnchainMutation,
   useCreateSetFollowModuleTypedDataMutation
-} from '@dragverse/lens'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
-import { Button, Spinner } from '@dragverse/ui'
-import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
-import usePendingTxn from '@hooks/usePendingTxn'
-import useProfileStore from '@lib/store/idb/profile'
-import useNonceStore from '@lib/store/nonce'
-import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
-import { useSignTypedData, useWriteContract } from 'wagmi'
+} from "@dragverse/lens";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
+import { Button, Spinner } from "@dragverse/ui";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useSignTypedData, useWriteContract } from "wagmi";
 
 type Props = {
-  profile: Profile
-}
+  profile: Profile;
+};
 
 const RevertFollow = ({ profile }: Props) => {
-  const [loading, setLoading] = useState(false)
+  const { addEventToQueue } = useSw();
+  const [loading, setLoading] = useState(false);
   const [isRevertFollow, setIsRevertFollow] = useState(
     profile.followModule?.type === FollowModuleType.RevertFollowModule
-  )
+  );
   const lensHubOnchainSigNonce = useNonceStore(
     (state) => state.lensHubOnchainSigNonce
-  )
+  );
   const setLensHubOnchainSigNonce = useNonceStore(
     (state) => state.setLensHubOnchainSigNonce
-  )
-  const activeProfile = useProfileStore((state) => state.activeProfile)
-  const handleWrongNetwork = useHandleWrongNetwork()
-  const { canBroadcast } = checkLensManagerPermissions(activeProfile)
+  );
+  const activeProfile = useProfileStore((state) => state.activeProfile);
+  const handleWrongNetwork = useHandleWrongNetwork();
+  const { canBroadcast } = checkLensManagerPermissions(activeProfile);
 
-  const onCompleted = (__typename?: 'RelayError' | 'RelaySuccess') => {
-    if (__typename === 'RelayError') {
-      return
+  const onCompleted = (__typename?: "RelayError" | "RelaySuccess") => {
+    if (__typename === "RelayError") {
+      return;
     }
-    setLoading(false)
-    setIsRevertFollow(!isRevertFollow)
-    toast.success('Follow settings updated')
-    Tower.track(EVENTS.PROFILE.SETTINGS.TOGGLE_REVERT_FOLLOW)
-  }
+    setLoading(false);
+    setIsRevertFollow(!isRevertFollow);
+    toast.success("Follow settings updated");
+    addEventToQueue(EVENTS.PROFILE.SETTINGS.TOGGLE_REVERT_FOLLOW);
+  };
 
   const onError = (error: CustomErrorWithData) => {
-    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-    setLoading(false)
-  }
+    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
+    setLoading(false);
+  };
 
   const { signTypedDataAsync } = useSignTypedData({
     mutation: { onError }
-  })
+  });
 
   const [broadcast, { data: broadcastData }] = useBroadcastOnchainMutation({
     onError
-  })
+  });
 
   const { data: txHash, writeContractAsync } = useWriteContract({
     mutation: {
       onError
     }
-  })
+  });
 
   const write = async ({ args }: { args: any[] }) => {
     return await writeContractAsync({
       address: LENSHUB_PROXY_ADDRESS,
       abi: LENSHUB_PROXY_ABI,
-      functionName: 'setFollowModule',
+      functionName: "setFollowModule",
       args
-    })
-  }
+    });
+  };
 
   const { indexed } = usePendingTxn({
     txHash,
-    ...(broadcastData?.broadcastOnchain.__typename === 'RelaySuccess' && {
+    ...(broadcastData?.broadcastOnchain.__typename === "RelaySuccess" && {
       txId: broadcastData?.broadcastOnchain?.txId
     })
-  })
+  });
 
   useEffect(() => {
     if (indexed) {
-      onCompleted()
+      onCompleted();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [indexed])
+  }, [indexed]);
 
   const [createSetFollowModuleTypedData] =
     useCreateSetFollowModuleTypedDataMutation({
       onCompleted: async ({ createSetFollowModuleTypedData }) => {
         const { typedData, id } =
-          createSetFollowModuleTypedData as CreateSetFollowModuleBroadcastItemResult
+          createSetFollowModuleTypedData as CreateSetFollowModuleBroadcastItemResult;
         const { profileId, followModule, followModuleInitData } =
-          typedData.value
-        const args = [profileId, followModule, followModuleInitData]
+          typedData.value;
+        const args = [profileId, followModule, followModuleInitData];
         try {
-          toast.loading(REQUESTING_SIGNATURE_MESSAGE)
+          toast.loading(REQUESTING_SIGNATURE_MESSAGE);
           if (canBroadcast) {
-            const signature = await signTypedDataAsync(getSignature(typedData))
-            setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1)
+            const signature = await signTypedDataAsync(getSignature(typedData));
+            setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1);
             const { data } = await broadcast({
               variables: { request: { id, signature } }
-            })
-            if (data?.broadcastOnchain?.__typename === 'RelayError') {
-              return await write({ args })
+            });
+            if (data?.broadcastOnchain?.__typename === "RelayError") {
+              return await write({ args });
             }
-            return onCompleted(data?.broadcastOnchain?.__typename)
+            return onCompleted(data?.broadcastOnchain?.__typename);
           }
-          return await write({ args })
+          return await write({ args });
         } catch {
-          setLoading(false)
+          setLoading(false);
         }
       },
       onError
-    })
+    });
 
   const toggleRevert = async (revertFollowModule: boolean) => {
-    await handleWrongNetwork()
+    await handleWrongNetwork();
 
-    setLoading(true)
+    setLoading(true);
     return await createSetFollowModuleTypedData({
       variables: {
         options: { overrideSigNonce: lensHubOnchainSigNonce },
@@ -140,18 +138,18 @@ const RevertFollow = ({ profile }: Props) => {
           followModule: { revertFollowModule }
         }
       }
-    })
-  }
+    });
+  };
 
   return (
     <>
       <div className="mb-5 space-y-2">
-        <h1 className="text-brand-400 text-xl font-bold">
-          {isRevertFollow ? 'Enable' : 'Disable'} Follow
+        <h1 className="font-bold text-brand-400 text-xl">
+          {isRevertFollow ? "Enable" : "Disable"} Follow
         </h1>
         <p className="text opacity-80">
           {isRevertFollow
-            ? 'Enable follow back to allow others to follow you.'
+            ? "Enable follow back to allow others to follow you."
             : "You're in complete control of your online presence and profile. You can choose to be off the radar and no one can follow."}
         </p>
       </div>
@@ -177,7 +175,7 @@ const RevertFollow = ({ profile }: Props) => {
         )}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default RevertFollow
+export default RevertFollow;

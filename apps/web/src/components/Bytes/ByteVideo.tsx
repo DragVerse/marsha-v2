@@ -1,4 +1,4 @@
-import MetaTags from '@components/Common/MetaTags'
+import useProfileStore from "@/lib/store/idb/profile";
 import {
   getPublication,
   getPublicationData,
@@ -7,103 +7,101 @@ import {
   getThumbnailUrl,
   imageCdn,
   sanitizeDStorageUrl
-} from '@dragverse/generic'
-import type { AnyPublication } from '@dragverse/lens'
-import { VideoPlayer } from '@dragverse/ui'
-import useProfileStore from '@lib/store/idb/profile'
-import type { FC } from 'react'
-import React, { useEffect, useRef } from 'react'
-
-import BottomOverlay from './BottomOverlay'
-import ByteActions from './ByteActions'
-import TopOverlay from './TopOverlay'
+} from "@dragverse/generic";
+import type { AnyPublication } from "@dragverse/lens";
+import { VideoPlayer } from "@dragverse/ui";
+import { type FC, memo, useEffect, useRef } from "react";
+import MetaTags from "../Common/MetaTags";
+import BottomOverlay from "./BottomOverlay";
+import ByteActions from "./ByteActions";
+import TopOverlay from "./TopOverlay";
 
 type Props = {
-  video: AnyPublication
-  currentViewingId: string
-  intersectionCallback: (id: string) => void
-}
+  video: AnyPublication;
+  currentViewingId: string;
+  intersectionCallback: (id: string) => void;
+};
 
 const ByteVideo: FC<Props> = ({
   video,
   currentViewingId,
   intersectionCallback
 }) => {
-  const videoRef = useRef<HTMLMediaElement>()
-  const intersectionRef = useRef<HTMLDivElement>(null)
-  const targetPublication = getPublication(video)
+  const videoRef = useRef<HTMLMediaElement>();
+  const intersectionRef = useRef<HTMLDivElement>(null);
+  const targetPublication = getPublication(video);
 
-  const { activeProfile } = useProfileStore()
+  const { activeProfile } = useProfileStore();
   const thumbnailUrl = imageCdn(
     sanitizeDStorageUrl(getThumbnailUrl(targetPublication.metadata, true)),
-    'THUMBNAIL_V'
-  )
+    "THUMBNAIL_V"
+  );
 
   const playVideo = () => {
     if (!videoRef.current) {
-      return
+      return;
     }
-    videoRef.current.currentTime = 0
-    videoRef.current.volume = 1
-    videoRef.current.autoplay = true
-    videoRef.current?.play().catch(() => {})
-  }
+    videoRef.current.currentTime = 0;
+    videoRef.current.volume = 1;
+    videoRef.current.autoplay = true;
+    videoRef.current?.play().catch(() => {});
+  };
 
   const observer = new IntersectionObserver((data) => {
-    if (data[0].target.id && data[0].isIntersecting) {
-      intersectionCallback(data[0].target.id)
-      const nextUrl = `${location.origin}/bytes/${targetPublication?.id}`
-      history.replaceState({ path: nextUrl }, '', nextUrl)
+    if (data[0]?.target.id && data[0].isIntersecting) {
+      intersectionCallback(data[0].target.id);
+      const nextUrl = `${location.origin}/bytes/${targetPublication?.id}`;
+      history.replaceState({ path: nextUrl }, "", nextUrl);
     }
-  })
+  });
 
   useEffect(() => {
     if (intersectionRef.current) {
-      observer.observe(intersectionRef.current)
+      observer.observe(intersectionRef.current);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const pauseVideo = () => {
     if (!videoRef.current) {
-      return
+      return;
     }
-    videoRef.current.volume = 0
-    videoRef.current?.pause()
-    videoRef.current.autoplay = false
-  }
+    videoRef.current.volume = 0;
+    videoRef.current?.pause();
+    videoRef.current.autoplay = false;
+  };
 
   const onClickVideo = () => {
     if (videoRef.current?.paused) {
-      playVideo()
+      playVideo();
     } else {
-      pauseVideo()
+      pauseVideo();
     }
-  }
+  };
 
   const refCallback = (ref: HTMLMediaElement) => {
     if (!ref) {
-      return
+      return;
     }
-    videoRef.current = ref
-    playVideo()
-  }
+    videoRef.current = ref;
+    playVideo();
+  };
 
   if (!video) {
-    return null
+    return null;
   }
 
   return (
     <div className="keen-slider__slide flex snap-center justify-center focus-visible:outline-none md:ml-16 md:pb-2">
       <MetaTags title={getPublicationData(targetPublication.metadata)?.title} />
       <div className="relative">
-        <div className="rounded-large ultrawide:w-[650px] bg-brand-850 flex h-full w-[calc(100vw-80px)] items-center overflow-hidden md:w-[450px]">
+        <div className="flex h-full ultrawide:w-[650px] w-[calc(100vw-80px)] items-center overflow-hidden rounded-large bg-black md:w-[450px]">
           <div
             className="absolute top-[50%]"
             ref={intersectionRef}
             id={targetPublication?.id}
           />
           <VideoPlayer
+            pid={targetPublication.id}
             address={activeProfile?.ownedBy.address}
             refCallback={refCallback}
             url={getPublicationMediaUrl(targetPublication.metadata)}
@@ -125,7 +123,7 @@ const ByteVideo: FC<Props> = ({
       </div>
       <ByteActions video={targetPublication} />
     </div>
-  )
-}
+  );
+};
 
-export default React.memo(ByteVideo)
+export default memo(ByteVideo);

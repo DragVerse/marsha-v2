@@ -1,38 +1,37 @@
-import MetaTags from '@components/Common/MetaTags'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
+import useSw from "@/hooks/useSw";
+import useCuratedProfiles from "@/lib/store/idb/curated";
 import {
   ALLOWED_APP_IDS,
   INFINITE_SCROLL_ROOT_MARGIN,
   IS_MAINNET,
   TAPE_APP_ID
-} from '@dragverse/constants'
-import { EVENTS, Tower } from '@dragverse/generic'
-import type {
-  AnyPublication,
-  PrimaryPublication,
-  PublicationsRequest
-} from '@dragverse/lens'
+} from "@dragverse/constants";
+import { EVENTS } from "@dragverse/generic";
 import {
+  type AnyPublication,
   LimitType,
+  type PrimaryPublication,
   PublicationMetadataMainFocusType,
   PublicationType,
+  type PublicationsRequest,
   usePublicationLazyQuery,
   usePublicationsLazyQuery
-} from '@dragverse/lens'
-import { ChevronDownOutline, ChevronUpOutline, Spinner } from '@dragverse/ui'
-import useCuratedProfiles from '@lib/store/idb/curated'
-import { useKeenSlider } from 'keen-slider/react'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { useInView } from 'react-cool-inview'
-
-import ByteVideo from './ByteVideo'
-import { KeyboardControls, WheelControls } from './SliderPlugin'
+} from "@dragverse/lens";
+import { ChevronDownOutline, ChevronUpOutline, Spinner } from "@dragverse/ui";
+import { useKeenSlider } from "keen-slider/react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useInView } from "react-cool-inview";
+import MetaTags from "../Common/MetaTags";
+import { NoDataFound } from "../UIElements/NoDataFound";
+import ByteVideo from "./ByteVideo";
+import { KeyboardControls, WheelControls } from "./SliderPlugin";
 
 const Bytes = () => {
-  const router = useRouter()
-  const [currentViewingId, setCurrentViewingId] = useState('')
-  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles)
+  const router = useRouter();
+  const [currentViewingId, setCurrentViewingId] = useState("");
+  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles);
+  const { addEventToQueue } = useSw();
 
   const [sliderRef, { current: slider }] = useKeenSlider(
     {
@@ -40,7 +39,7 @@ const Bytes = () => {
       slides: { perView: 1, spacing: 10 }
     },
     [WheelControls, KeyboardControls]
-  )
+  );
 
   const request: PublicationsRequest = {
     where: {
@@ -52,12 +51,12 @@ const Bytes = () => {
       from: curatedProfiles
     },
     limit: LimitType.Fifty
-  }
+  };
 
   const [
     fetchPublication,
     { data: singleByteData, loading: singleByteLoading }
-  ] = usePublicationLazyQuery()
+  ] = usePublicationLazyQuery();
 
   const [fetchAllBytes, { data, loading, error, fetchMore }] =
     usePublicationsLazyQuery({
@@ -65,40 +64,39 @@ const Bytes = () => {
         request
       },
       onCompleted: ({ publications }) => {
-        const items = publications?.items as unknown as AnyPublication[]
-        const publicationId = router.query.id
+        const items = publications?.items as unknown as AnyPublication[];
+        const publicationId = router.query.id;
         if (!publicationId && items[0]?.id) {
-          const nextUrl = `${location.origin}/bytes/${items[0]?.id}`
-          history.pushState({ path: nextUrl }, '', nextUrl)
+          const nextUrl = `${location.origin}/bytes/${items[0]?.id}`;
+          history.pushState({ path: nextUrl }, "", nextUrl);
         }
       }
-    })
+    });
 
-  const bytes = data?.publications?.items as unknown as AnyPublication[]
-  const pageInfo = data?.publications?.pageInfo
-  const singleByte = singleByteData?.publication as PrimaryPublication
+  const bytes = data?.publications?.items as unknown as AnyPublication[];
+  const pageInfo = data?.publications?.pageInfo;
+  const singleByte = singleByteData?.publication as PrimaryPublication;
 
   const fetchSingleByte = async () => {
-    const publicationId = router.query.id
+    const publicationId = router.query.id;
     if (!publicationId) {
-      return curatedProfiles?.length ? fetchAllBytes() : null
+      return curatedProfiles?.length ? fetchAllBytes() : null;
     }
     await fetchPublication({
       variables: {
         request: { forId: publicationId }
       },
       onCompleted: () => (curatedProfiles?.length ? fetchAllBytes() : null),
-      fetchPolicy: 'network-only'
-    })
-  }
+      fetchPolicy: "network-only"
+    });
+  };
 
   useEffect(() => {
     if (router.isReady) {
-      fetchSingleByte()
-      Tower.track(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.BYTES })
+      fetchSingleByte();
+      addEventToQueue(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.BYTES });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady, curatedProfiles.length])
+  }, [router.isReady, curatedProfiles.length]);
 
   const { observe } = useInView({
     threshold: 0.25,
@@ -111,16 +109,16 @@ const Bytes = () => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   if (loading || singleByteLoading) {
     return (
       <div className="grid h-screen place-items-center">
         <Spinner />
       </div>
-    )
+    );
   }
 
   if (error || (!bytes?.length && !singleByte)) {
@@ -128,7 +126,7 @@ const Bytes = () => {
       <div className="grid h-screen place-items-center">
         <NoDataFound isCenter withImage />
       </div>
-    )
+    );
   }
 
   return (
@@ -167,22 +165,24 @@ const Bytes = () => {
           <Spinner />
         </span>
       )}
-      <div className="laptop:right-6 ultrawide:right-8 bottom-3 right-4 hidden flex-col space-y-2 md:absolute md:flex">
+      <div className="laptop:right-6 right-4 ultrawide:right-8 bottom-3 hidden flex-col space-y-2 md:absolute md:flex">
         <button
-          className="bg-gallery dark:bg-brand-250/50 rounded-full p-3 focus:outline-none"
+          type="button"
+          className="rounded-full bg-gallery p-3 focus:outline-none dark:bg-gray-800"
           onClick={() => slider?.prev()}
         >
           <ChevronUpOutline className="size-5" />
         </button>
         <button
-          className="bg-gallery dark:bg-brand-250/50 rounded-full p-3 focus:outline-none"
+          type="button"
+          className="rounded-full bg-gallery p-3 focus:outline-none dark:bg-gray-800"
           onClick={() => slider?.next()}
         >
           <ChevronDownOutline className="size-5" />
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Bytes
+export default Bytes;

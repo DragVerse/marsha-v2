@@ -1,31 +1,32 @@
-import type { UnknownOpenActionType } from '@dragverse/lens/custom-types'
-import { Button, Checkbox, ChevronRightOutline, Modal } from '@dragverse/ui'
-import useAppStore from '@lib/store'
-import { useState } from 'react'
+import type { UnknownOpenActionType } from "@dragverse/lens/custom-types";
+import { Button, Checkbox, ChevronRightOutline, Modal } from "@dragverse/ui";
+import { useState } from "react";
+
+import useAppStore from "@/lib/store";
 
 const APPROVED_UNKNOWN_OPEN_ACTIONS = [
   {
-    name: 'Tip the creator',
+    name: "Tip the creator",
     description:
-      'Anyone can directly tip the creator of this publication with any of the supported currencies.',
-    address: '',
-    data: ''
+      "Anyone can directly tip the creator of this publication with any of the supported currencies.",
+    address: "",
+    data: ""
   }
-]
+];
 
 const OpenActionSettings = () => {
-  const [showModal, setShowModal] = useState(false)
-  const [selected, setSelected] = useState<UnknownOpenActionType | null>(null)
+  const [showModal, setShowModal] = useState(false);
+  const [selected, setSelected] = useState<UnknownOpenActionType | null>(null);
 
-  const uploadedMedia = useAppStore((state) => state.uploadedMedia)
-  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia)
+  const uploadedMedia = useAppStore((state) => state.uploadedMedia);
+  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia);
 
   const getSelectedOpenActions = () => {
     if (!uploadedMedia.unknownOpenAction) {
-      return 'Select an action'
+      return "Select an action";
     }
-    return `${uploadedMedia.unknownOpenAction?.name} (selected)`
-  }
+    return `${uploadedMedia.unknownOpenAction?.name} (selected)`;
+  };
 
   return (
     <div className="mt-2 pb-2">
@@ -51,7 +52,7 @@ const OpenActionSettings = () => {
           {APPROVED_UNKNOWN_OPEN_ACTIONS.map(
             ({ name, description, address }, i) => (
               <div
-                key={i}
+                key={address}
                 className="space-y-2 rounded-lg border border-gray-200 px-4 py-3"
               >
                 <Checkbox
@@ -64,9 +65,9 @@ const OpenActionSettings = () => {
                         APPROVED_UNKNOWN_OPEN_ACTIONS.find(
                           (action) => action.address === address
                         ) as (typeof APPROVED_UNKNOWN_OPEN_ACTIONS)[0]
-                      )
+                      );
                     }
-                    setSelected(null)
+                    setSelected(null);
                   }}
                 />
                 <p className="text-sm opacity-80">{description}</p>
@@ -78,8 +79,8 @@ const OpenActionSettings = () => {
             <Button
               type="button"
               onClick={() => {
-                setUploadedMedia({ unknownOpenAction: selected })
-                setShowModal(false)
+                setUploadedMedia({ unknownOpenAction: selected });
+                setShowModal(false);
               }}
             >
               Set Action
@@ -88,7 +89,7 @@ const OpenActionSettings = () => {
         </div>
       </Modal>
     </div>
-  )
-}
+  );
+};
 
-export default OpenActionSettings
+export default OpenActionSettings;

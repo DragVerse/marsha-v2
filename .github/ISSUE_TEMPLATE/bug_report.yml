@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a reproducible bug in Tape
+description: Report a reproducible bug in Dragverse
 labels: [bug, needs review]
 body:
   - type: markdown

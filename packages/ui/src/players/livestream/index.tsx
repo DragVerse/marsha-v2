@@ -1,16 +1,19 @@
-import { LIVEPEER_STUDIO_API_KEY } from '@dragverse/constants'
-import type { FC } from 'react'
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { LIVEPEER_STUDIO_API_KEY } from "@dragverse/constants";
+import type React from "react";
+import type { FC } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 
-import type { PlayerProps } from './Player'
-import PlayerInstance from './Player'
-import SensitiveWarning from './SensitiveWarning'
+import type { PlayerProps } from "./Player";
+import PlayerInstance from "./Player";
+import SensitiveWarning from "./SensitiveWarning";
 
 interface Props extends PlayerProps {
-  url: string
-  currentTime?: number
-  isSensitiveContent?: boolean
-  refCallback?: (ref: HTMLMediaElement) => void
+  url: string;
+  currentTime?: number;
+  isSensitiveContent?: boolean;
+  refCallback?: (ref: HTMLMediaElement) => void;
+  playbackId: string;
+  streamId: string;
 }
 
 export const LivestreamPlayer: FC<Props> = memo(function LivestreamPlayer({
@@ -19,7 +22,7 @@ export const LivestreamPlayer: FC<Props> = memo(function LivestreamPlayer({
   options,
   posterUrl,
   refCallback,
-  ratio = '16to9',
+  ratio = "16to9",
   currentTime = 0,
   isSensitiveContent,
   showControls = true,
@@ -27,27 +30,27 @@ export const LivestreamPlayer: FC<Props> = memo(function LivestreamPlayer({
   playbackId,
   streamId
 }) {
-  const [showLivestream, setShowLivestream] = useState<boolean>(false)
-  const playerRef = useRef<HTMLMediaElement>()
-  const [sensitiveWarning, setSensitiveWarning] = useState(isSensitiveContent)
+  const [showLivestream, setShowLivestream] = useState<boolean>(false);
+  const playerRef = useRef<HTMLMediaElement>();
+  const [sensitiveWarning, setSensitiveWarning] = useState(isSensitiveContent);
 
   const mediaElementRef = useCallback((ref: HTMLMediaElement) => {
-    refCallback?.(ref)
-    playerRef.current = ref
-    playerRef.current.currentTime = Number(currentTime || 0)
+    refCallback?.(ref);
+    playerRef.current = ref;
+    playerRef.current.currentTime = Number(currentTime || 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (!playerRef.current) {
-      return
+      return;
     }
-    playerRef.current.currentTime = Number(currentTime || 0)
-  }, [currentTime])
+    playerRef.current.currentTime = Number(currentTime || 0);
+  }, [currentTime]);
 
   const onContextClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault()
-  }
+    event.preventDefault();
+  };
 
   const checkStreamActive = async (streamId: string) => {
     const response = await fetch(
@@ -57,35 +60,34 @@ export const LivestreamPlayer: FC<Props> = memo(function LivestreamPlayer({
           Authorization: `Bearer ${LIVEPEER_STUDIO_API_KEY}`
         }
       }
-    )
+    );
     if (response.ok) {
-      const session = await response.json()
-      return session.isActive
-    } else {
-      console.error(`Failed to fetch session: ${response.statusText}`)
-      return false
+      const session = await response.json();
+      return session.isActive;
     }
-  }
+    console.error(`Failed to fetch session: ${response.statusText}`);
+    return false;
+  };
 
   useEffect(() => {
     if (!streamId) {
-      return
+      return;
     }
     checkStreamActive(streamId).then((isActive) => {
-      console.log('livestream isActive', isActive)
-      setShowLivestream(isActive)
-    })
-  }, [streamId])
+      console.log("livestream isActive", isActive);
+      setShowLivestream(isActive);
+    });
+  }, [streamId]);
 
   return (
-    <div className={`w-full ${options.maxHeight && 'h-full'}`}>
+    <div className={`w-full ${options.maxHeight && "h-full"}`}>
       {showLivestream ? (
         sensitiveWarning ? (
           <SensitiveWarning acceptWarning={() => setSensitiveWarning(false)} />
         ) : (
           <div
             onContextMenu={onContextClick}
-            className={`relative flex ${options.maxHeight && 'h-full'} h-full w-full p-12`}
+            className={`relative flex ${options.maxHeight && "h-full"} h-full w-full p-12`}
           >
             <PlayerInstance
               ratio={ratio}
@@ -104,5 +106,5 @@ export const LivestreamPlayer: FC<Props> = memo(function LivestreamPlayer({
         <> </>
       )}
     </div>
-  )
-})
+  );
+});

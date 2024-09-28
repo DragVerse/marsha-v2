@@ -1,17 +1,18 @@
 {
-  "extends": "@dragverse/config/base.tsconfig.json",
+  "extends": "@dragverse/tsconfig/base.json",
   "compilerOptions": {
+    "outDir": "./dist",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
+    "noEmit": false,
     "lib": ["esnext"],
-    "types": ["@cloudflare/workers-types"],
     "jsx": "react-jsx",
+    "types": ["node"],
     "jsxImportSource": "hono/jsx",
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "exclude": ["node_modules", "dist"]
 }

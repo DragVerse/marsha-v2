@@ -1,12 +1,11 @@
-import type { Profile } from '@dragverse/lens'
-import type { FC } from 'react'
-
-import Followers from './Followers'
-import Following from './Following'
+import type { Profile } from "@dragverse/lens";
+import type { FC } from "react";
+import Followers from "./Followers";
+import Following from "./Following";
 
 type Props = {
-  profile: Profile
-}
+  profile: Profile;
+};
 
 const Stats: FC<Props> = ({ profile }) => {
   return (
@@ -14,7 +13,7 @@ const Stats: FC<Props> = ({ profile }) => {
       <Followers stats={profile.stats} profileId={profile.id} />
       <Following stats={profile.stats} profileId={profile.id} />
     </div>
-  )
-}
+  );
+};
 
-export default Stats
+export default Stats;

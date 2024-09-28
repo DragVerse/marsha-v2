@@ -1,34 +1,34 @@
-import { SuggestedVideosShimmer } from '@components/Shimmers/WatchShimmer'
+import useCuratedProfiles from "@/lib/store/idb/curated";
+import useProfileStore from "@/lib/store/idb/profile";
 import {
   ALLOWED_APP_IDS,
   INFINITE_SCROLL_ROOT_MARGIN,
   IS_MAINNET,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID
-} from '@dragverse/constants'
-import type { PrimaryPublication, PublicationsRequest } from '@dragverse/lens'
+} from "@dragverse/constants";
 import {
   LimitType,
+  type PrimaryPublication,
   PublicationMetadataMainFocusType,
   PublicationType,
+  type PublicationsRequest,
   usePublicationsQuery
-} from '@dragverse/lens'
-import { Spinner } from '@dragverse/ui'
-import useCuratedProfiles from '@lib/store/idb/curated'
-import useProfileStore from '@lib/store/idb/profile'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import { useInView } from 'react-cool-inview'
-
-import SuggestedVideoCard from './SuggestedVideoCard'
+} from "@dragverse/lens";
+import { Spinner } from "@dragverse/ui";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { useInView } from "react-cool-inview";
+import { SuggestedVideosShimmer } from "../Shimmers/WatchShimmer";
+import SuggestedVideoCard from "./SuggestedVideoCard";
 
 const SuggestedVideos = () => {
   const {
     query: { id }
-  } = useRouter()
+  } = useRouter();
 
-  const { activeProfile } = useProfileStore()
-  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles)
+  const { activeProfile } = useProfileStore();
+  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles);
 
   const request: PublicationsRequest = {
     where: {
@@ -42,21 +42,21 @@ const SuggestedVideos = () => {
       from: curatedProfiles
     },
     limit: LimitType.Fifty
-  }
+  };
 
   const { data, loading, error, fetchMore, refetch } = usePublicationsQuery({
     variables: {
       request
     },
     skip: !curatedProfiles?.length
-  })
+  });
 
-  const videos = data?.publications?.items as PrimaryPublication[]
-  const pageInfo = data?.publications?.pageInfo
+  const videos = data?.publications?.items as PrimaryPublication[];
+  const pageInfo = data?.publications?.pageInfo;
 
   useEffect(() => {
-    refetch()
-  }, [id, refetch])
+    refetch();
+  }, [id, refetch]);
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -69,9 +69,9 @@ const SuggestedVideos = () => {
           },
           channelId: activeProfile?.id ?? null
         }
-      })
+      });
     }
-  })
+  });
 
   return (
     <>
@@ -95,7 +95,7 @@ const SuggestedVideos = () => {
         </div>
       ) : null}
     </>
-  )
-}
+  );
+};
 
-export default SuggestedVideos
+export default SuggestedVideos;

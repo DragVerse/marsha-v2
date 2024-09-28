@@ -1,12 +1,11 @@
-import MetaTags from '@components/Common/MetaTags'
-import type { Profile } from '@dragverse/lens'
-
-import FeeFollow from './FeeFollow'
-import RevertFollow from './RevertFollow'
+import MetaTags from "@/components/Common/MetaTags";
+import type { Profile } from "@dragverse/lens";
+import FeeFollow from "./FeeFollow";
+import RevertFollow from "./RevertFollow";
 
 type Props = {
-  profile: Profile
-}
+  profile: Profile;
+};
 
 const FollowSettings = ({ profile }: Props) => {
   return (
@@ -17,7 +16,7 @@ const FollowSettings = ({ profile }: Props) => {
         <RevertFollow profile={profile} />
       </div>
     </>
-  )
-}
+  );
+};
 
-export default FollowSettings
+export default FollowSettings;

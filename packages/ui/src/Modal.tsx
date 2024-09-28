@@ -1,18 +1,18 @@
-import { tw } from '@dragverse/browser'
-import * as Dialog from '@radix-ui/react-dialog'
-import type { FC, ReactNode } from 'react'
+import { tw } from "@dragverse/browser";
+import * as Dialog from "@radix-ui/react-dialog";
+import type { FC, ReactNode } from "react";
 
-import { TimesOutline } from './icons'
+import { TimesOutline } from "./icons";
 
 type Props = {
-  title: ReactNode | string
-  description?: ReactNode | string
-  children: ReactNode
-  size?: 'sm' | 'md' | 'lg'
-  show: boolean
-  setShow: (show: boolean) => void
-  locked?: boolean
-}
+  title: ReactNode | string;
+  description?: ReactNode | string;
+  children: ReactNode;
+  size?: "sm" | "md" | "lg";
+  show: boolean;
+  setShow: (show: boolean) => void;
+  locked?: boolean;
+};
 
 export const Modal: FC<Props> = ({
   children,
@@ -21,13 +21,13 @@ export const Modal: FC<Props> = ({
   show,
   setShow,
   locked,
-  size = 'md'
+  size = "md"
 }) => {
   const sizeClasses = {
-    'max-w-[450px]': size === 'sm',
-    'max-w-[550px]': size === 'md',
-    'max-w-[650px]': size === 'lg'
-  }
+    "max-w-[450px]": size === "sm",
+    "max-w-[550px]": size === "md",
+    "max-w-[650px]": size === "lg"
+  };
   return (
     <Dialog.Root open={show} onOpenChange={setShow}>
       <Dialog.Portal>
@@ -36,17 +36,21 @@ export const Modal: FC<Props> = ({
           onPointerDownOutside={(e) => (locked ? e.preventDefault() : null)}
           className={tw(
             sizeClasses,
-            'tape-border dark:bg-brand-850 fixed left-[50%] top-[50%] z-10 max-h-[85vh] w-[90vw] translate-x-[-50%] translate-y-[-50%] space-y-4 rounded-xl bg-white p-5 focus:outline-none'
+            "dragverse-border fixed top-[50%] left-[50%] z-10 max-h-[85vh] w-[90vw] translate-x-[-50%] translate-y-[-50%] space-y-4 rounded-xl bg-white p-5 focus:outline-none dark:bg-brand"
           )}
         >
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Dialog.Title className="text-lg font-semibold">
+              <Dialog.Title className="font-semibold text-lg">
                 {title}
               </Dialog.Title>
               {!locked && (
-                <button className="flex" onClick={() => setShow(false)}>
-                  <span className="dark:hover:bg-brand-250 cursor-pointer rounded p-1.5 hover:bg-gray-100">
+                <button
+                  type="button"
+                  className="flex"
+                  onClick={() => setShow(false)}
+                >
+                  <span className="cursor-pointer rounded p-1.5 hover:bg-gray-100 dark:hover:bg-gray-900">
                     <TimesOutline outlined={false} className="size-3" />
                   </span>
                 </button>
@@ -62,5 +66,5 @@ export const Modal: FC<Props> = ({
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
-  )
-}
+  );
+};

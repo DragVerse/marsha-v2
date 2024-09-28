@@ -1,32 +1,5 @@
 {
-  "name": "@dragverse/browser",
+  "name": "browser",
   "version": "0.0.0",
-  "license": "AGPL-3.0",
-  "main": "./index.ts",
-  "scripts": {
-    "lint": "eslint . --ext .js,.ts,.tsx --fix",
-    "typecheck": "tsc --pretty"
-  },
-  "devDependencies": {
-    "@aws-sdk/client-s3": "3.583.0",
-    "@aws-sdk/lib-storage": "3.583.0",
-    "@livepeer/react": "^3.1.9",
-    "axios": "^1.7.2",
-    "next": "^14.2.3",
-    "react": "^18.3.1",
-    "typescript": "5.4.5",
-    "uuid": "^9.0.1"
-  },
-  "dependencies": {
-    "@rajesh896/broprint.js": "^2.1.1",
-    "@dragverse/config": "workspace:*",
-    "@dragverse/constants": "workspace:*",
-    "@dragverse/generic": "workspace:*",
-    "@dragverse/lens": "workspace:*",
-    "@types/react": "^18.3.3",
-    "@types/uuid": "^9.0.8",
-    "clsx": "^2.1.1",
-    "fast-average-color": "^9.4.0",
-    "tailwind-merge": "^2.3.0"
-  }
+  "private": true
 }

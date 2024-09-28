@@ -1,11 +1,12 @@
-import { LocalIDBStore } from '@dragverse/lens/custom-types'
-import createIdbStorage from '@lib/createIdbStorage'
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { LocalIDBStore } from "@dragverse/lens/custom-types";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+import createIdbStorage from "@/lib/createIdbStorage";
 
 interface State {
-  curatedProfiles: string[]
-  setCuratedProfiles: (curatedProfiles: string[]) => void
+  curatedProfiles: string[];
+  setCuratedProfiles: (curatedProfiles: string[]) => void;
 }
 
 const useCuratedProfiles = create(
@@ -19,6 +20,6 @@ const useCuratedProfiles = create(
       storage: createIdbStorage()
     }
   )
-)
+);
 
-export default useCuratedProfiles
+export default useCuratedProfiles;

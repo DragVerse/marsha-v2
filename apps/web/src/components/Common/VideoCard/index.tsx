@@ -1,36 +1,35 @@
-import { LENSTUBE_BYTES_APP_ID } from '@dragverse/constants'
+import { getShortHandTime } from "@/lib/formatTime";
+import { LENSTUBE_BYTES_APP_ID } from "@dragverse/constants";
 import {
   formatNumber,
   getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData
-} from '@dragverse/generic'
-import type { PrimaryPublication, VideoMetadataV3 } from '@dragverse/lens'
-import { HeartOutline } from '@dragverse/ui'
-import { getShortHandTime } from '@lib/formatTime'
-import Link from 'next/link'
-import type { FC } from 'react'
-
-import HoverableProfile from '../HoverableProfile'
-import PublicationOptions from '../Publication/PublicationOptions'
-import ThumbnailImage from './ThumbnailImage'
-import ThumbnailOverlays from './ThumbnailOverlays'
+} from "@dragverse/generic";
+import type { PrimaryPublication, VideoMetadataV3 } from "@dragverse/lens";
+import { HeartOutline } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
+import HoverableProfile from "../HoverableProfile";
+import PublicationOptions from "../Publication/PublicationOptions";
+import ThumbnailImage from "./ThumbnailImage";
+import ThumbnailOverlays from "./ThumbnailOverlays";
 
 type Props = {
-  video: PrimaryPublication
-}
+  video: PrimaryPublication;
+};
 
 const VideoCard: FC<Props> = ({ video }) => {
-  const isBytes = video.publishedOn?.id === LENSTUBE_BYTES_APP_ID
+  const isBytes = video.publishedOn?.id === LENSTUBE_BYTES_APP_ID;
 
-  const href = isBytes ? `/bytes/${video.id}` : `/watch/${video.id}`
-  const metadata = video.metadata as VideoMetadataV3
+  const href = isBytes ? `/bytes/${video.id}` : `/watch/${video.id}`;
+  const metadata = video.metadata as VideoMetadataV3;
 
   return (
     <div className="group">
       <Link href={href}>
-        <div className="rounded-medium tape-border relative aspect-[16/9] overflow-hidden">
+        <div className="dragverse-border relative aspect-[16/9] overflow-hidden rounded-medium">
           <ThumbnailImage video={video} />
           <ThumbnailOverlays video={video} />
         </div>
@@ -38,12 +37,12 @@ const VideoCard: FC<Props> = ({ video }) => {
       <div className="py-2">
         <div className="flex gap-2">
           <img
-            src={getProfilePicture(video.by, 'AVATAR')}
+            src={getProfilePicture(video.by, "AVATAR")}
             className="size-8 rounded-full"
             alt={getProfile(video.by)?.displayName}
             draggable={false}
             onError={({ currentTarget }) => {
-              currentTarget.src = getLennyPicture(video.by?.id)
+              currentTarget.src = getLennyPicture(video.by?.id);
             }}
           />
 
@@ -52,7 +51,7 @@ const VideoCard: FC<Props> = ({ video }) => {
               <Link className="line-clamp-2 break-words font-bold" href={href}>
                 {getPublicationData(metadata)?.title}
               </Link>
-              <div className="flex pr-1 pt-1">
+              <div className="flex pt-1 pr-1">
                 <PublicationOptions publication={video} />
               </div>
             </div>
@@ -71,7 +70,7 @@ const VideoCard: FC<Props> = ({ video }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VideoCard
+export default VideoCard;

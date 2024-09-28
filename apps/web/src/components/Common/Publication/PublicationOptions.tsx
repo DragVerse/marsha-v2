@@ -1,16 +1,19 @@
-import ReportPublication from '@components/Report/Publication'
-import Confirm from '@components/UIElements/Confirm'
-import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
+import ReportPublication from "@/components/Report/Publication";
+import Confirm from "@/components/UIElements/Confirm";
+import useHandleWrongNetwork from "@/hooks/useHandleWrongNetwork";
+import useSw from "@/hooks/useSw";
+import useProfileStore from "@/lib/store/idb/profile";
+import { LENSHUB_PROXY_ABI } from "@dragverse/abis";
 import {
   ERROR_MESSAGE,
   LENSHUB_PROXY_ADDRESS,
   REQUESTING_SIGNATURE_MESSAGE,
   SIGN_IN_REQUIRED,
   TAPE_APP_ID
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
-  checkLensManagerPermissions,
   EVENTS,
+  checkLensManagerPermissions,
   getIsIPFSUrl,
   getMetadataCid,
   getProfileCoverPicture,
@@ -18,16 +21,13 @@ import {
   getSignature,
   getValueFromKeyInAttributes,
   logger,
-  Tower,
   trimify,
   uploadToAr
-} from '@dragverse/generic'
-import type {
-  OnchainSetProfileMetadataRequest,
-  PrimaryPublication,
-  Profile
-} from '@dragverse/lens'
+} from "@dragverse/generic";
 import {
+  type OnchainSetProfileMetadataRequest,
+  type PrimaryPublication,
+  type Profile,
   useAddPublicationBookmarkMutation,
   useAddPublicationNotInterestedMutation,
   useBroadcastOnchainMutation,
@@ -36,9 +36,9 @@ import {
   useRemovePublicationBookmarkMutation,
   useSetProfileMetadataMutation,
   useUndoPublicationNotInterestedMutation
-} from '@dragverse/lens'
-import { useApolloClient } from '@dragverse/lens/apollo'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
+} from "@dragverse/lens";
+import { useApolloClient } from "@dragverse/lens/apollo";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
 import {
   BookmarkOutline,
   DropdownMenu,
@@ -51,165 +51,162 @@ import {
   ShareOutline,
   ThreeDotsOutline,
   TrashOutline
-} from '@dragverse/ui'
-import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
-import type { ProfileOptions } from '@lens-protocol/metadata'
-import { MetadataAttributeType, profile } from '@lens-protocol/metadata'
-import useProfileStore from '@lib/store/idb/profile'
-import type { FC, ReactNode } from 'react'
-import { useState } from 'react'
-import toast from 'react-hot-toast'
-import { useSignTypedData, useWriteContract } from 'wagmi'
-
-import ArweaveExplorerLink from '../Links/ArweaveExplorerLink'
-import IPFSLink from '../Links/IPFSLink'
-import Share from '../VideoCard/Share'
+} from "@dragverse/ui";
+import type { ProfileOptions } from "@lens-protocol/metadata";
+import { MetadataAttributeType, profile } from "@lens-protocol/metadata";
+import { type FC, type ReactNode, useState } from "react";
+import toast from "react-hot-toast";
+import { useSignTypedData, useWriteContract } from "wagmi";
+import ArweaveExplorerLink from "../Links/ArweaveExplorerLink";
+import IPFSLink from "../Links/IPFSLink";
+import Share from "../VideoCard/Share";
 
 type Props = {
-  publication: PrimaryPublication
-  children?: ReactNode
-}
+  publication: PrimaryPublication;
+  children?: ReactNode;
+};
 
 const PublicationOptions: FC<Props> = ({ publication, children }) => {
-  const handleWrongNetwork = useHandleWrongNetwork()
-  const [showConfirm, setShowConfirm] = useState(false)
-  const [showShareModal, setShowShareModal] = useState(false)
-  const [showReportModal, setShowReportModal] = useState(false)
+  const handleWrongNetwork = useHandleWrongNetwork();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
-  const { cache } = useApolloClient()
-  const activeProfile = useProfileStore((state) => state.activeProfile)
+  const { addEventToQueue } = useSw();
+  const { cache } = useApolloClient();
+  const activeProfile = useProfileStore((state) => state.activeProfile);
   const { canUseLensManager, canBroadcast } =
-    checkLensManagerPermissions(activeProfile)
+    checkLensManagerPermissions(activeProfile);
 
-  const isVideoOwner = activeProfile?.id === publication?.by?.id
+  const isVideoOwner = activeProfile?.id === publication?.by?.id;
   const pinnedVideoId = getValueFromKeyInAttributes(
     activeProfile?.metadata?.attributes,
-    'pinnedPublicationId'
-  )
+    "pinnedPublicationId"
+  );
 
   const [hideVideo, { loading: hiding }] = useHidePublicationMutation({
     update(cache) {
       const normalizedId = cache.identify({
         id: publication?.id,
-        __typename: 'Post'
-      })
-      cache.evict({ id: normalizedId })
-      cache.gc()
+        __typename: "Post"
+      });
+      cache.evict({ id: normalizedId });
+      cache.gc();
     },
     onCompleted: () => {
-      toast.success(`Video deleted`)
-      Tower.track(EVENTS.PUBLICATION.DELETE, {
+      toast.success("Video deleted");
+      addEventToQueue(EVENTS.PUBLICATION.DELETE, {
         publication_type: publication.__typename?.toLowerCase()
-      })
+      });
     }
-  })
+  });
 
   const onHideVideo = async () => {
-    await hideVideo({ variables: { request: { for: publication?.id } } })
-    setShowConfirm(false)
-  }
+    await hideVideo({ variables: { request: { for: publication?.id } } });
+    setShowConfirm(false);
+  };
 
   const onClickReport = async () => {
     if (!activeProfile?.id) {
-      return toast.error(SIGN_IN_REQUIRED)
+      return toast.error(SIGN_IN_REQUIRED);
     }
-    await handleWrongNetwork()
+    await handleWrongNetwork();
 
-    setShowReportModal(true)
-  }
+    setShowReportModal(true);
+  };
 
   const onError = (error: CustomErrorWithData) => {
-    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-  }
+    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
+  };
 
   const onCompleted = (
-    __typename?: 'RelayError' | 'RelaySuccess' | 'LensProfileManagerRelayError'
+    __typename?: "RelayError" | "RelaySuccess" | "LensProfileManagerRelayError"
   ) => {
     if (
-      __typename === 'RelayError' ||
-      __typename === 'LensProfileManagerRelayError'
+      __typename === "RelayError" ||
+      __typename === "LensProfileManagerRelayError"
     ) {
-      return
+      return;
     }
-    toast.success(`Transaction submitted`)
-    Tower.track(EVENTS.PUBLICATION.PIN)
-  }
+    toast.success("Transaction submitted");
+    addEventToQueue(EVENTS.PUBLICATION.PIN);
+  };
 
   const { signTypedDataAsync } = useSignTypedData({
     mutation: { onError }
-  })
+  });
 
   const { writeContractAsync } = useWriteContract({
     mutation: {
       onError,
       onSuccess: () => onCompleted()
     }
-  })
+  });
 
   const write = async ({ args }: { args: any[] }) => {
     return await writeContractAsync({
       address: LENSHUB_PROXY_ADDRESS,
       abi: LENSHUB_PROXY_ABI,
-      functionName: 'setProfileMetadataURI',
+      functionName: "setProfileMetadataURI",
       args
-    })
-  }
+    });
+  };
 
   const [broadcast] = useBroadcastOnchainMutation({
     onError,
     onCompleted: ({ broadcastOnchain }) =>
       onCompleted(broadcastOnchain.__typename)
-  })
+  });
 
   const [createOnchainSetProfileMetadataTypedData] =
     useCreateOnchainSetProfileMetadataTypedDataMutation({
       onCompleted: async ({ createOnchainSetProfileMetadataTypedData }) => {
-        const { typedData, id } = createOnchainSetProfileMetadataTypedData
-        const { profileId, metadataURI } = typedData.value
+        const { typedData, id } = createOnchainSetProfileMetadataTypedData;
+        const { profileId, metadataURI } = typedData.value;
         try {
-          toast.loading(REQUESTING_SIGNATURE_MESSAGE)
+          toast.loading(REQUESTING_SIGNATURE_MESSAGE);
 
           if (canBroadcast) {
-            const signature = await signTypedDataAsync(getSignature(typedData))
+            const signature = await signTypedDataAsync(getSignature(typedData));
             const { data } = await broadcast({
               variables: { request: { id, signature } }
-            })
-            if (data?.broadcastOnchain?.__typename === 'RelayError') {
-              return await write({ args: [profileId, metadataURI] })
+            });
+            if (data?.broadcastOnchain?.__typename === "RelayError") {
+              return await write({ args: [profileId, metadataURI] });
             }
-            return
+            return;
           }
-          return await write({ args: [profileId, metadataURI] })
+          return await write({ args: [profileId, metadataURI] });
         } catch {}
       },
       onError
-    })
+    });
 
   const [setProfileMetadata] = useSetProfileMetadataMutation({
     onCompleted: ({ setProfileMetadata }) =>
       onCompleted(setProfileMetadata.__typename),
     onError
-  })
+  });
 
   const otherAttributes =
     activeProfile?.metadata?.attributes
-      ?.filter((attr) => !['pinnedPublicationId', 'app'].includes(attr.key))
+      ?.filter((attr) => !["pinnedPublicationId", "app"].includes(attr.key))
       .map(({ key, value, type }) => ({
         key,
         value,
         type: MetadataAttributeType[type] as any
-      })) ?? []
+      })) ?? [];
 
   const onPinVideo = async () => {
     if (!activeProfile) {
-      return toast.error(SIGN_IN_REQUIRED)
+      return toast.error(SIGN_IN_REQUIRED);
     }
-    await handleWrongNetwork()
+    await handleWrongNetwork();
 
     try {
-      toast.loading(`Pinning video...`)
-      const pfp = getProfilePictureUri(activeProfile as Profile)
-      const coverPicture = getProfileCoverPicture(activeProfile as Profile)
+      toast.loading("Pinning video...");
+      const pfp = getProfilePictureUri(activeProfile as Profile);
+      const coverPicture = getProfileCoverPicture(activeProfile as Profile);
       const metadata: ProfileOptions = {
         ...(activeProfile?.metadata?.displayName && {
           name: activeProfile?.metadata.displayName
@@ -227,59 +224,59 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
           ...otherAttributes,
           {
             type: MetadataAttributeType.STRING,
-            key: 'pinnedPublicationId',
+            key: "pinnedPublicationId",
             value: publication.id
           },
           {
             type: MetadataAttributeType.STRING,
-            key: 'app',
+            key: "app",
             value: TAPE_APP_ID
           }
         ]
-      }
+      };
       metadata.attributes = metadata.attributes?.filter(
         (m) => Boolean(trimify(m.key)) && Boolean(trimify(m.value))
-      )
-      const metadataUri = await uploadToAr(profile(metadata))
+      );
+      const metadataUri = await uploadToAr(profile(metadata));
       const request: OnchainSetProfileMetadataRequest = {
         metadataURI: metadataUri
-      }
+      };
 
       if (canUseLensManager) {
         const { data } = await setProfileMetadata({
           variables: { request }
-        })
+        });
         if (
           data?.setProfileMetadata?.__typename ===
-          'LensProfileManagerRelayError'
+          "LensProfileManagerRelayError"
         ) {
           return await createOnchainSetProfileMetadataTypedData({
             variables: { request }
-          })
+          });
         }
-        return
+        return;
       }
 
       return createOnchainSetProfileMetadataTypedData({
         variables: { request }
-      })
+      });
     } catch (error) {
-      logger.error('[On Pin Video]', error)
+      logger.error("[On Pin Video]", error);
     }
-  }
+  };
 
   const modifyInterestCache = (notInterested: boolean) => {
     cache.modify({
       id: `Post:${publication?.id}`,
       fields: { notInterested: () => notInterested }
-    })
+    });
     toast.success(
       notInterested
-        ? `Publication marked as not interested`
-        : `Publication removed from not interested`
-    )
-    Tower.track(EVENTS.PUBLICATION.TOGGLE_INTEREST)
-  }
+        ? "Publication marked as not interested"
+        : "Publication removed from not interested"
+    );
+    addEventToQueue(EVENTS.PUBLICATION.TOGGLE_INTEREST);
+  };
 
   const modifyListCache = (saved: boolean) => {
     cache.modify({
@@ -289,39 +286,39 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
           return {
             ...publication.operations,
             hasBookmarked: saved
-          }
+          };
         }
       }
-    })
+    });
     toast.success(
-      saved ? `Video added to your list` : `Video removed from your list`
-    )
-    Tower.track(EVENTS.PUBLICATION.TOGGLE_INTEREST)
-  }
+      saved ? "Video added to your list" : "Video removed from your list"
+    );
+    addEventToQueue(EVENTS.PUBLICATION.TOGGLE_INTEREST);
+  };
 
   const [addToNotInterested] = useAddPublicationNotInterestedMutation({
     onError,
     onCompleted: () => modifyInterestCache(true)
-  })
+  });
 
   const [removeFromNotInterested] = useUndoPublicationNotInterestedMutation({
     onError,
     onCompleted: () => modifyInterestCache(false)
-  })
+  });
 
   const [saveVideoToList] = useAddPublicationBookmarkMutation({
     onError,
     onCompleted: () => modifyListCache(true)
-  })
+  });
 
   const [removeVideoFromList] = useRemovePublicationBookmarkMutation({
     onError,
     onCompleted: () => modifyListCache(false)
-  })
+  });
 
   const notInterested = async () => {
     if (!activeProfile?.id) {
-      return toast.error(SIGN_IN_REQUIRED)
+      return toast.error(SIGN_IN_REQUIRED);
     }
     if (publication.operations.isNotInterested) {
       await removeFromNotInterested({
@@ -330,7 +327,7 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
             on: publication.id
           }
         }
-      })
+      });
     } else {
       await addToNotInterested({
         variables: {
@@ -338,13 +335,13 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
             on: publication.id
           }
         }
-      })
+      });
     }
-  }
+  };
 
   const saveToList = () => {
     if (!activeProfile?.id) {
-      return toast.error(SIGN_IN_REQUIRED)
+      return toast.error(SIGN_IN_REQUIRED);
     }
     if (publication.operations.hasBookmarked) {
       removeVideoFromList({
@@ -353,7 +350,7 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
             on: publication.id
           }
         }
-      })
+      });
     } else {
       saveVideoToList({
         variables: {
@@ -361,9 +358,9 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
             on: publication.id
           }
         }
-      })
+      });
     }
-  }
+  };
 
   return (
     <>
@@ -376,7 +373,7 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
       <DropdownMenu
         trigger={
           children ?? (
-            <button>
+            <button type="button">
               <ThreeDotsOutline className="size-3.5" />
               <span className="sr-only">Video Options</span>
             </button>
@@ -386,8 +383,8 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
         <div className="flex w-40 flex-col transition duration-150 ease-in-out">
           <DropdownMenuItem
             onClick={(e) => {
-              e.preventDefault()
-              setShowShareModal(true)
+              e.preventDefault();
+              setShowShareModal(true);
             }}
           >
             <div className="flex items-center gap-2">
@@ -434,7 +431,7 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
                 <p className="flex items-center gap-2">
                   <BookmarkOutline className="size-3.5 flex-none" />
                   <span className="truncate whitespace-nowrap">
-                    {publication.operations.hasBookmarked ? 'Unsave' : 'Save'}
+                    {publication.operations.hasBookmarked ? "Unsave" : "Save"}
                   </span>
                 </p>
               </DropdownMenuItem>
@@ -446,8 +443,8 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
                   <ForbiddenOutline className="size-3.5" />
                   <span className="whitespace-nowrap">
                     {publication.operations.isNotInterested
-                      ? 'Interested'
-                      : 'Not Interested'}
+                      ? "Interested"
+                      : "Not Interested"}
                   </span>
                 </p>
               </DropdownMenuItem>
@@ -463,8 +460,8 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
               </Modal>
               <DropdownMenuItem
                 onClick={(e) => {
-                  e.preventDefault()
-                  onClickReport()
+                  e.preventDefault();
+                  onClickReport();
                 }}
               >
                 <div className="flex items-center gap-2">
@@ -476,7 +473,7 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
               {getIsIPFSUrl(publication.metadata.rawURI) ? (
                 <IPFSLink hash={getMetadataCid(publication)}>
                   <DropdownMenuItem
-                    onClick={() => Tower.track(EVENTS.CLICK_VIEW_METADATA)}
+                    onClick={() => addEventToQueue(EVENTS.CLICK_VIEW_METADATA)}
                   >
                     <p className="flex items-center gap-2">
                       <ExternalOutline className="size-3.5" />
@@ -487,7 +484,7 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
               ) : (
                 <ArweaveExplorerLink txId={getMetadataCid(publication)}>
                   <DropdownMenuItem
-                    onClick={() => Tower.track(EVENTS.CLICK_VIEW_METADATA)}
+                    onClick={() => addEventToQueue(EVENTS.CLICK_VIEW_METADATA)}
                   >
                     <p className="flex items-center gap-2">
                       <ExternalOutline className="size-3.5" />
@@ -498,10 +495,10 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
               )}
               {publication.momoka?.proof && (
                 <ArweaveExplorerLink
-                  txId={publication.momoka?.proof?.replace('ar://', '')}
+                  txId={publication.momoka?.proof?.replace("ar://", "")}
                 >
                   <DropdownMenuItem
-                    onClick={() => Tower.track(EVENTS.CLICK_VIEW_PROOF)}
+                    onClick={() => addEventToQueue(EVENTS.CLICK_VIEW_PROOF)}
                   >
                     <p className="flex items-center gap-2">
                       <ExternalOutline className="size-3.5" />
@@ -515,7 +512,7 @@ const PublicationOptions: FC<Props> = ({ publication, children }) => {
         </div>
       </DropdownMenu>
     </>
-  )
-}
+  );
+};
 
-export default PublicationOptions
+export default PublicationOptions;

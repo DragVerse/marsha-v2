@@ -1,23 +1,22 @@
-import CollectorsList from '@components/Common/CollectorsList'
-import HoverableProfile from '@components/Common/HoverableProfile'
-import MirroredList from '@components/Common/MirroredList'
 import {
   getLennyPicture,
   getProfile,
   getProfilePicture
-} from '@dragverse/generic'
-import type { PrimaryPublication } from '@dragverse/lens'
-import { CollectOutline, MirrorOutline, Modal } from '@dragverse/ui'
-import type { FC } from 'react'
-import { useState } from 'react'
+} from "@dragverse/generic";
+import type { PrimaryPublication } from "@dragverse/lens";
+import { CollectOutline, MirrorOutline, Modal } from "@dragverse/ui";
+import { type FC, useState } from "react";
+import CollectorsList from "../Common/CollectorsList";
+import HoverableProfile from "../Common/HoverableProfile";
+import MirroredList from "../Common/MirroredList";
 
 type Props = {
-  video: PrimaryPublication
-}
+  video: PrimaryPublication;
+};
 
 const VideoMeta: FC<Props> = ({ video }) => {
-  const [showCollectsModal, setShowCollectsModal] = useState(false)
-  const [showMirrorsModal, setShowMirrorsModal] = useState(false)
+  const [showCollectsModal, setShowCollectsModal] = useState(false);
+  const [showMirrorsModal, setShowMirrorsModal] = useState(false);
 
   return (
     <div className="mt-2 flex flex-wrap items-center">
@@ -25,12 +24,12 @@ const VideoMeta: FC<Props> = ({ video }) => {
         profile={video.by}
         pfp={
           <img
-            src={getProfilePicture(video.by, 'AVATAR')}
+            src={getProfilePicture(video.by, "AVATAR")}
             className="size-5 rounded-full"
             draggable={false}
             alt={getProfile(video.by)?.displayName}
             onError={({ currentTarget }) => {
-              currentTarget.src = getLennyPicture(video.by?.id)
+              currentTarget.src = getLennyPicture(video.by?.id);
             }}
           />
         }
@@ -57,8 +56,6 @@ const VideoMeta: FC<Props> = ({ video }) => {
             <MirroredList videoId={video.id} />
           </div>
         </Modal>
-
-        {/* <ViewCount cid={getPublicationMediaCid(video.metadata)} /> */}
         <button
           type="button"
           onClick={() => setShowCollectsModal(true)}
@@ -78,7 +75,7 @@ const VideoMeta: FC<Props> = ({ video }) => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default VideoMeta
+export default VideoMeta;

@@ -1,16 +1,15 @@
 /* apps/web/src/components/Profile/BasicInfo/Follow.module.css */
 .container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  
-  .tipButton {
-    background-color: #fca5a5; /* Adjust color for tip button */
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.tipButton {
+  background-color: #fca5a5; /* Adjust color for tip button */
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

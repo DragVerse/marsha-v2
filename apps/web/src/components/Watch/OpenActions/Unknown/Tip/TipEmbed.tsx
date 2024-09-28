@@ -1,31 +1,30 @@
-// apps/web/src/components/Watch/OpenActions/Unknown/Tip/TipEmbed.tsx
-import React, { useEffect, useState } from 'react'
-import { createThirdwebClient } from 'thirdweb'
-import { base } from 'thirdweb/chains'
-import { darkTheme, PayEmbed } from 'thirdweb/react'
-
-import styles from './TipEmbed.module.css'
+import type React from "react";
+import { useEffect, useState } from "react";
+import { createThirdwebClient } from "thirdweb";
+import { base } from "thirdweb/chains";
+import { PayEmbed, darkTheme } from "thirdweb/react";
+import styles from "./TipEmbed.module.css";
 
 const client = createThirdwebClient({
-  clientId: 'ss' // Replace with your actual client ID
-})
+  clientId: "ss" // Replace with your actual client ID
+});
 
 interface TipEmbedProps {
-  publicationId: string
-  onClose: () => void
+  publicationId: string;
+  onClose: () => void;
 }
 
 const TipEmbed: React.FC<TipEmbedProps> = ({ publicationId, onClose }) => {
-  const [showPayEmbed, setShowPayEmbed] = useState(false)
+  const [showPayEmbed, setShowPayEmbed] = useState(false);
 
   useEffect(() => {
-    setShowPayEmbed(true)
-  }, [])
+    setShowPayEmbed(true);
+  }, []);
 
   return (
     <div className={styles.modal}>
       <div className={styles.modalContent}>
-        <button className={styles.modalClose} onClick={onClose}>
+        <button type="button" className={styles.modalClose} onClick={onClose}>
           ✖
         </button>
         <h2 className="text-brand-500">
@@ -37,9 +36,9 @@ const TipEmbed: React.FC<TipEmbedProps> = ({ publicationId, onClose }) => {
             payOptions={{
               prefillBuy: {
                 token: {
-                  address: '0x4200000000000000000000000000000000000006', // ETH on Base
-                  name: 'ETH',
-                  symbol: 'ETH'
+                  address: "0x4200000000000000000000000000000000000006", // ETH on Base
+                  name: "ETH",
+                  symbol: "ETH"
                 },
                 chain: base,
                 allowEdits: {
@@ -51,13 +50,13 @@ const TipEmbed: React.FC<TipEmbedProps> = ({ publicationId, onClose }) => {
             }}
             theme={darkTheme({
               colors: {
-                modalBg: '#100c1f' // Hard-coded value matching the brand[250] color
+                modalBg: "#100c1f" // Hard-coded value matching the brand[250] color
               }
             })}
             connectOptions={{
               connectModal: {
-                size: 'compact',
-                title: 'Connect your wallet'
+                size: "compact",
+                title: "Connect your wallet"
               },
               autoConnect: { timeout: 15000 }
             }}
@@ -65,7 +64,7 @@ const TipEmbed: React.FC<TipEmbedProps> = ({ publicationId, onClose }) => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TipEmbed
+export default TipEmbed;

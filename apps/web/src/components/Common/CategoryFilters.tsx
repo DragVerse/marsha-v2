@@ -1,56 +1,60 @@
-import { tw } from '@dragverse/browser'
-import { CREATOR_VIDEO_CATEGORIES } from '@dragverse/constants'
-import { EVENTS, Tower } from '@dragverse/generic'
-import useAppStore from '@lib/store'
-import type { FC } from 'react'
-import { useRef } from 'react'
+import { tw } from "@dragverse/browser";
+import { CREATOR_VIDEO_CATEGORIES } from "@dragverse/constants";
+import { EVENTS } from "@dragverse/generic";
+import type { FC } from "react";
+import { useRef } from "react";
 
-import HorizontalScroller from './HorizontalScroller'
+import useSw from "@/hooks/useSw";
+
+import useAppStore from "@/lib/store";
+import HorizontalScroller from "./HorizontalScroller";
 
 type Props = {
-  heading?: string
-  headingClassName?: string
-}
+  heading?: string;
+};
 
 const CategoryFilters: FC<Props> = ({ heading }) => {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const { activeTagFilter, setActiveTagFilter } = useAppStore()
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { activeTagFilter, setActiveTagFilter } = useAppStore();
+  const { addEventToQueue } = useSw();
 
   const onFilter = (tag: string) => {
-    setActiveTagFilter(tag)
-    Tower.track(EVENTS.FILTER_CATEGORIES)
-  }
+    setActiveTagFilter(tag);
+    addEventToQueue(EVENTS.FILTER_CATEGORIES);
+  };
 
   return (
-    <div className="dark:bg-brand-850 sticky top-0 z-[9] bg-white">
+    <div className="sticky top-0 z-[9] bg-white dark:bg-brand-850">
       <HorizontalScroller
         sectionRef={sectionRef}
-        heading={heading ?? 'Explore The Garden🌱'}
-        headingClassName="font-syne font-extrabold"
+        heading={heading ?? "Explore"}
+        headingClassName="font-dragverse font-extrabold"
       />
       <div
         ref={sectionRef}
         className="no-scrollbar flex items-center overflow-x-auto scroll-smooth pt-4 md:mx-auto"
       >
         <button
+          type="button"
           className={tw(
-            'whitespace-nowrap px-10 py-2.5 font-medium',
-            activeTagFilter === 'all'
-              ? 'from-brand-50 border-brand-400 dark:from-brand-950 border-b-2 bg-gradient-to-t to-transparent'
-              : 'border-b dark:border-gray-800'
+            "whitespace-nowrap px-10 py-2.5 font-medium",
+            activeTagFilter === "all"
+              ? "border-brand-400 border-b-2 bg-gradient-to-t from-brand-50 to-transparent dark:from-brand-950"
+              : "border-b dark:border-gray-800"
           )}
-          onClick={() => onFilter('all')}
+          onClick={() => onFilter("all")}
         >
           All
         </button>
         {CREATOR_VIDEO_CATEGORIES.map((category) => (
           <button
+            type="button"
             key={category.tag}
             className={tw(
-              'whitespace-nowrap px-6 py-2.5 font-medium',
+              "whitespace-nowrap px-6 py-2.5 font-medium",
               activeTagFilter === category.tag
-                ? 'from-brand-50 border-brand-400 dark:from-brand-950 border-b-2 bg-gradient-to-t to-transparent'
-                : 'border-b dark:border-gray-800'
+                ? "border-brand-400 border-b-2 bg-gradient-to-t from-brand-50 to-transparent dark:from-brand-950"
+                : "border-b dark:border-gray-800"
             )}
             onClick={() => onFilter(category.tag)}
           >
@@ -59,7 +63,7 @@ const CategoryFilters: FC<Props> = ({ heading }) => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CategoryFilters
+export default CategoryFilters;

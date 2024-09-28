@@ -1,5 +1,6 @@
-import { tw } from '@dragverse/browser'
-import { getIsProfileOwner } from '@dragverse/generic'
+import useProfileStore from "@/lib/store/idb/profile";
+import { tw } from "@dragverse/browser";
+import { getIsProfileOwner } from "@dragverse/generic";
 import {
   InterestsOutline,
   KeyOutline,
@@ -10,12 +11,10 @@ import {
   SubscribeOutline,
   UserOutline,
   WarningOutline
-} from '@dragverse/ui'
-import useProfileStore from '@lib/store/idb/profile'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
-
+} from "@dragverse/ui";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAccount } from "wagmi";
 import {
   SETTINGS,
   SETTINGS_ALLOWANCE,
@@ -26,28 +25,28 @@ import {
   SETTINGS_INTERESTS,
   SETTINGS_MANAGER,
   SETTINGS_SESSIONS
-} from '.'
+} from ".";
 
 const SettingsSidebar = () => {
-  const router = useRouter()
-  const { address } = useAccount()
-  const activeProfile = useProfileStore((state) => state.activeProfile)
-  const isActivePath = (path: string) => router.pathname === path
+  const router = useRouter();
+  const { address } = useAccount();
+  const activeProfile = useProfileStore((state) => state.activeProfile);
+  const isActivePath = (path: string) => router.pathname === path;
   if (!activeProfile || !address) {
-    return null
+    return null;
   }
 
-  const isProfileOwner = getIsProfileOwner(activeProfile, address)
+  const isProfileOwner = getIsProfileOwner(activeProfile, address);
 
   return (
     <div className="flex flex-col space-y-1 pb-10 md:ml-auto md:w-44">
       <Link
         href={SETTINGS}
         className={tw(
-          'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
+          "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors",
           isActivePath(SETTINGS)
-            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
-            : 'text-dust hover:bg-brand-600 dark:hover:bg-brand-600/50 font-medium'
+            ? "bg-gray-200 font-bold dark:bg-gray-800/80"
+            : "font-medium text-dust hover:bg-gray-200 dark:hover:bg-gray-900/50"
         )}
       >
         <UserOutline className="size-4" />
@@ -56,10 +55,10 @@ const SettingsSidebar = () => {
       <Link
         href={SETTINGS_FOLLOW}
         className={tw(
-          'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
+          "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors",
           isActivePath(SETTINGS_FOLLOW)
-            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
-            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
+            ? "bg-gray-200 font-bold dark:bg-gray-800/80"
+            : "font-medium text-dust hover:bg-gray-200 dark:hover:bg-gray-900/50"
         )}
       >
         <SubscribeOutline className="size-4" />
@@ -68,10 +67,10 @@ const SettingsSidebar = () => {
       <Link
         href={SETTINGS_HANDLES}
         className={tw(
-          'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
+          "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors",
           isActivePath(SETTINGS_HANDLES)
-            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
-            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
+            ? "bg-gray-200 font-bold dark:bg-gray-800/80"
+            : "font-medium text-dust hover:bg-gray-200 dark:hover:bg-gray-900/50"
         )}
       >
         <MentionOutline className="size-4" />
@@ -80,10 +79,10 @@ const SettingsSidebar = () => {
       <Link
         href={SETTINGS_INTERESTS}
         className={tw(
-          'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
+          "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors",
           isActivePath(SETTINGS_INTERESTS)
-            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
-            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
+            ? "bg-gray-200 font-bold dark:bg-gray-800/80"
+            : "font-medium text-dust hover:bg-gray-200 dark:hover:bg-gray-900/50"
         )}
       >
         <InterestsOutline className="size-4" />
@@ -93,10 +92,10 @@ const SettingsSidebar = () => {
         <Link
           href={SETTINGS_MANAGER}
           className={tw(
-            'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
+            "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors",
             isActivePath(SETTINGS_MANAGER)
-              ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
-              : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
+              ? "bg-gray-200 font-bold dark:bg-gray-800/80"
+              : "font-medium text-dust hover:bg-gray-200 dark:hover:bg-gray-900/50"
           )}
         >
           <ProfileManagerOutline className="size-4" />
@@ -106,10 +105,10 @@ const SettingsSidebar = () => {
       <Link
         href={SETTINGS_ALLOWANCE}
         className={tw(
-          'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
+          "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors",
           isActivePath(SETTINGS_ALLOWANCE)
-            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
-            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
+            ? "bg-gray-200 font-bold dark:bg-gray-800/80"
+            : "font-medium text-dust hover:bg-gray-200 dark:hover:bg-gray-900/50"
         )}
       >
         <LockOutline className="size-4" />
@@ -118,10 +117,10 @@ const SettingsSidebar = () => {
       <Link
         href={SETTINGS_BLOCKED}
         className={tw(
-          'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
+          "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors",
           isActivePath(SETTINGS_BLOCKED)
-            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
-            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
+            ? "bg-gray-200 font-bold dark:bg-gray-800/80"
+            : "font-medium text-dust hover:bg-gray-200 dark:hover:bg-gray-900/50"
         )}
       >
         <ProfileBanOutline className="size-4" />
@@ -130,10 +129,10 @@ const SettingsSidebar = () => {
       <Link
         href={SETTINGS_SESSIONS}
         className={tw(
-          'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors',
+          "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm transition-colors",
           isActivePath(SETTINGS_SESSIONS)
-            ? 'bg-brand-600/50 dark:bg-brand-600/80/80 font-bold'
-            : 'text-dust hover:bg-brand-600/50 dark:hover:bg-brand-600/50 font-medium'
+            ? "bg-gray-200 font-bold dark:bg-gray-800/80"
+            : "font-medium text-dust hover:bg-gray-200 dark:hover:bg-gray-900/50"
         )}
       >
         <KeyOutline className="size-4" />
@@ -143,10 +142,10 @@ const SettingsSidebar = () => {
         <Link
           href={SETTINGS_DANGER_ZONE}
           className={tw(
-            'flex items-center space-x-3 rounded-lg px-3 py-1.5 text-sm text-red-500 transition-colors',
+            "flex items-center space-x-3 rounded-lg px-3 py-1.5 text-red-500 text-sm transition-colors",
             isActivePath(SETTINGS_DANGER_ZONE)
-              ? 'bg-red-200 font-bold dark:bg-red-900/50'
-              : 'font-medium hover:bg-red-100 dark:hover:bg-red-900/50'
+              ? "bg-red-200 font-bold dark:bg-red-900/50"
+              : "font-medium hover:bg-red-100 dark:hover:bg-red-900/50"
           )}
         >
           <WarningOutline className="size-4" />
@@ -154,7 +153,7 @@ const SettingsSidebar = () => {
         </Link>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SettingsSidebar
+export default SettingsSidebar;

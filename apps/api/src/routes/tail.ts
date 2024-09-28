@@ -1,44 +1,40 @@
-import { zValidator } from '@hono/zod-validator'
-import { Hono } from 'hono'
-import type { z } from 'zod'
-import { object, string } from 'zod'
+import { ERROR_MESSAGE, TAPE_USER_AGENT } from "@dragverse/constants";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import type { z } from "zod";
+import { object, string } from "zod";
 
-import { ERROR_MESSAGE } from '@/helpers/constants'
+const app = new Hono();
 
-type Bindings = {
-  LOGTAIL_API_KEY: string
-}
-
-const app = new Hono<{ Bindings: Bindings }>()
-
-const logtailApiURL = 'https://in.logtail.com/'
+const logtailApiURL = "https://in.logs.betterstack.com";
 const validationSchema = object({
   source: string(),
   level: string().nullable().optional(),
   message: string().nullable().optional()
-})
-type RequestInput = z.infer<typeof validationSchema>
+});
+type RequestInput = z.infer<typeof validationSchema>;
 
-app.post('/', zValidator('json', validationSchema), async (c) => {
+app.post("/", zValidator("json", validationSchema), async (c) => {
   try {
-    const body = await c.req.json<RequestInput>()
-    const LOGTAIL_API_KEY = c.env.LOGTAIL_API_KEY
+    const body = await c.req.json<RequestInput>();
+    const { LOGTAIL_API_KEY } = process.env;
     const result = await fetch(logtailApiURL, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${LOGTAIL_API_KEY}`,
-        'Content-Type': 'application/json',
-        'User-Agent': 'Tape'
+        "Content-Type": "application/json",
+        "User-Agent": TAPE_USER_AGENT
       },
       body: JSON.stringify(body)
-    })
+    });
     if (!result.ok) {
-      return c.json({ success: false, message: ERROR_MESSAGE })
+      return c.json({ success: false, message: ERROR_MESSAGE });
     }
-    return c.json({ success: true })
-  } catch {
-    return c.json({ success: false, message: ERROR_MESSAGE })
+    return c.json({ success: true });
+  } catch (error) {
+    console.error("[TAIL] Error:", error);
+    return c.json({ success: false, message: ERROR_MESSAGE });
   }
-})
+});
 
-export default app
+export default app;

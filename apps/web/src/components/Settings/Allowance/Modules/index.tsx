@@ -1,79 +1,78 @@
-import { VERIFIED_UNKNOWN_OPEN_ACTION_CONTRACTS } from '@components/Watch/OpenActions/verified-contracts'
-import { BONSAI_TOKEN_ADDRESS, POLYGONSCAN_URL } from '@dragverse/constants'
-import { shortenAddress } from '@dragverse/generic'
-import type { ApprovedAllowanceAmountResult } from '@dragverse/lens'
+import { VERIFIED_UNKNOWN_OPEN_ACTION_CONTRACTS } from "@/components/Watch/OpenActions/verified-contracts";
+import { getCollectModuleConfig } from "@/lib/getCollectModuleInput";
+import useProfileStore from "@/lib/store/idb/profile";
+import useAllowedTokensStore from "@/lib/store/idb/tokens";
+import { POLYGONSCAN_URL, WMATIC_TOKEN_ADDRESS } from "@dragverse/constants";
+import { shortenAddress } from "@dragverse/generic";
 import {
+  type ApprovedAllowanceAmountResult,
   FollowModuleType,
   OpenActionModuleType,
   useApprovedModuleAllowanceAmountQuery,
   useGenerateModuleCurrencyApprovalDataLazyQuery
-} from '@dragverse/lens'
-import { Button, Select, SelectItem, Spinner } from '@dragverse/ui'
-import { getCollectModuleConfig } from '@lib/getCollectModuleInput'
-import useProfileStore from '@lib/store/idb/profile'
-import useAllowedTokensStore from '@lib/store/idb/tokens'
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
-import { useSendTransaction, useWaitForTransactionReceipt } from 'wagmi'
+} from "@dragverse/lens";
+import { Button, Select, SelectItem, Spinner } from "@dragverse/ui";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 
 const ModuleItem = ({
   moduleItem,
   currency,
   onSuccess
 }: {
-  moduleItem: ApprovedAllowanceAmountResult
-  currency: string
-  onSuccess: () => void
+  moduleItem: ApprovedAllowanceAmountResult;
+  currency: string;
+  onSuccess: () => void;
 }) => {
-  const [loadingModule, setLoadingModule] = useState('')
+  const [loadingModule, setLoadingModule] = useState("");
 
   const [generateAllowanceQuery] =
-    useGenerateModuleCurrencyApprovalDataLazyQuery()
+    useGenerateModuleCurrencyApprovalDataLazyQuery();
 
   const { data: hash, sendTransaction } = useSendTransaction({
     mutation: {
       onError: (error) => {
-        toast.error(error?.message)
-        setLoadingModule('')
+        toast.error(error?.message);
+        setLoadingModule("");
       }
     }
-  })
+  });
 
   const { isSuccess, error, isError } = useWaitForTransactionReceipt({
     hash,
     query: {
       enabled: hash && hash.length > 0
     }
-  })
+  });
 
   useEffect(() => {
     if (isError) {
-      toast.error(error?.message)
-      setLoadingModule('')
+      toast.error(error?.message);
+      setLoadingModule("");
     }
     if (isSuccess) {
-      onSuccess()
-      toast.success(`Allowance updated`)
-      setLoadingModule('')
+      onSuccess();
+      toast.success("Allowance updated");
+      setLoadingModule("");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isError, isSuccess, error])
+  }, [isError, isSuccess, error]);
 
   const handleClick = async (
     isAllow: boolean,
     module: ApprovedAllowanceAmountResult
   ) => {
     try {
-      setLoadingModule(module.moduleName)
+      setLoadingModule(module.moduleName);
       const isUnknownModule =
-        module.moduleName === OpenActionModuleType.UnknownOpenActionModule
+        module.moduleName === OpenActionModuleType.UnknownOpenActionModule;
       const { data: allowanceData } = await generateAllowanceQuery({
         variables: {
           request: {
             allowance: {
               currency,
-              value: isAllow ? Number.MAX_SAFE_INTEGER.toString() : '0'
+              value: isAllow ? Number.MAX_SAFE_INTEGER.toString() : "0"
             },
             module: {
               [getCollectModuleConfig(module).type]: isUnknownModule
@@ -82,16 +81,16 @@ const ModuleItem = ({
             }
           }
         }
-      })
-      const generated = allowanceData?.generateModuleCurrencyApprovalData
+      });
+      const generated = allowanceData?.generateModuleCurrencyApprovalData;
       sendTransaction?.({
         to: generated?.to,
         data: generated?.data
-      })
+      });
     } catch {
-      setLoadingModule('')
+      setLoadingModule("");
     }
-  }
+  };
 
   return (
     <div
@@ -114,7 +113,7 @@ const ModuleItem = ({
         </p>
       </div>
       <div className="ml-2 flex flex-none items-center space-x-2">
-        {parseFloat(moduleItem?.allowance.value) === 0 ? (
+        {Number.parseFloat(moduleItem?.allowance.value) === 0 ? (
           <Button
             disabled={loadingModule === moduleItem.moduleName}
             loading={loadingModule === moduleItem.moduleName}
@@ -134,13 +133,13 @@ const ModuleItem = ({
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
 const ModuleAllowance = () => {
-  const { activeProfile } = useProfileStore()
-  const [currency, setCurrency] = useState(BONSAI_TOKEN_ADDRESS)
-  const allowedTokens = useAllowedTokensStore((state) => state.allowedTokens)
+  const { activeProfile } = useProfileStore();
+  const [currency, setCurrency] = useState(WMATIC_TOKEN_ADDRESS);
+  const allowedTokens = useAllowedTokensStore((state) => state.allowedTokens);
 
   const {
     data: commonAllowancesData,
@@ -160,8 +159,8 @@ const ModuleAllowance = () => {
       }
     },
     skip: !activeProfile?.id,
-    fetchPolicy: 'no-cache'
-  })
+    fetchPolicy: "no-cache"
+  });
 
   const {
     data: unKnownActAllowancesData,
@@ -175,13 +174,13 @@ const ModuleAllowance = () => {
       }
     },
     skip: !activeProfile?.id,
-    fetchPolicy: 'no-cache'
-  })
+    fetchPolicy: "no-cache"
+  });
 
   return (
     <div>
       <div className="space-y-2">
-        <h1 className="text-brand-400 text-xl font-bold">Allowance</h1>
+        <h1 className="font-bold text-brand-400 text-xl">Allowance</h1>
         <p className="opacity-80">
           These are the collect modules which you allowed / need to allow to use
           collect feature. You can allow and revoke access anytime.
@@ -193,7 +192,7 @@ const ModuleAllowance = () => {
             <Select
               value={currency}
               onValueChange={(value) => setCurrency(value)}
-              defaultValue={allowedTokens[0].address}
+              defaultValue={allowedTokens[0]?.address}
             >
               {allowedTokens?.map((token) => (
                 <SelectItem key={token.address} value={token.address}>
@@ -216,14 +215,14 @@ const ModuleAllowance = () => {
                 moduleItem={moduleItem}
                 currency={currency}
                 onSuccess={() => {
-                  refetchCommonApproved()
-                  refetchUnknownActApproved()
+                  refetchCommonApproved();
+                  refetchUnknownActApproved();
                 }}
               />
             )
           )}
         {unKnownActAllowancesData?.approvedModuleAllowanceAmount.length ? (
-          <h6 className="text-brand-500 mb-2 mt-4 font-medium">Open Actions</h6>
+          <h6 className="mt-4 mb-2 font-medium text-brand-500">Open Actions</h6>
         ) : null}
         {!gettingUnknownActSettings &&
           unKnownActAllowancesData?.approvedModuleAllowanceAmount?.map(
@@ -233,15 +232,15 @@ const ModuleAllowance = () => {
                 moduleItem={moduleItem}
                 currency={currency}
                 onSuccess={() => {
-                  refetchCommonApproved()
-                  refetchUnknownActApproved()
+                  refetchCommonApproved();
+                  refetchUnknownActApproved();
                 }}
               />
             )
           )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ModuleAllowance
+export default ModuleAllowance;

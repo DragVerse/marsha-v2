@@ -1,21 +1,22 @@
-import { TAPE_SIGNUP_PROXY_ABI } from '@dragverse/abis'
-import { useDebounce } from '@dragverse/browser'
+import useHandleWrongNetwork from "@/hooks/useHandleWrongNetwork";
+import usePendingTxn from "@/hooks/usePendingTxn";
+import useSw from "@/hooks/useSw";
+import { TAPE_SIGNUP_PROXY_ABI } from "@dragverse/abis";
+import { useDebounce } from "@dragverse/browser";
 import {
   COMMON_REGEX,
   ERROR_MESSAGE,
-  IS_MAINNET,
   LENS_NAMESPACE_PREFIX,
   MOONPAY_URL,
   TAPE_SIGNUP_PROXY_ADDRESS,
   ZERO_ADDRESS
-} from '@dragverse/constants'
-import { EVENTS, Tower } from '@dragverse/generic'
+} from "@dragverse/constants";
+import { EVENTS } from "@dragverse/generic";
 import {
   useGenerateLensApiRelayAddressQuery,
-  useHandleToAddressLazyQuery,
-  useProfileLazyQuery
-} from '@dragverse/lens'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
+  useHandleToAddressLazyQuery
+} from "@dragverse/lens";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
 import {
   Button,
   CheckOutline,
@@ -25,55 +26,37 @@ import {
   Spinner,
   TimesOutline,
   Tooltip
-} from '@dragverse/ui'
-import { zodResolver } from '@hookform/resolvers/zod'
-import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
-import usePendingTxn from '@hooks/usePendingTxn'
-import Link from 'next/link'
-import Script from 'next/script'
-import type { FC } from 'react'
-import React, { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import { formatUnits } from 'viem'
+} from "@dragverse/ui";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
+import { type FC, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { formatUnits } from "viem";
 import {
   useAccount,
   useBalance,
   useReadContract,
   useWriteContract
-} from 'wagmi'
-import type { z } from 'zod'
-import { object, string } from 'zod'
-
-declare global {
-  interface Window {
-    createLemonSqueezy: any
-    LemonSqueezy: {
-      Setup: ({ eventHandler }: { eventHandler: any }) => void
-      Url: {
-        Close: () => void
-        Open: (checkoutUrl: string) => void
-      }
-    }
-  }
-}
+} from "wagmi";
+import { object, string, type z } from "zod";
 
 type Props = {
-  showLogin: boolean
-  onSuccess: () => void
-  setShowSignup: (b: boolean) => void
-}
+  showLogin: boolean;
+  onSuccess: () => void;
+  setShowSignup: (b: boolean) => void;
+};
 
 const formSchema = object({
   handle: string()
-    .min(5, { message: 'Handle should be at least 5 characters' })
-    .max(26, { message: 'Handle should not exceed 26 characters' })
+    .min(5, { message: "Handle should be at least 5 characters" })
+    .max(26, { message: "Handle should not exceed 26 characters" })
     .regex(COMMON_REGEX.HANDLE, {
       message:
-        'Handle must start with a letter/number, only _ allowed in between'
+        "Handle must start with a letter/number, only _ allowed in between"
     })
-})
-type FormData = z.infer<typeof formSchema>
+});
+type FormData = z.infer<typeof formSchema>;
 
 const Signup: FC<Props> = ({ showLogin, onSuccess, setShowSignup }) => {
   const {
@@ -84,77 +67,63 @@ const Signup: FC<Props> = ({ showLogin, onSuccess, setShowSignup }) => {
     watch
   } = useForm<FormData>({
     resolver: zodResolver(formSchema)
-  })
+  });
 
-  const [showModal, setShowModal] = useState(false)
-  const [creating, setCreating] = useState(false)
-  const [isHandleAvailable, setIsHandleAvailable] = useState(false)
-  const handleWrongNetwork = useHandleWrongNetwork()
+  const [showModal, setShowModal] = useState(false);
+  const [creating, setCreating] = useState(false);
+  const [isHandleAvailable, setIsHandleAvailable] = useState(false);
+  const handleWrongNetwork = useHandleWrongNetwork();
+  const { addEventToQueue } = useSw();
 
-  const { address } = useAccount()
-  const handle = watch('handle')?.toLowerCase()
+  const { address } = useAccount();
+  const handle = watch("handle")?.toLowerCase();
 
-  const debouncedValue = useDebounce<string>(handle, 300)
+  const debouncedValue = useDebounce<string>(handle, 300);
   const { data: balanceData } = useBalance({
     address,
     query: { refetchInterval: 2000 }
-  })
+  });
 
   const { data: signupPrice } = useReadContract({
     abi: TAPE_SIGNUP_PROXY_ABI,
     address: TAPE_SIGNUP_PROXY_ADDRESS,
-    functionName: 'signupPrice',
+    functionName: "signupPrice",
     query: { refetchInterval: 1000 }
-  })
+  });
 
-  const signupPriceFormatted = formatUnits((signupPrice ?? 0) as bigint, 18)
+  const signupPriceFormatted = formatUnits((signupPrice ?? 0) as bigint, 18);
 
   const onMinted = (via: string) => {
-    onSuccess()
-    reset()
-    toast.success(
-      'Profile created. It might take a few minutes to register on the blockchain and let you use your new handle.'
-    )
-    duration: 10000
-    setCreating(false)
-    Tower.track(EVENTS.AUTH.SIGNUP_SUCCESS, {
+    onSuccess();
+    reset();
+    toast.success("Profile created");
+    setCreating(false);
+    addEventToQueue(EVENTS.AUTH.SIGNUP_SUCCESS, {
       price: signupPriceFormatted,
       via
-    })
-  }
+    });
+  };
 
   const { data } = useGenerateLensApiRelayAddressQuery({
-    fetchPolicy: 'no-cache'
-  })
-  const delegatedExecutor = data?.generateLensAPIRelayAddress
+    fetchPolicy: "no-cache"
+  });
+  const delegatedExecutor = data?.generateLensAPIRelayAddress;
 
   const [checkAvailability, { loading: checkingAvailability }] =
     useHandleToAddressLazyQuery({
-      fetchPolicy: 'no-cache'
-    })
-  const [checkIsProfileMinted] = useProfileLazyQuery({
-    notifyOnNetworkStatusChange: true,
-    pollInterval: 3000,
-    variables: {
-      request: { forHandle: `${LENS_NAMESPACE_PREFIX}${handle}` }
-    },
-    onCompleted: (data) => {
-      if (data.profile) {
-        onMinted('card')
-      }
-    }
-  })
+      fetchPolicy: "no-cache"
+    });
 
   const onError = (error: CustomErrorWithData) => {
-    setCreating(false)
-    toast.error(error?.message ?? ERROR_MESSAGE)
-  }
+    setCreating(false);
+    toast.error(error?.message ?? ERROR_MESSAGE);
+  };
 
   const { writeContractAsync, data: txnHash } = useWriteContract({
     mutation: {
       onError
     }
-  })
+  });
 
   const onSearchDebounce = async () => {
     if (handle?.trim().length) {
@@ -164,102 +133,70 @@ const Signup: FC<Props> = ({ showLogin, onSuccess, setShowSignup }) => {
             handle: `${LENS_NAMESPACE_PREFIX}${handle}`
           }
         }
-      })
-      Tower.track(EVENTS.AUTH.SIGNUP_HANDLE_SEARCH, {
+      });
+      addEventToQueue(EVENTS.AUTH.SIGNUP_HANDLE_SEARCH, {
         handle: `${LENS_NAMESPACE_PREFIX}${handle}`
-      })
+      });
       if (data?.handleToAddress) {
-        return setIsHandleAvailable(false)
+        return setIsHandleAvailable(false);
       }
-      setIsHandleAvailable(true)
+      setIsHandleAvailable(true);
     }
-  }
+  };
 
   const { indexed, error } = usePendingTxn({
     ...(txnHash && {
       txHash: txnHash
     })
-  })
+  });
 
   useEffect(() => {
     if (indexed) {
-      onMinted('wallet')
+      onMinted("wallet");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [indexed, error])
+  }, [indexed, error]);
 
   useEffect(() => {
-    onSearchDebounce()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedValue])
+    onSearchDebounce();
+  }, [debouncedValue]);
 
-  const eventHandler = async ({ event }: { data: any; event: any }) => {
-    if (event === 'Checkout.Success' && window.LemonSqueezy) {
-      window.LemonSqueezy?.Url?.Close()
-      setCreating(true)
-      await checkIsProfileMinted()
-    }
-  }
-
-  const handleBuy = () => {
-    window.createLemonSqueezy?.()
-    window.LemonSqueezy?.Setup?.({ eventHandler })
-    const id = IS_MAINNET
-      ? '45a0b30c-7c01-4431-b9a0-2160a152f26f'
-      : 'd9dba154-17d4-40df-a786-6f90c3dc0ca7'
-    window.LemonSqueezy?.Url?.Open?.(
-      `https://tape.lemonsqueezy.com/checkout/buy/${id}?checkout[custom][address]=${address}&checkout[custom][delegatedExecutor]=${delegatedExecutor}&checkout[custom][handle]=${handle}&embed=1&media=0`
-    )
-  }
-
-  const signup = async (
-    { handle }: FormData,
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
+  const signup = async ({ handle }: FormData) => {
     if (!isHandleAvailable) {
-      return toast.error('Handle is taken')
+      return toast.error("Handle is taken");
     }
 
-    const clickedButton = (e.nativeEvent as any).submitter.name
-    if (clickedButton === 'card') {
-      return handleBuy()
-    }
-    setCreating(true)
-    await handleWrongNetwork()
+    setCreating(true);
+    await handleWrongNetwork();
 
     try {
       if (!delegatedExecutor) {
-        setCreating(false)
-        return toast.error(ERROR_MESSAGE)
+        setCreating(false);
+        return toast.error(ERROR_MESSAGE);
       }
       return await writeContractAsync({
         abi: TAPE_SIGNUP_PROXY_ABI,
         address: TAPE_SIGNUP_PROXY_ADDRESS,
-        args: [[address, ZERO_ADDRESS, '0x'], handle, [delegatedExecutor]],
-        functionName: 'createProfileWithHandleUsingCredits',
+        args: [[address, ZERO_ADDRESS, "0x"], handle, [delegatedExecutor]],
+        functionName: "createProfileWithHandleUsingCredits",
         value: signupPrice as bigint
-      })
+      });
     } catch {
-      setCreating(false)
+      setCreating(false);
     }
-  }
+  };
 
-  const balance = balanceData && parseFloat(formatUnits(balanceData.value, 18))
-  const hasBalance = balance && balance >= Number(signupPriceFormatted)
+  const balance =
+    balanceData && Number.parseFloat(formatUnits(balanceData.value, 18));
+  const hasBalance = balance && balance >= Number(signupPriceFormatted);
 
   return (
     <form
       onSubmit={(e) => {
-        e.preventDefault()
-        handleSubmit((data) => signup(data, e))()
+        e.preventDefault();
+        handleSubmit((data) => signup(data))();
       }}
       className="space-y-2"
     >
-      <Script
-        id="lemon-js"
-        src="https://assets.lemonsqueezy.com/lemon.js"
-        strategy="afterInteractive"
-      />
       <div className="relative flex items-center">
         <Input
           className="h-[46px] text-base"
@@ -268,7 +205,7 @@ const Signup: FC<Props> = ({ showLogin, onSuccess, setShowSignup }) => {
           prefix={`@${LENS_NAMESPACE_PREFIX}`}
           error={errors.handle?.message}
           autoFocus
-          {...register('handle')}
+          {...register("handle")}
         />
         {isValid && (
           <div className="flex items-center">
@@ -319,53 +256,31 @@ const Signup: FC<Props> = ({ showLogin, onSuccess, setShowSignup }) => {
         )}
       </Modal>
 
-      {IS_MAINNET && (
-        <div className="relative flex items-center">
-          <div className="w-full">
-            {/* <Button
-              name="card"
-              size="md"
-              loading={creating}
-              disabled={creating || !isHandleAvailable || checkingAvailability}
-            >
-              Buy with Card
-      </Button> */}
-          </div>
-          {/* <button
-            type="button"
-            className="absolute right-2.5 z-[1] cursor-help p-1 text-xs"
-            onClick={() => setShowModal(true)}
+      <div className="relative flex items-center">
+        <div className="w-full">
+          <Button
+            size="md"
+            loading={creating}
+            disabled={creating || !isHandleAvailable || checkingAvailability}
           >
-            <InfoOutline className="size-4 text-white dark:text-black" />
-      </button> */}
+            Mint for {signupPriceFormatted} MATIC
+          </Button>
         </div>
-      )}
-
-      <Button
-        name="wallet"
-        size="md"
-        variant="secondary"
-        loading={creating}
-        disabled={creating || !isHandleAvailable || checkingAvailability}
-      >
-        Mint for {signupPriceFormatted} MATIC
-      </Button>
-
-      <button
-        type="button"
-        className="ml-2 flex cursor-help items-center justify-center p-1 text-xs"
-        onClick={() => setShowModal(true)}
-      >
-        <InfoOutline className="mr-1 size-4" />
-        <span>Why do I have to pay?</span>
-      </button>
+        <button
+          type="button"
+          className="absolute right-2.5 z-[1] cursor-help p-1 text-xs"
+          onClick={() => setShowModal(true)}
+        >
+          <InfoOutline className="size-4 text-white dark:text-black" />
+        </button>
+      </div>
 
       {showLogin && (
         <div className="flex items-center justify-center space-x-2 pt-3 text-sm">
           <span>Have an account?</span>
           <button
             type="button"
-            className="text-brand-500 font-bold"
+            className="font-bold text-brand-500"
             onClick={() => setShowSignup(false)}
           >
             Login
@@ -373,7 +288,7 @@ const Signup: FC<Props> = ({ showLogin, onSuccess, setShowSignup }) => {
         </div>
       )}
     </form>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

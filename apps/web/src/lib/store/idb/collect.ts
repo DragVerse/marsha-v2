@@ -1,14 +1,15 @@
-import type { CollectModuleType } from '@dragverse/lens/custom-types'
-import { LocalIDBStore } from '@dragverse/lens/custom-types'
-import createIdbStorage from '@lib/createIdbStorage'
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import type { CollectModuleType } from "@dragverse/lens/custom-types";
+import { LocalIDBStore } from "@dragverse/lens/custom-types";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+import createIdbStorage from "@/lib/createIdbStorage";
 
 interface State {
-  collectModule: CollectModuleType | null
-  setCollectModule: (collectModule: CollectModuleType | null) => void
-  saveAsDefault: boolean
-  setSaveAsDefault: (saveAsDefault: boolean) => void
+  collectModule: CollectModuleType | null;
+  setCollectModule: (collectModule: CollectModuleType | null) => void;
+  saveAsDefault: boolean;
+  setSaveAsDefault: (saveAsDefault: boolean) => void;
 }
 
 const useCollectStore = create(
@@ -24,6 +25,6 @@ const useCollectStore = create(
       storage: createIdbStorage()
     }
   )
-)
+);
 
-export default useCollectStore
+export default useCollectStore;

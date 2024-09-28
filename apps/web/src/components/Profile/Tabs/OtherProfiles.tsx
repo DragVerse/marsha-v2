@@ -1,21 +1,21 @@
-import Badge from '@components/Common/Badge'
-import FollowActions from '@components/Common/FollowActions'
-import OtherChannelsShimmer from '@components/Shimmers/OtherChannelsShimmer'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
+import FollowActions from "@/components/Common/FollowActions";
+import OtherChannelsShimmer from "@/components/Shimmers/OtherChannelsShimmer";
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
 import {
   formatNumber,
   getLennyPicture,
   getProfile,
   getProfilePicture
-} from '@dragverse/generic'
-import type { Profile } from '@dragverse/lens'
-import { useProfilesQuery } from '@dragverse/lens'
-import Link from 'next/link'
-import type { FC } from 'react'
+} from "@dragverse/generic";
+import type { Profile } from "@dragverse/lens";
+import { useProfilesQuery } from "@dragverse/lens";
+import { Badge } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
 
 type Props = {
-  currentProfile: Profile
-}
+  currentProfile: Profile;
+};
 
 const OtherProfiles: FC<Props> = ({ currentProfile }) => {
   const { data, loading } = useProfilesQuery({
@@ -23,15 +23,15 @@ const OtherProfiles: FC<Props> = ({ currentProfile }) => {
       request: { where: { ownedBy: [currentProfile?.ownedBy.address] } }
     },
     skip: !currentProfile?.ownedBy
-  })
-  const allProfiles = data?.profiles?.items as Profile[]
+  });
+  const allProfiles = data?.profiles?.items as Profile[];
 
   if (loading) {
-    return <OtherChannelsShimmer />
+    return <OtherChannelsShimmer />;
   }
 
   if (allProfiles?.length === 1) {
-    return <NoDataFound isCenter withImage text="No other channels found" />
+    return <NoDataFound isCenter withImage text="No other channels found" />;
   }
 
   return (
@@ -46,11 +46,11 @@ const OtherProfiles: FC<Props> = ({ currentProfile }) => {
               <Link href={getProfile(profile)?.link}>
                 <img
                   className="size-24 rounded-full object-cover"
-                  src={getProfilePicture(profile, 'AVATAR_LG')}
+                  src={getProfilePicture(profile, "AVATAR_LG")}
                   alt={getProfile(profile)?.slug}
                   draggable={false}
                   onError={({ currentTarget }) => {
-                    currentTarget.src = getLennyPicture(profile?.id)
+                    currentTarget.src = getLennyPicture(profile?.id);
                   }}
                 />
               </Link>
@@ -75,7 +75,7 @@ const OtherProfiles: FC<Props> = ({ currentProfile }) => {
           )
       )}
     </div>
-  )
-}
+  );
+};
 
-export default OtherProfiles
+export default OtherProfiles;

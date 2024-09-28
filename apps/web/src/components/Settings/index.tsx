@@ -1,62 +1,65 @@
-import MetaTags from '@components/Common/MetaTags'
-import SettingsShimmer from '@components/Shimmers/SettingsShimmer'
-import { EVENTS, Tower } from '@dragverse/generic'
-import type { Profile } from '@dragverse/lens'
-import { useProfileQuery } from '@dragverse/lens'
-import useProfileStore from '@lib/store/idb/profile'
-import { useRouter } from 'next/router'
-import { useEffect } from 'react'
-import Custom404 from 'src/pages/404'
-import Custom500 from 'src/pages/500'
+import { EVENTS } from "@dragverse/generic";
+import type { Profile } from "@dragverse/lens";
+import { useProfileQuery } from "@dragverse/lens";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+import Custom404 from "src/pages/404";
+import Custom500 from "src/pages/500";
 
-import Allowance from './Allowance'
-import BasicInfo from './BasicInfo'
-import Blocked from './Blocked'
-import DangerZone from './DangerZone'
-import FollowSettings from './Follow'
-import Handles from './Handles'
-import ProfileManager from './Manager'
-import ProfileInterests from './ProfileInterests'
-import Sessions from './Sessions'
-import SettingsSidebar from './SettingsSidebar'
+import useSw from "@/hooks/useSw";
 
-export const SETTINGS_FOLLOW = '/settings/follow'
-export const SETTINGS_HANDLES = '/settings/handles'
-export const SETTINGS_INTERESTS = '/settings/interests'
-export const SETTINGS_ALLOWANCE = '/settings/allowance'
-export const SETTINGS_MANAGER = '/settings/manager'
-export const SETTINGS_SESSIONS = '/settings/sessions'
-export const SETTINGS_BLOCKED = '/settings/blocked'
-export const SETTINGS_DANGER_ZONE = '/settings/danger'
-export const SETTINGS = '/settings'
+import useProfileStore from "@/lib/store/idb/profile";
+import MetaTags from "../Common/MetaTags";
+import SettingsShimmer from "../Shimmers/SettingsShimmer";
+import Allowance from "./Allowance";
+import BasicInfo from "./BasicInfo";
+import Blocked from "./Blocked";
+import DangerZone from "./DangerZone";
+import FollowSettings from "./Follow";
+import Handles from "./Handles";
+import ProfileManager from "./Manager";
+import ProfileInterests from "./ProfileInterests";
+import Sessions from "./Sessions";
+import SettingsSidebar from "./SettingsSidebar";
+
+export const SETTINGS_FOLLOW = "/settings/follow";
+export const SETTINGS_HANDLES = "/settings/handles";
+export const SETTINGS_INTERESTS = "/settings/interests";
+export const SETTINGS_ALLOWANCE = "/settings/allowance";
+export const SETTINGS_MANAGER = "/settings/manager";
+export const SETTINGS_SESSIONS = "/settings/sessions";
+export const SETTINGS_BLOCKED = "/settings/blocked";
+export const SETTINGS_DANGER_ZONE = "/settings/danger";
+export const SETTINGS = "/settings";
 
 const Settings = () => {
-  const router = useRouter()
-  const { activeProfile } = useProfileStore()
+  const router = useRouter();
+  const { activeProfile } = useProfileStore();
+  const { addEventToQueue } = useSw();
 
   useEffect(() => {
-    Tower.track(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.SETTINGS })
-  }, [])
+    addEventToQueue(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.SETTINGS });
+  }, []);
 
   const { data, loading, error } = useProfileQuery({
     variables: {
       request: { forProfileId: activeProfile?.id }
     },
     skip: !activeProfile?.id
-  })
+  });
 
   if (error) {
-    return <Custom500 />
+    return <Custom500 />;
   }
   if (loading) {
-    return <SettingsShimmer />
+    return <SettingsShimmer />;
   }
 
   if (!data?.profile) {
-    return <Custom404 />
+    return <Custom404 />;
   }
 
-  const profile = data?.profile as Profile
+  const profile = data?.profile as Profile;
 
   return (
     <>
@@ -82,7 +85,7 @@ const Settings = () => {
         </div>
       ) : null}
     </>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;

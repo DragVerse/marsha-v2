@@ -1,53 +1,50 @@
-import Alert from '@components/Common/Alert'
-import CommentsShimmer from '@components/Shimmers/CommentsShimmer'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
-import { INFINITE_SCROLL_ROOT_MARGIN } from '@dragverse/constants'
-import { getProfile } from '@dragverse/generic'
-import type {
-  AnyPublication,
-  Comment,
-  MirrorablePublication,
-  PublicationsRequest
-} from '@dragverse/lens'
+import CommentsShimmer from "@/components/Shimmers/CommentsShimmer";
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
+import useCommentStore from "@/lib/store/comment";
+import useProfileStore from "@/lib/store/idb/profile";
+import usePersistStore from "@/lib/store/persist";
+import { INFINITE_SCROLL_ROOT_MARGIN } from "@dragverse/constants";
+import { getProfile } from "@dragverse/generic";
 import {
+  type AnyPublication,
+  type Comment,
   CommentRankingFilterType,
   CustomFiltersType,
   LimitType,
+  type MirrorablePublication,
+  type PublicationsRequest,
   TriStateValue,
   usePublicationsQuery
-} from '@dragverse/lens'
-import { CustomCommentsFilterEnum } from '@dragverse/lens/custom-types'
-import { CommentOutline, Spinner } from '@dragverse/ui'
-import useCommentStore from '@lib/store/comment'
-import useProfileStore from '@lib/store/idb/profile'
-import usePersistStore from '@lib/store/persist'
-import type { FC } from 'react'
-import { useInView } from 'react-cool-inview'
-
-import CommentsFilter from '../../Watch/Comments/CommentsFilter'
-import NewComment from '../../Watch/Comments/NewComment'
-import QueuedComment from '../../Watch/Comments/QueuedComment'
-import RenderComment from '../../Watch/Comments/RenderComment'
+} from "@dragverse/lens";
+import { CustomCommentsFilterEnum } from "@dragverse/lens/custom-types";
+import { CommentOutline, Spinner } from "@dragverse/ui";
+import type { FC } from "react";
+import { useInView } from "react-cool-inview";
+import CommentsFilter from "../../Watch/Comments/CommentsFilter";
+import NewComment from "../../Watch/Comments/NewComment";
+import QueuedComment from "../../Watch/Comments/QueuedComment";
+import RenderComment from "../../Watch/Comments/RenderComment";
+import Alert from "../Alert";
 
 type Props = {
-  publication: MirrorablePublication
-  hideTitle?: boolean
-}
+  publication: MirrorablePublication;
+  hideTitle?: boolean;
+};
 
 const PublicationComments: FC<Props> = ({ publication, hideTitle = false }) => {
-  const activeProfile = useProfileStore((state) => state.activeProfile)
+  const activeProfile = useProfileStore((state) => state.activeProfile);
   const selectedCommentFilter = useCommentStore(
     (state) => state.selectedCommentFilter
-  )
-  const queuedComments = usePersistStore((state) => state.queuedComments)
+  );
+  const queuedComments = usePersistStore((state) => state.queuedComments);
 
   const isFollowerOnlyReferenceModule =
     publication?.referenceModule?.__typename ===
-    'FollowOnlyReferenceModuleSettings'
+    "FollowOnlyReferenceModuleSettings";
 
   const isDegreesOfSeparationReferenceModule =
     publication?.referenceModule?.__typename ===
-    'DegreesOfSeparationReferenceModuleSettings'
+    "DegreesOfSeparationReferenceModuleSettings";
 
   const request: PublicationsRequest = {
     limit: LimitType.Fifty,
@@ -63,16 +60,16 @@ const PublicationComments: FC<Props> = ({ publication, hideTitle = false }) => {
         }
       }
     }
-  }
+  };
 
   const { data, loading, error, fetchMore } = usePublicationsQuery({
     variables: { request },
     skip: !publication.id
-  })
+  });
 
-  const comments = data?.publications?.items as AnyPublication[]
-  const pageInfo = data?.publications?.pageInfo
-  const profile = getProfile(publication.by)
+  const comments = data?.publications?.items as AnyPublication[];
+  const pageInfo = data?.publications?.pageInfo;
+  const profile = getProfile(publication.by);
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -84,13 +81,13 @@ const PublicationComments: FC<Props> = ({ publication, hideTitle = false }) => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   const showReferenceModuleAlert =
     activeProfile?.id &&
-    (isFollowerOnlyReferenceModule || isDegreesOfSeparationReferenceModule)
+    (isFollowerOnlyReferenceModule || isDegreesOfSeparationReferenceModule);
 
   return (
     <>
@@ -100,7 +97,7 @@ const PublicationComments: FC<Props> = ({ publication, hideTitle = false }) => {
             <h1 className="my-2 flex items-center space-x-2 text-lg">
               <CommentOutline className="size-5" />
               <span className="font-medium">
-                Comments{' '}
+                Comments{" "}
                 {publication.stats.comments
                   ? `( ${publication.stats.comments} )`
                   : null}
@@ -119,7 +116,7 @@ const PublicationComments: FC<Props> = ({ publication, hideTitle = false }) => {
             <Alert variant="warning">
               <span className="text-sm">
                 {isFollowerOnlyReferenceModule
-                  ? `Only followers can comment on this publication`
+                  ? "Only followers can comment on this publication"
                   : isDegreesOfSeparationReferenceModule
                     ? `Only followers within ${profile.displayName}'s preferred network can comment`
                     : null}
@@ -163,7 +160,7 @@ const PublicationComments: FC<Props> = ({ publication, hideTitle = false }) => {
         </>
       ) : null}
     </>
-  )
-}
+  );
+};
 
-export default PublicationComments
+export default PublicationComments;

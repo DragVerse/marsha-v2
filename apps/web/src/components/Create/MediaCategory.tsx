@@ -1,14 +1,15 @@
-import { CREATOR_VIDEO_CATEGORIES } from '@dragverse/constants'
-import { getCategoryByTag } from '@dragverse/generic'
-import { Select, SelectItem } from '@dragverse/ui'
-import useAppStore from '@lib/store'
+import { CREATOR_VIDEO_CATEGORIES } from "@dragverse/constants";
+import { getCategoryByTag } from "@dragverse/generic";
+import { Select, SelectItem } from "@dragverse/ui";
+
+import useAppStore from "@/lib/store";
 
 const MediaCategory = () => {
-  const uploadedMedia = useAppStore((state) => state.uploadedMedia)
-  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia)
+  const uploadedMedia = useAppStore((state) => state.uploadedMedia);
+  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia);
   return (
     <div className="flex-1 space-y-1">
-      <span className="text-sm font-medium">Category</span>
+      <span className="font-medium text-sm">Category</span>
 
       <Select
         value={uploadedMedia.mediaCategory.tag}
@@ -23,7 +24,7 @@ const MediaCategory = () => {
         ))}
       </Select>
     </div>
-  )
-}
+  );
+};
 
-export default MediaCategory
+export default MediaCategory;

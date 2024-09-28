@@ -1,30 +1,28 @@
-import MetaTags from '@components/Common/MetaTags'
-import Timeline from '@components/Home/Timeline'
-import TimelineShimmer from '@components/Shimmers/TimelineShimmer'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
+import useProfileStore from "@/lib/store/idb/profile";
 import {
   ALLOWED_APP_IDS,
   INFINITE_SCROLL_ROOT_MARGIN,
   IS_MAINNET,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID
-} from '@dragverse/constants'
-import type {
-  AnyPublication,
-  PublicationBookmarksRequest
-} from '@dragverse/lens'
+} from "@dragverse/constants";
 import {
+  type AnyPublication,
   LimitType,
+  type PublicationBookmarksRequest,
   PublicationMetadataMainFocusType,
   usePublicationBookmarksQuery
-} from '@dragverse/lens'
-import { Spinner } from '@dragverse/ui'
-import useProfileStore from '@lib/store/idb/profile'
-import type { FC } from 'react'
-import { useInView } from 'react-cool-inview'
+} from "@dragverse/lens";
+import { Spinner } from "@dragverse/ui";
+import type { FC } from "react";
+import { useInView } from "react-cool-inview";
+import MetaTags from "../Common/MetaTags";
+import Timeline from "../Home/Timeline";
+import TimelineShimmer from "../Shimmers/TimelineShimmer";
+import { NoDataFound } from "../UIElements/NoDataFound";
 
 const Bookmarks: FC = () => {
-  const { activeProfile } = useProfileStore()
+  const { activeProfile } = useProfileStore();
 
   const request: PublicationBookmarksRequest = {
     limit: LimitType.Fifty,
@@ -36,17 +34,17 @@ const Bookmarks: FC = () => {
           : undefined
       }
     }
-  }
+  };
 
   const { data, loading, error, fetchMore } = usePublicationBookmarksQuery({
     variables: {
       request
     },
     skip: !activeProfile?.id
-  })
+  });
 
-  const savedVideos = data?.publicationBookmarks?.items as AnyPublication[]
-  const pageInfo = data?.publicationBookmarks?.pageInfo
+  const savedVideos = data?.publicationBookmarks?.items as AnyPublication[];
+  const pageInfo = data?.publicationBookmarks?.pageInfo;
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -59,12 +57,12 @@ const Bookmarks: FC = () => {
           },
           channelId: activeProfile?.id ?? null
         }
-      })
+      });
     }
-  })
+  });
 
   if (loading) {
-    return <TimelineShimmer />
+    return <TimelineShimmer />;
   }
 
   if (!data?.publicationBookmarks?.items?.length) {
@@ -75,12 +73,12 @@ const Bookmarks: FC = () => {
         text="No DRAG content to consume yet 🌕 Share your drag make-up tutorial, music videos, and more with your community!"
         className="my-20"
       />
-    )
+    );
   }
 
   return (
     <>
-      <MetaTags title={`Saved Videos`} />
+      <MetaTags title="Saved Videos" />
       <h1 className="mb-6 font-bold md:text-2xl">Saved Videos</h1>
       {!error && !loading && (
         <>
@@ -93,7 +91,7 @@ const Bookmarks: FC = () => {
         </>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Bookmarks
+export default Bookmarks;

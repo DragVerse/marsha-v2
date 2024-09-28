@@ -1,28 +1,31 @@
-import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
-import { useCopyToClipboard } from '@dragverse/browser'
+import useHandleWrongNetwork from "@/hooks/useHandleWrongNetwork";
+import usePendingTxn from "@/hooks/usePendingTxn";
+import useProfileStore from "@/lib/store/idb/profile";
+import useAllowedTokensStore from "@/lib/store/idb/tokens";
+import useNonceStore from "@/lib/store/nonce";
+import { LENSHUB_PROXY_ABI } from "@dragverse/abis";
+import { useCopyToClipboard } from "@dragverse/browser";
 import {
   BONSAI_TOKEN_ADDRESS,
   ERROR_MESSAGE,
   LENSHUB_PROXY_ADDRESS,
   REQUESTING_SIGNATURE_MESSAGE
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
   checkLensManagerPermissions,
   getProfile,
   getSignature,
   shortenAddress
-} from '@dragverse/generic'
-import type {
-  CreateSetFollowModuleBroadcastItemResult,
-  FeeFollowModuleSettings,
-  Profile
-} from '@dragverse/lens'
+} from "@dragverse/generic";
 import {
+  type CreateSetFollowModuleBroadcastItemResult,
+  type FeeFollowModuleSettings,
+  type Profile,
   useBroadcastOnchainMutation,
   useCreateSetFollowModuleTypedDataMutation,
   useProfileFollowModuleQuery
-} from '@dragverse/lens'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
+} from "@dragverse/lens";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
 import {
   Button,
   Input,
@@ -30,44 +33,38 @@ import {
   SelectItem,
   Spinner,
   Tooltip
-} from '@dragverse/ui'
-import { zodResolver } from '@hookform/resolvers/zod'
-import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
-import usePendingTxn from '@hooks/usePendingTxn'
-import useProfileStore from '@lib/store/idb/profile'
-import useAllowedTokensStore from '@lib/store/idb/tokens'
-import useNonceStore from '@lib/store/nonce'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import toast from 'react-hot-toast'
-import { useSignTypedData, useWriteContract } from 'wagmi'
-import type { z } from 'zod'
-import { number, object, string } from 'zod'
+} from "@dragverse/ui";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+import { useSignTypedData, useWriteContract } from "wagmi";
+import { number, object, string, type z } from "zod";
 
 type Props = {
-  profile: Profile
-}
+  profile: Profile;
+};
 
 const formSchema = object({
-  recipient: string().length(42, { message: 'Enter valid ethereum address' }),
+  recipient: string().length(42, { message: "Enter valid ethereum address" }),
   amount: number()
-    .nonnegative({ message: 'Amount should to greater than zero' })
-    .refine((n) => n > 0, { message: 'Amount should be greater than 0' }),
-  token: string().length(42, { message: 'Select valid token' })
-})
-type FormData = z.infer<typeof formSchema>
+    .nonnegative({ message: "Amount should to greater than zero" })
+    .refine((n) => n > 0, { message: "Amount should be greater than 0" }),
+  token: string().length(42, { message: "Select valid token" })
+});
+type FormData = z.infer<typeof formSchema>;
 
 const FeeFollow = ({ profile }: Props) => {
-  const [copy] = useCopyToClipboard()
+  const [copy] = useCopyToClipboard();
 
-  const [loading, setLoading] = useState(false)
-  const [showForm, setShowForm] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
-  const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore()
-  const allowedTokens = useAllowedTokensStore((state) => state.allowedTokens)
-  const handleWrongNetwork = useHandleWrongNetwork()
-  const { activeProfile } = useProfileStore()
-  const { canBroadcast } = checkLensManagerPermissions(activeProfile)
+  const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore();
+  const allowedTokens = useAllowedTokensStore((state) => state.allowedTokens);
+  const handleWrongNetwork = useHandleWrongNetwork();
+  const { activeProfile } = useProfileStore();
+  const { canBroadcast } = checkLensManagerPermissions(activeProfile);
 
   const {
     register,
@@ -83,12 +80,12 @@ const FeeFollow = ({ profile }: Props) => {
       amount: 2,
       token: BONSAI_TOKEN_ADDRESS
     }
-  })
+  });
 
   const onError = (error: CustomErrorWithData) => {
-    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-    setLoading(false)
-  }
+    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
+    setLoading(false);
+  };
 
   const {
     data: followModuleData,
@@ -100,86 +97,85 @@ const FeeFollow = ({ profile }: Props) => {
     notifyOnNetworkStatusChange: true,
     onCompleted: ({ profile }) => {
       const activeFollowModule =
-        profile?.followModule as FeeFollowModuleSettings
-      setShowForm(activeFollowModule ? false : true)
+        profile?.followModule as FeeFollowModuleSettings;
+      setShowForm(!activeFollowModule);
     }
-  })
+  });
   const activeFollowModule = followModuleData?.profile
-    ?.followModule as FeeFollowModuleSettings
+    ?.followModule as FeeFollowModuleSettings;
 
   const { signTypedDataAsync } = useSignTypedData({
     mutation: { onError }
-  })
+  });
 
   const [broadcast, { data: broadcastData }] = useBroadcastOnchainMutation({
     onError
-  })
+  });
 
   const { data: txHash, writeContractAsync } = useWriteContract({
     mutation: {
       onError
     }
-  })
+  });
 
   const write = async ({ args }: { args: any[] }) => {
     return await writeContractAsync({
       address: LENSHUB_PROXY_ADDRESS,
       abi: LENSHUB_PROXY_ABI,
-      functionName: 'setFollowModule',
+      functionName: "setFollowModule",
       args
-    })
-  }
+    });
+  };
 
   const { indexed } = usePendingTxn({
     txHash,
     txId:
-      broadcastData?.broadcastOnchain.__typename === 'RelaySuccess'
+      broadcastData?.broadcastOnchain.__typename === "RelaySuccess"
         ? broadcastData?.broadcastOnchain?.txId
         : undefined
-  })
+  });
 
   useEffect(() => {
     if (indexed) {
-      setLoading(false)
-      refetch()
-      toast.success('Follow settings updated')
+      setLoading(false);
+      refetch();
+      toast.success("Follow settings updated");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [indexed])
+  }, [indexed]);
 
   const [createSetFollowModuleTypedData] =
     useCreateSetFollowModuleTypedDataMutation({
       onCompleted: async ({ createSetFollowModuleTypedData }) => {
         const { typedData, id } =
-          createSetFollowModuleTypedData as CreateSetFollowModuleBroadcastItemResult
+          createSetFollowModuleTypedData as CreateSetFollowModuleBroadcastItemResult;
         const { profileId, followModule, followModuleInitData } =
-          typedData.value
-        const args = [profileId, followModule, followModuleInitData]
+          typedData.value;
+        const args = [profileId, followModule, followModuleInitData];
         try {
-          toast.loading(REQUESTING_SIGNATURE_MESSAGE)
+          toast.loading(REQUESTING_SIGNATURE_MESSAGE);
           if (canBroadcast) {
-            const signature = await signTypedDataAsync(getSignature(typedData))
-            setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1)
+            const signature = await signTypedDataAsync(getSignature(typedData));
+            setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1);
             const { data } = await broadcast({
               variables: { request: { id, signature } }
-            })
-            if (data?.broadcastOnchain?.__typename === 'RelayError') {
-              return await write({ args })
+            });
+            if (data?.broadcastOnchain?.__typename === "RelayError") {
+              return await write({ args });
             }
-            return
+            return;
           }
-          return await write({ args })
+          return await write({ args });
         } catch {
-          setLoading(false)
+          setLoading(false);
         }
       },
       onError
-    })
+    });
 
   const updateFeeFollow = async (disable: boolean) => {
-    await handleWrongNetwork()
+    await handleWrongNetwork();
 
-    setLoading(true)
+    setLoading(true);
     return await createSetFollowModuleTypedData({
       variables: {
         options: { overrideSigNonce: lensHubOnchainSigNonce },
@@ -189,25 +185,25 @@ const FeeFollow = ({ profile }: Props) => {
             : {
                 feeFollowModule: {
                   amount: {
-                    currency: getValues('token'),
-                    value: getValues('amount').toString()
+                    currency: getValues("token"),
+                    value: getValues("amount").toString()
                   },
-                  recipient: getValues('recipient')
+                  recipient: getValues("recipient")
                 }
               }
         }
       }
-    })
-  }
+    });
+  };
 
   const onSubmitForm = () => {
-    updateFeeFollow(false)
-  }
+    updateFeeFollow(false);
+  };
 
   return (
     <>
       <div className="mb-5 space-y-2">
-        <h1 className="text-brand-400 text-xl font-bold">Grow with Lens</h1>
+        <h1 className="font-bold text-brand-400 text-xl">Grow with Lens</h1>
         <p className="text opacity-80">
           You can set up a follow fee for your profile and provide exclusive
           offers and perks to the followers, also people can pay and support
@@ -221,18 +217,18 @@ const FeeFollow = ({ profile }: Props) => {
       )}
 
       {activeFollowModule?.amount && (
-        <div className="tape-border mb-6 w-full rounded-xl bg-gradient-to-br p-6 transition-all">
+        <div className="dragverse-border mb-6 w-full rounded-xl bg-gradient-to-br p-6 transition-all">
           <div className="grid gap-y-4 md:grid-cols-3">
             <div>
               <span>Amount</span>
-              <h6 className="text-xl font-bold">
-                {activeFollowModule.amount?.value}{' '}
+              <h6 className="font-bold text-xl">
+                {activeFollowModule.amount?.value}{" "}
                 {activeFollowModule.amount?.asset?.symbol}
               </h6>
             </div>
             <div>
               <span>Asset</span>
-              <h6 className="text-xl font-bold">
+              <h6 className="font-bold text-xl">
                 {activeFollowModule.amount?.asset?.name}
               </h6>
             </div>
@@ -240,7 +236,7 @@ const FeeFollow = ({ profile }: Props) => {
               <span>Recipient</span>
               <Tooltip content="Copy Address" placement="top">
                 <Button onClick={() => copy(activeFollowModule.recipient)}>
-                  <span className="block text-xl font-bold outline-none">
+                  <span className="block font-bold text-xl outline-none">
                     {shortenAddress(activeFollowModule.recipient, 6)}
                   </span>
                 </Button>
@@ -252,13 +248,13 @@ const FeeFollow = ({ profile }: Props) => {
 
       {showForm && !moduleLoading ? (
         <form onSubmit={handleSubmit(onSubmitForm)}>
-          <div className="laptop:w-1/2 flex flex-col gap-4">
+          <div className="flex laptop:w-1/2 flex-col gap-4">
             <div>
-              <div className="mb-1 text-sm font-medium">Currency</div>
+              <div className="mb-1 font-medium text-sm">Currency</div>
               <Select
-                value={watch('token')}
-                onValueChange={(value) => setValue('token', value)}
-                defaultValue={allowedTokens[0].address}
+                value={watch("token")}
+                onValueChange={(value) => setValue("token", value)}
+                defaultValue={allowedTokens[0]?.address}
               >
                 {allowedTokens?.map(({ address, name }) => (
                   <SelectItem key={address} value={address}>
@@ -267,7 +263,7 @@ const FeeFollow = ({ profile }: Props) => {
                 ))}
               </Select>
               {errors.token?.message && (
-                <div className="mx-1 mt-1 text-xs font-medium text-red-500">
+                <div className="mx-1 mt-1 font-medium text-red-500 text-xs">
                   {errors.token?.message}
                 </div>
               )}
@@ -280,7 +276,7 @@ const FeeFollow = ({ profile }: Props) => {
                 placeholder="10"
                 autoComplete="off"
                 error={errors.amount?.message}
-                {...register('amount', { valueAsNumber: true })}
+                {...register("amount", { valueAsNumber: true })}
               />
             </div>
             <div>
@@ -289,7 +285,7 @@ const FeeFollow = ({ profile }: Props) => {
                 placeholder="0x00..."
                 autoComplete="off"
                 error={errors.recipient?.message}
-                {...register('recipient')}
+                {...register("recipient")}
               />
             </div>
           </div>
@@ -319,7 +315,7 @@ const FeeFollow = ({ profile }: Props) => {
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default FeeFollow
+export default FeeFollow;

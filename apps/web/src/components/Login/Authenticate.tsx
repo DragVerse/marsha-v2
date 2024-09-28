@@ -1,62 +1,60 @@
-import Badge from '@components/Common/Badge'
-import ButtonShimmer from '@components/Shimmers/ButtonShimmer'
-import { ERROR_MESSAGE } from '@dragverse/constants'
+import { signIn, signOut } from "@/lib/store/auth";
+import useProfileStore from "@/lib/store/idb/profile";
+import { ERROR_MESSAGE } from "@dragverse/constants";
 import {
-  EVENTS,
   getLennyPicture,
   getProfile,
   getProfilePicture,
   logger,
-  shortenAddress,
-  Tower
-} from '@dragverse/generic'
-import type { Profile } from '@dragverse/lens'
+  shortenAddress
+} from "@dragverse/generic";
+import type { Profile } from "@dragverse/lens";
 import {
   LimitType,
   useAuthenticateMutation,
   useChallengeLazyQuery,
   useProfilesManagedQuery
-} from '@dragverse/lens'
-import { useApolloClient } from '@dragverse/lens/apollo'
+} from "@dragverse/lens";
+import { useApolloClient } from "@dragverse/lens/apollo";
 import {
+  Badge,
   Button,
   Callout,
   Select,
   SelectItem,
   WarningOutline
-} from '@dragverse/ui'
-import { signIn, signOut } from '@lib/store/auth'
-import useProfileStore from '@lib/store/idb/profile'
-import { useRouter } from 'next/router'
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
-import toast from 'react-hot-toast'
-import { useAccount, useSignMessage } from 'wagmi'
-
-import Signup from './Signup'
+} from "@dragverse/ui";
+import { useRouter } from "next/router";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { useAccount, useSignMessage } from "wagmi";
+import ButtonShimmer from "../Shimmers/ButtonShimmer";
+import Signup from "./Signup";
 
 const Authenticate = () => {
   const {
     query: { as, signup }
-  } = useRouter()
+  } = useRouter();
 
-  const [loading, setLoading] = useState(false)
-  const [showSignup, setShowSignup] = useState(false)
-  const [selectedProfileId, setSelectedProfileId] = useState<string>('')
-  const { activeProfile, setActiveProfile } = useProfileStore()
+  const [loading, setLoading] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
+  const [selectedProfileId, setSelectedProfileId] = useState<string>("");
+  const { activeProfile, setActiveProfile } = useProfileStore();
 
-  const router = useRouter()
-  const { address, connector, isConnected } = useAccount()
-  const { resetStore: resetApolloStore } = useApolloClient()
+  const router = useRouter();
+  const { address, connector, isConnected } = useAccount();
+
+  const { resetStore: resetApolloStore } = useApolloClient();
 
   useEffect(() => {
     if (signup) {
-      setShowSignup(true)
+      setShowSignup(true);
     }
-  }, [signup])
+  }, [signup]);
 
   const onError = () => {
-    signOut()
-  }
+    signOut();
+  };
 
   const {
     data,
@@ -70,100 +68,101 @@ const Authenticate = () => {
     notifyOnNetworkStatusChange: true,
     skip: !address,
     onCompleted: (data) => {
-      const profiles = data?.profilesManaged.items
-      const lastLogin = data?.lastLoggedInProfile
+      const profiles = data?.profilesManaged.items;
+      const lastLogin = data?.lastLoggedInProfile;
       if (profiles?.length) {
         const profile = lastLogin
           ? profiles.find((p) => p.id === lastLogin.id)
-          : profiles[0]
+          : profiles[0];
 
-        const profileId = as || (signup ? profiles[0].id : profile?.id)
-        setSelectedProfileId(profileId)
+        const profileId = as || (signup ? profiles?.[0]?.id : profile?.id);
+        setSelectedProfileId(profileId);
       } else {
-        setShowSignup(true)
+        setShowSignup(true);
       }
     }
-  })
+  });
 
-  const profilesManaged = data?.profilesManaged.items as Profile[]
-  const lastLogin = data?.lastLoggedInProfile as Profile
+  const profilesManaged = data?.profilesManaged.items as Profile[];
+  const lastLogin = data?.lastLoggedInProfile as Profile;
 
   const remainingProfiles = useMemo(() => {
     return lastLogin
       ? profilesManaged.filter((profile) => profile.id !== lastLogin.id)
-      : profilesManaged
-  }, [profilesManaged, lastLogin])
+      : profilesManaged;
+  }, [profilesManaged, lastLogin]);
 
   const profiles = lastLogin
     ? [lastLogin, ...remainingProfiles]
-    : remainingProfiles
+    : remainingProfiles;
 
   const { signMessageAsync } = useSignMessage({
     mutation: { onError }
-  })
+  });
 
   const [loadChallenge] = useChallengeLazyQuery({
     // if cache old challenge persist issue (InvalidSignature)
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     onError
-  })
-  const [authenticate] = useAuthenticateMutation()
+  });
+  const [authenticate] = useAuthenticateMutation({
+    onError
+  });
 
   const handleSign = useCallback(async () => {
     if (!isConnected) {
-      signOut()
-      return toast.error('Please connect to your wallet')
+      signOut();
+      return toast.error("Please connect to your wallet");
     }
     try {
-      setLoading(true)
+      setLoading(true);
       const challenge = await loadChallenge({
         variables: { request: { for: selectedProfileId, signedBy: address } }
-      })
+      });
       if (!challenge?.data?.challenge?.text) {
-        return toast.error(ERROR_MESSAGE)
+        return toast.error(ERROR_MESSAGE);
       }
       const signature = await signMessageAsync({
         message: challenge?.data?.challenge?.text
-      })
+      });
       if (!signature) {
-        return
+        return;
       }
       const result = await authenticate({
         variables: {
           request: { id: challenge.data?.challenge.id, signature }
         }
-      })
-      const accessToken = result.data?.authenticate.accessToken
-      const refreshToken = result.data?.authenticate.refreshToken
-      signIn({ accessToken, refreshToken })
+      });
+      const accessToken = result.data?.authenticate.accessToken;
+      const refreshToken = result.data?.authenticate.refreshToken;
+      const identityToken = result.data?.authenticate.identityToken;
+      signIn({ accessToken, refreshToken, identityToken });
       if (profilesManaged.length === 0) {
-        setActiveProfile(null)
-        toast.error('No profile found')
+        setActiveProfile(null);
+        toast.error("No profile found");
       } else {
         const profile = profilesManaged.find(
           (profile) => profile.id === selectedProfileId
-        )
+        );
         if (profile) {
-          setActiveProfile(profile)
+          setActiveProfile(profile);
         }
-        const next = router.query?.next as string
-        if (next && next.startsWith('/') && !next.startsWith('//')) {
-          router.push(next)
+        const next = router.query?.next as string;
+        if (!!next && next.startsWith("/") && !next.startsWith("//")) {
+          router.push(next);
         } else {
-          router.push('/')
+          router.push("/");
         }
       }
-      resetApolloStore()
-      Tower.track(EVENTS.AUTH.SIGN_IN_WITH_LENS)
+      resetApolloStore();
     } catch (error) {
-      logger.error('[Error Sign In]', {
+      logger.error("[Error Sign In]", {
         error,
         connector: connector?.name
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     router,
     address,
@@ -173,14 +172,14 @@ const Authenticate = () => {
     loadChallenge,
     profilesManaged,
     selectedProfileId
-  ])
+  ]);
 
   if (as && as === activeProfile?.id) {
-    return null
+    return null;
   }
 
   if (!isConnected) {
-    return null
+    return null;
   }
 
   if (profilesLoading) {
@@ -189,7 +188,7 @@ const Authenticate = () => {
         <ButtonShimmer className="h-[46px]" />
         <ButtonShimmer className="h-[46px]" />
       </div>
-    )
+    );
   }
 
   return (
@@ -197,8 +196,8 @@ const Authenticate = () => {
       {showSignup ? (
         <Signup
           onSuccess={() => {
-            setShowSignup(false)
-            refetch()
+            setShowSignup(false);
+            refetch();
           }}
           setShowSignup={setShowSignup}
           showLogin={Boolean(profiles[0])}
@@ -217,15 +216,15 @@ const Authenticate = () => {
                   <SelectItem size="lg" key={profile.id} value={profile.id}>
                     <div className="flex items-center space-x-2">
                       <img
-                        src={getProfilePicture(profile, 'AVATAR')}
+                        src={getProfilePicture(profile, "AVATAR")}
                         className="size-4 rounded-full"
                         onError={({ currentTarget }) => {
-                          currentTarget.src = getLennyPicture(profile?.id)
+                          currentTarget.src = getLennyPicture(profile?.id);
                         }}
                         alt={getProfile(profile)?.displayName}
                       />
                       <span>{getProfile(profile).slugWithPrefix}</span>
-                      <Badge id={profile?.id} size="xs" />
+                      <Badge id={profile?.id} size="sm" />
                     </div>
                   </SelectItem>
                 ))}
@@ -256,7 +255,7 @@ const Authenticate = () => {
             )}
             <button
               type="button"
-              className="text-brand-500 font-bold"
+              className="font-bold text-brand-500"
               onClick={() => setShowSignup(true)}
             >
               Sign up
@@ -265,7 +264,7 @@ const Authenticate = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default memo(Authenticate)
+export default memo(Authenticate);

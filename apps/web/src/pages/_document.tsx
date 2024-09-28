@@ -5,8 +5,8 @@ import {
   DRAGVERSE_FAVICON_32,
   DRAGVERSE_LOGO,
   TAPE_APP_NAME
-} from '@dragverse/constants'
-import Document, { Head, Html, Main, NextScript } from 'next/document'
+} from "@dragverse/constants";
+import Document, { Head, Html, Main, NextScript } from "next/document";
 
 class AppDocument extends Document {
   render() {
@@ -50,8 +50,8 @@ class AppDocument extends Document {
           <NextScript />
         </body>
       </Html>
-    )
+    );
   }
 }
 
-export default AppDocument
+export default AppDocument;

@@ -1,17 +1,20 @@
-import { ADMIN_IDS } from '@dragverse/constants'
+import useSw from "@/hooks/useSw";
+import getCurrentSession from "@/lib/getCurrentSession";
+import { signOut } from "@/lib/store/auth";
+import useProfileStore from "@/lib/store/idb/profile";
+import { ADMIN_IDS } from "@dragverse/constants";
 import {
   EVENTS,
   getLennyPicture,
   getProfile,
-  getProfilePicture,
-  Tower
-} from '@dragverse/generic'
-import type { Profile } from '@dragverse/lens'
+  getProfilePicture
+} from "@dragverse/generic";
 import {
   LimitType,
+  type Profile,
   useProfilesManagedQuery,
   useRevokeAuthenticationMutation
-} from '@dragverse/lens'
+} from "@dragverse/lens";
 import {
   BookmarkOutline,
   ChevronRightOutline,
@@ -27,23 +30,20 @@ import {
   HandWaveOutline,
   SwitchProfileOutline,
   UserOutline
-} from '@dragverse/ui'
-import getCurrentSession from '@lib/getCurrentSession'
-import { signOut } from '@lib/store/auth'
-import useProfileStore from '@lib/store/idb/profile'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
-
-import Badge from './Badge'
+} from "@dragverse/ui";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useMemo } from "react";
+import { useAccount } from "wagmi";
+import Badge from "./Badge";
 
 const UserMenu = () => {
-  // Removed or commented out since it's not in use
-  // const { theme, setTheme } = useTheme();
-  const { push, asPath } = useRouter()
-  const { address } = useAccount()
-  const { activeProfile } = useProfileStore()
+  const { theme, setTheme } = useTheme();
+  const { push, asPath } = useRouter();
+  const { address } = useAccount();
+  const { activeProfile } = useProfileStore();
+  const { addEventToQueue } = useSw();
 
   const { data } = useProfilesManagedQuery({
     variables: {
@@ -51,45 +51,45 @@ const UserMenu = () => {
       lastLoggedInProfileRequest: { for: address }
     },
     skip: !address
-  })
+  });
   const profilesManagedWithoutActiveProfile = useMemo(() => {
     if (!data?.profilesManaged?.items) {
-      return []
+      return [];
     }
     return data.profilesManaged.items.filter(
       (p) => p.id !== activeProfile?.id
-    ) as Profile[]
-  }, [data?.profilesManaged, activeProfile])
+    ) as Profile[];
+  }, [data?.profilesManaged, activeProfile]);
 
-  const isAdmin = ADMIN_IDS.includes(activeProfile?.id)
+  const isAdmin = ADMIN_IDS.includes(activeProfile?.id);
 
-  const [revokeAuthentication, { loading }] = useRevokeAuthenticationMutation()
+  const [revokeAuthentication, { loading }] = useRevokeAuthenticationMutation();
 
   const onClickSignout = async () => {
-    const authorizationId = getCurrentSession().authorizationId
+    const { authorizationId } = getCurrentSession();
     if (authorizationId) {
       await revokeAuthentication({
         variables: {
           request: { authorizationId }
         }
-      })
+      });
     }
-    signOut()
-    Tower.track(EVENTS.AUTH.SIGN_OUT)
-    location.reload()
-  }
+    signOut();
+    addEventToQueue(EVENTS.AUTH.SIGN_OUT);
+    location.reload();
+  };
 
   return (
     <DropdownMenu
       trigger={
-        <div className="ring-brand-500 size-[34px] rounded-full hover:ring-2">
+        <div className="size-[34px] rounded-full ring-brand-500 hover:ring-2">
           <img
             className="h-full w-full flex-none rounded-full object-cover"
-            src={getProfilePicture(activeProfile, 'AVATAR')}
+            src={getProfilePicture(activeProfile, "AVATAR")}
             alt={getProfile(activeProfile)?.displayName}
             draggable={false}
             onError={({ currentTarget }) => {
-              currentTarget.src = getLennyPicture(activeProfile?.id)
+              currentTarget.src = getLennyPicture(activeProfile?.id);
             }}
           />
         </div>
@@ -99,11 +99,11 @@ const UserMenu = () => {
         <Link href={getProfile(activeProfile)?.link}>
           <div className="flex items-center gap-2 px-2 py-1 pb-3">
             <img
-              src={getProfilePicture(activeProfile, 'AVATAR')}
+              src={getProfilePicture(activeProfile, "AVATAR")}
               alt={getProfile(activeProfile)?.displayName}
               className="h-8 w-8 rounded-full"
               onError={({ currentTarget }) => {
-                currentTarget.src = getLennyPicture(activeProfile?.id)
+                currentTarget.src = getLennyPicture(activeProfile?.id);
               }}
             />
             <p className="line-clamp-1 font-semibold">
@@ -112,7 +112,7 @@ const UserMenu = () => {
           </div>
         </Link>
         {isAdmin && (
-          <DropdownMenuItem onClick={() => push('/mod')}>
+          <DropdownMenuItem onClick={() => push("/mod")}>
             <div className="flex items-center gap-2">
               <GraphOutline className="size-4" />
               <p className="whitespace-nowrap">Mod</p>
@@ -129,7 +129,7 @@ const UserMenu = () => {
                 <p className="whitespace-nowrap">My Profile</p>
               </div>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => push('/bookmarks')}>
+            <DropdownMenuItem onClick={() => push("/bookmarks")}>
               <div className="flex items-center gap-2">
                 <BookmarkOutline className="size-4" />
                 <p className="whitespace-nowrap">Bookmarks</p>
@@ -164,7 +164,7 @@ const UserMenu = () => {
                                 onError={({ currentTarget }) => {
                                   currentTarget.src = getLennyPicture(
                                     profile?.id
-                                  )
+                                  );
                                 }}
                                 draggable={false}
                               />
@@ -184,7 +184,7 @@ const UserMenu = () => {
             ) : null}
           </>
         )}
-        <DropdownMenuItem onClick={() => push('/settings')}>
+        <DropdownMenuItem onClick={() => push("/settings")}>
           <div className="flex items-center gap-2">
             <CogOutline className="size-4" />
             <p className="whitespace-nowrap">My Settings</p>
@@ -193,21 +193,21 @@ const UserMenu = () => {
         <DropdownMenuSeparator />
         {/* <DropdownMenuItem
           onClick={() => {
-            const selected = theme === 'dark' ? 'light' : 'dark'
-            setTheme(selected)
-            Tower.track(EVENTS.SYSTEM.TOGGLE_THEME, {
+            const selected = theme === "dark" ? "light" : "dark";
+            setTheme(selected);
+            addEventToQueue(EVENTS.SYSTEM.TOGGLE_THEME, {
               selected_theme: selected
-            })
+            });
           }}
         >
           <div className="flex items-center gap-2">
-            {theme === 'dark' ? (
+            {theme === "dark" ? (
               <SunOutline className="size-4" />
             ) : (
               <MoonOutline className="size-4" />
             )}
             <p className="whitespace-nowrap">
-              {theme === 'light' ? `Switch to Dark` : `Switch to Light`}
+              {theme === "light" ? "Switch to Dark" : "Switch to Light"}
             </p>
           </div>
         </DropdownMenuItem> */}
@@ -219,7 +219,7 @@ const UserMenu = () => {
         </DropdownMenuItem>
       </div>
     </DropdownMenu>
-  )
-}
+  );
+};
 
-export default UserMenu
+export default UserMenu;

@@ -1,14 +1,17 @@
-import Badge from '@components/Common/Badge'
-import InterweaveContent from '@components/Common/InterweaveContent'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
-import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
+import Badge from "@/components/Common/Badge";
+import InterweaveContent from "@/components/Common/InterweaveContent";
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
+import useHandleWrongNetwork from "@/hooks/useHandleWrongNetwork";
+import useProfileStore from "@/lib/store/idb/profile";
+import useNonceStore from "@/lib/store/nonce";
+import { LENSHUB_PROXY_ABI } from "@dragverse/abis";
 import {
   ERROR_MESSAGE,
   INFINITE_SCROLL_ROOT_MARGIN,
   LENSHUB_PROXY_ADDRESS,
   REQUESTING_SIGNATURE_MESSAGE,
   SIGN_IN_REQUIRED
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
   checkLensManagerPermissions,
   getLennyPicture,
@@ -18,74 +21,69 @@ import {
   getSignature,
   imageCdn,
   sanitizeDStorageUrl
-} from '@dragverse/generic'
-import type {
-  CreateUnblockProfilesBroadcastItemResult,
-  Profile,
-  WhoHaveBlockedRequest
-} from '@dragverse/lens'
+} from "@dragverse/generic";
 import {
+  type CreateUnblockProfilesBroadcastItemResult,
   LimitType,
+  type Profile,
+  type WhoHaveBlockedRequest,
   useBroadcastOnchainMutation,
   useCreateUnblockProfilesTypedDataMutation,
   useUnblockMutation,
   useWhoHaveBlockedQuery
-} from '@dragverse/lens'
-import { useApolloClient } from '@dragverse/lens/apollo'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
-import { Button, Spinner } from '@dragverse/ui'
-import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
-import useProfileStore from '@lib/store/idb/profile'
-import useNonceStore from '@lib/store/nonce'
-import Link from 'next/link'
-import { useState } from 'react'
-import { useInView } from 'react-cool-inview'
-import toast from 'react-hot-toast'
-import { useSignTypedData, useWriteContract } from 'wagmi'
+} from "@dragverse/lens";
+import { useApolloClient } from "@dragverse/lens/apollo";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
+import { Button, Spinner } from "@dragverse/ui";
+import Link from "next/link";
+import { useState } from "react";
+import { useInView } from "react-cool-inview";
+import toast from "react-hot-toast";
+import { useSignTypedData, useWriteContract } from "wagmi";
 
 const List = () => {
-  const [unblockingProfileId, setUnblockingProfileId] = useState('')
+  const [unblockingProfileId, setUnblockingProfileId] = useState("");
 
-  const { activeProfile } = useProfileStore()
-  const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore()
-  const { cache } = useApolloClient()
-  const { canBroadcast } = checkLensManagerPermissions(activeProfile)
-  const handleWrongNetwork = useHandleWrongNetwork()
+  const { activeProfile } = useProfileStore();
+  const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore();
+  const { cache } = useApolloClient();
+  const { canBroadcast } = checkLensManagerPermissions(activeProfile);
+  const handleWrongNetwork = useHandleWrongNetwork();
 
   const onError = (error: CustomErrorWithData) => {
-    setUnblockingProfileId('')
-    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-  }
+    setUnblockingProfileId("");
+    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
+  };
 
   const updateCache = () => {
     const normalizedId = cache.identify({
       id: unblockingProfileId,
-      __typename: 'Profile'
-    })
-    cache.evict({ id: normalizedId })
-    cache.gc()
-  }
+      __typename: "Profile"
+    });
+    cache.evict({ id: normalizedId });
+    cache.gc();
+  };
 
   const onCompleted = (
-    __typename?: 'RelayError' | 'RelaySuccess' | 'LensProfileManagerRelayError'
+    __typename?: "RelayError" | "RelaySuccess" | "LensProfileManagerRelayError"
   ) => {
     if (
-      __typename === 'RelayError' ||
-      __typename === 'LensProfileManagerRelayError'
+      __typename === "RelayError" ||
+      __typename === "LensProfileManagerRelayError"
     ) {
-      return
+      return;
     }
-    updateCache()
-    toast.success(`Unblocked successfully`)
-    setUnblockingProfileId('')
-  }
+    updateCache();
+    toast.success("Unblocked successfully");
+    setUnblockingProfileId("");
+  };
 
-  const request: WhoHaveBlockedRequest = { limit: LimitType.Fifty }
+  const request: WhoHaveBlockedRequest = { limit: LimitType.Fifty };
   const { data, loading, error, fetchMore } = useWhoHaveBlockedQuery({
     variables: { request },
     skip: !activeProfile?.id
-  })
-  const pageInfo = data?.whoHaveBlocked?.pageInfo
+  });
+  const pageInfo = data?.whoHaveBlocked?.pageInfo;
 
   const { observe } = useInView({
     threshold: 0.25,
@@ -98,117 +96,117 @@ const List = () => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   const { signTypedDataAsync } = useSignTypedData({
     mutation: { onError }
-  })
+  });
 
   const { writeContractAsync } = useWriteContract({
     mutation: {
       onSuccess: () => onCompleted(),
       onError
     }
-  })
+  });
 
   const write = async ({ args }: { args: any[] }) => {
     return await writeContractAsync({
       address: LENSHUB_PROXY_ADDRESS,
       abi: LENSHUB_PROXY_ABI,
-      functionName: 'setBlockStatus',
+      functionName: "setBlockStatus",
       args
-    })
-  }
+    });
+  };
 
   const [broadcast] = useBroadcastOnchainMutation({
     onCompleted: ({ broadcastOnchain }) =>
       onCompleted(broadcastOnchain.__typename),
     onError
-  })
+  });
 
   const broadcastTypedData = async (
     typedDataResult: CreateUnblockProfilesBroadcastItemResult
   ) => {
-    const { typedData, id } = typedDataResult
+    const { typedData, id } = typedDataResult;
     const { byProfileId, idsOfProfilesToSetBlockStatus, blockStatus } =
-      typedData.value
-    const args = [byProfileId, idsOfProfilesToSetBlockStatus, blockStatus]
+      typedData.value;
+    const args = [byProfileId, idsOfProfilesToSetBlockStatus, blockStatus];
     try {
       if (canBroadcast) {
-        toast.loading(REQUESTING_SIGNATURE_MESSAGE)
-        const signature = await signTypedDataAsync(getSignature(typedData))
-        setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1)
+        toast.loading(REQUESTING_SIGNATURE_MESSAGE);
+        const signature = await signTypedDataAsync(getSignature(typedData));
+        setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1);
         const { data } = await broadcast({
           variables: { request: { id, signature } }
-        })
-        if (data?.broadcastOnchain?.__typename === 'RelayError') {
-          return await write({ args })
+        });
+        if (data?.broadcastOnchain?.__typename === "RelayError") {
+          return await write({ args });
         }
-        return
+        return;
       }
-      return await write({ args })
+      return await write({ args });
     } catch {
-      setUnblockingProfileId('')
+      setUnblockingProfileId("");
     }
-  }
+  };
 
   const [createUnBlockTypedData] = useCreateUnblockProfilesTypedDataMutation({
-    onCompleted: async ({ createUnblockProfilesTypedData }) => {
-      broadcastTypedData(createUnblockProfilesTypedData)
+    onCompleted: ({ createUnblockProfilesTypedData }) => {
+      broadcastTypedData(createUnblockProfilesTypedData);
     },
     onError
-  })
+  });
 
   const [unBlock] = useUnblockMutation({
     onCompleted: async ({ unblock }) => {
-      if (unblock.__typename === 'LensProfileManagerRelayError') {
+      if (unblock.__typename === "LensProfileManagerRelayError") {
         return await createUnBlockTypedData({
           variables: { request: { profiles: [unblockingProfileId] } }
-        })
+        });
       }
-      onCompleted(unblock.__typename)
+      onCompleted(unblock.__typename);
     },
     onError
-  })
+  });
 
-  const blockedProfiles = data?.whoHaveBlocked.items as Profile[]
+  const blockedProfiles = data?.whoHaveBlocked.items as Profile[];
 
   if (loading) {
-    return <Spinner className="my-20" />
+    return <Spinner className="my-20" />;
   }
 
   if (!blockedProfiles?.length || error) {
-    return <NoDataFound withImage isCenter />
+    return <NoDataFound withImage isCenter />;
   }
 
   const onClickUnblock = async (profileId: string) => {
     if (!activeProfile?.id) {
-      return toast.error(SIGN_IN_REQUIRED)
+      return toast.error(SIGN_IN_REQUIRED);
     }
-    await handleWrongNetwork()
+    await handleWrongNetwork();
 
     try {
-      setUnblockingProfileId(profileId)
+      setUnblockingProfileId(profileId);
       await unBlock({
         variables: {
           request: {
             profiles: [profileId]
           }
         }
-      })
+      });
     } catch (error: any) {
-      onError(error)
+      onError(error);
     }
-  }
+  };
 
   return (
     <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
       {blockedProfiles.map((profile) => (
         <div
           key={profile.id}
-          className="tape-border rounded-small overflow-hidden"
+          className="dragverse-border overflow-hidden rounded-small"
         >
           <div
             style={{
@@ -216,20 +214,20 @@ const List = () => {
                 sanitizeDStorageUrl(getProfileCoverPicture(profile, true))
               )})`
             }}
-            className="bg-brand-500 relative h-20 w-full bg-cover bg-center bg-no-repeat"
+            className="relative h-20 w-full bg-brand-500 bg-center bg-cover bg-no-repeat"
           >
             <div className="absolute bottom-2 left-2 flex-none">
               <img
-                className="dark:bg-brand-250 size-8 rounded-full border-2 border-white bg-white object-cover"
-                src={getProfilePicture(profile, 'AVATAR')}
+                className="size-8 rounded-full border-2 border-white bg-white object-cover dark:bg-gray-900"
+                src={getProfilePicture(profile, "AVATAR")}
                 alt={getProfile(profile)?.displayName}
                 draggable={false}
                 onError={({ currentTarget }) => {
-                  currentTarget.src = getLennyPicture(profile?.id)
+                  currentTarget.src = getLennyPicture(profile?.id);
                 }}
               />
             </div>
-            <div className="absolute bottom-2 right-2 flex-none">
+            <div className="absolute right-2 bottom-2 flex-none">
               <Button
                 onClick={() => onClickUnblock(profile.id)}
                 disabled={unblockingProfileId === profile.id}
@@ -238,12 +236,12 @@ const List = () => {
               </Button>
             </div>
           </div>
-          <div className="p-2 pl-4 pt-2.5">
+          <div className="p-2 pt-2.5 pl-4">
             <Link
               href={getProfile(profile)?.link}
               className="flex items-center space-x-1"
             >
-              <span className="text-2xl font-bold leading-tight">
+              <span className="font-bold text-2xl leading-tight">
                 {getProfile(profile)?.slug}
               </span>
               <Badge id={profile?.id} size="lg" />
@@ -262,7 +260,7 @@ const List = () => {
         </span>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default List
+export default List;

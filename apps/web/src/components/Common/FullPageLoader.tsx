@@ -1,15 +1,15 @@
-import { TAPE_LOGO } from '@dragverse/constants'
-import { useTheme } from 'next-themes'
+import { TAPE_LOGO } from "@dragverse/constants";
+import { useTheme } from "next-themes";
 
-import MetaTags from './MetaTags'
+import MetaTags from "./MetaTags";
 
 const FullPageLoader = () => {
-  const { resolvedTheme } = useTheme()
+  const { resolvedTheme } = useTheme();
 
   return (
     <div className="grid h-screen place-items-center">
       <MetaTags />
-      {resolvedTheme === 'dark' ? (
+      {resolvedTheme === "dark" ? (
         <img
           src={`${TAPE_LOGO}`}
           className="h-10"
@@ -29,7 +29,7 @@ const FullPageLoader = () => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default FullPageLoader
+export default FullPageLoader;

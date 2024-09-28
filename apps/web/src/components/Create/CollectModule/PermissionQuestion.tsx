@@ -1,19 +1,20 @@
-import { tw } from '@dragverse/browser'
-import type { CollectModuleType } from '@dragverse/lens/custom-types'
-import { Button } from '@dragverse/ui'
-import useAppStore from '@lib/store'
-import type { FC } from 'react'
+import { tw } from "@dragverse/browser";
+import type { CollectModuleType } from "@dragverse/lens/custom-types";
+import { Button } from "@dragverse/ui";
+import type { FC } from "react";
+
+import useAppStore from "@/lib/store";
 
 type Props = {
-  setCollectType: (data: CollectModuleType) => void
-}
+  setCollectType: (data: CollectModuleType) => void;
+};
 
 const PermissionQuestion: FC<Props> = ({ setCollectType }) => {
-  const uploadedMedia = useAppStore((state) => state.uploadedMedia)
+  const uploadedMedia = useAppStore((state) => state.uploadedMedia);
 
   return (
     <div className="space-y-1">
-      <span className="text-sm font-medium">Who can collect?</span>
+      <span className="font-medium text-sm">Who can collect?</span>
       <div className="flex flex-wrap gap-1.5 md:flex-nowrap">
         <div className="flex-1">
           <Button
@@ -21,7 +22,7 @@ const PermissionQuestion: FC<Props> = ({ setCollectType }) => {
             className={tw(
               !uploadedMedia.collectModule.followerOnlyCollect &&
                 !uploadedMedia.collectModule.isRevertCollect &&
-                'border-brand-500'
+                "border-brand-500"
             )}
             variant="secondary"
             onClick={() =>
@@ -41,7 +42,7 @@ const PermissionQuestion: FC<Props> = ({ setCollectType }) => {
             className={tw(
               uploadedMedia.collectModule.followerOnlyCollect &&
                 !uploadedMedia.collectModule.isRevertCollect &&
-                'border-brand-500'
+                "border-brand-500"
             )}
             variant="secondary"
             onClick={() =>
@@ -57,7 +58,7 @@ const PermissionQuestion: FC<Props> = ({ setCollectType }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default PermissionQuestion
+export default PermissionQuestion;

@@ -1,10 +1,11 @@
-import { tw } from '@dragverse/browser'
-import { CustomCommentsFilterEnum } from '@dragverse/lens/custom-types'
-import { DropdownMenu, DropdownMenuItem, SortOutline } from '@dragverse/ui'
-import useCommentStore from '@lib/store/comment'
+import { tw } from "@dragverse/browser";
+import { CustomCommentsFilterEnum } from "@dragverse/lens/custom-types";
+import { DropdownMenu, DropdownMenuItem, SortOutline } from "@dragverse/ui";
+
+import useCommentStore from "@/lib/store/comment";
 
 const CommentsFilter = () => {
-  const { selectedCommentFilter, setSelectedCommentFilter } = useCommentStore()
+  const { selectedCommentFilter, setSelectedCommentFilter } = useCommentStore();
 
   return (
     <DropdownMenu trigger={<SortOutline className="size-5" />}>
@@ -15,9 +16,9 @@ const CommentsFilter = () => {
       >
         <p
           className={tw(
-            'whitespace-nowrap',
+            "whitespace-nowrap",
             selectedCommentFilter ===
-              CustomCommentsFilterEnum.RELEVANT_COMMENTS && 'font-bold'
+              CustomCommentsFilterEnum.RELEVANT_COMMENTS && "font-bold"
           )}
         >
           Relevant
@@ -30,16 +31,16 @@ const CommentsFilter = () => {
       >
         <p
           className={tw(
-            'whitespace-nowrap',
+            "whitespace-nowrap",
             selectedCommentFilter ===
-              CustomCommentsFilterEnum.NEWEST_COMMENTS && 'font-bold'
+              CustomCommentsFilterEnum.NEWEST_COMMENTS && "font-bold"
           )}
         >
           Newest first
         </p>
       </DropdownMenuItem>
     </DropdownMenu>
-  )
-}
+  );
+};
 
-export default CommentsFilter
+export default CommentsFilter;

@@ -1,0 +1,164 @@
+You are an expert in TypeScript, Node.js, Next.js App Router, React, Shadcn UI, and Tailwind CSS.
+
+**Code Style and Structure**
+
+- Write concise, technical TypeScript code with accurate examples.
+- Use functional and declarative programming patterns; avoid classes.
+- Prefer iteration and modularization over code duplication.
+- Use descriptive variable names with auxiliary verbs (e.g., `isLoading`, `hasError`).
+- Structure files:
+  - Exported component
+  - Subcomponents
+  - Helpers
+  - Static content
+  - Types
+
+**Naming Conventions**
+
+- Use lowercase with dashes for directories (e.g., `components/auth-wizard`).
+- Favor named exports for components.
+
+**TypeScript Usage**
+
+- Use TypeScript for all code; prefer interfaces over types.
+- Avoid enums; use maps or union types instead.
+- Use functional components with TypeScript interfaces.
+
+**Syntax and Formatting**
+
+- Prefer arrow functions for defining functions (e.g., `const fetchData = () => { /* ... */ };`).
+- Avoid unnecessary curly braces in conditionals; use concise syntax for simple statements.
+  - Example: `if (condition) return value;`
+- Use declarative JSX.
+  - Compose UI with clear and readable JSX syntax.
+
+**UI and Styling**
+
+- Use Shadcn UI and Tailwind CSS for components and styling.
+- Implement responsive design with Tailwind CSS; use a mobile-first approach.
+  - Apply responsive classes (`sm:`, `md:`, `lg:`, `xl:`) appropriately.
+- Include Tailwind CSS plugins:
+  - `@tailwindcss/aspect-ratio`
+  - `@tailwindcss/typography`
+
+**Performance Optimization**
+
+- Minimize `useEffect` and `setState`; favor React Server Components (RSC).
+  - Use server-side data fetching methods provided by Next.js.
+- Wrap client components in `Suspense` with fallback.
+- Use dynamic loading for non-critical components.
+  - Import components dynamically using `next/dynamic`.
+- Optimize images:
+  - Use Next.js `Image` component.
+  - Serve images in WebP format.
+  - Include `width` and `height` attributes.
+  - Enable lazy loading with the `loading="lazy"` attribute.
+
+**Key Conventions**
+
+- Optimize Web Vitals (LCP, CLS, FID).
+  - Ensure fast loading times and minimal layout shifts.
+- Limit `use client`:
+  - Favor server components and Next.js SSR.
+    - Use server-side rendering for initial data load.
+  - Use `use client` only for Web API access in small components.
+    - For example, components that need `window` or `document`.
+  - Avoid `use client` for data fetching or state management.
+    - Use `@tanstack/react-query` for client-side data management when necessary.
+
+**State Management and Data Fetching**
+
+- Use `@tanstack/react-query` for data fetching and caching.
+  - Manage asynchronous data with built-in caching and updating.
+- Use `zustand` for state management where appropriate.
+  - Keep global state minimal and well-organized.
+- Utilize `react-hook-form` for form management with validation via `@hookform/resolvers` and `zod`.
+  - Ensure forms are performant and have robust validation.
+
+**Authentication and Authorization**
+
+- Use `@privy-io/react-auth` for authentication flows.
+  - Implement secure and user-friendly authentication.
+- Handle authentication tokens and user data securely.
+  - Store tokens using `js-cookie` if needed.
+
+**Networking and APIs**
+
+- Use the built-in `fetch` API for HTTP requests.
+  - Prefer `fetch` over third-party libraries for simplicity.
+- Utilize `graphql` for GraphQL APIs when necessary.
+  - Implement queries and mutations efficiently.
+
+**Web3 Integration**
+
+- Use `ethers` version 5 and `wagmi` with `viem` for blockchain interactions.
+  - Ensure compatibility and security in Web3 functionalities.
+- Leverage `@irys/web-upload` and related packages for decentralized storage.
+  - Facilitate interactions with decentralized file systems.
+
+**Third-Party Libraries**
+
+- **Animations:**
+  - Use `framer-motion` for interactive animations.
+- **Carousels and Sliders:**
+  - Implement using `keen-slider`.
+- **Notifications:**
+  - Utilize `react-hot-toast` for toast notifications.
+- **WebSockets:**
+  - Manage with `react-use-websocket`.
+
+**Date and Time**
+
+- Use `dayjs` for date and time manipulations.
+  - Prefer over larger libraries like Moment.js for performance.
+
+**Text and Content**
+
+- **Emojis:**
+  - Implement emoji pickers with `@emoji-mart/react` and `emoji-mart`.
+- **Rich Text Rendering:**
+  - Use `interweave` for safely rendering HTML content.
+- **Advanced Textarea Interactions:**
+  - Utilize `textarea-caret` for features like mention suggestions.
+
+**Accessibility and Internationalization**
+
+- Ensure components are accessible.
+  - Follow WAI-ARIA guidelines and test with screen readers.
+- **Internationalization:**
+  - Use `make-plural` if handling plurals in multiple languages.
+
+**Best Practices**
+
+- Follow Next.js documentation for Data Fetching, Rendering, and Routing.
+  - Stay updated with Next.js best practices.
+- Ensure code is accessible and follows usability best practices.
+  - Test UI components for accessibility issues.
+- Optimize bundle size:
+  - Avoid importing entire libraries when possible.
+  - Use code-splitting and dynamic imports.
+
+**Testing**
+
+- Write unit and integration tests.
+  - Use testing libraries compatible with your stack.
+- **Type Checking:**
+  - Run `typecheck` script using `tsc --pretty --noEmit`.
+
+**Development Scripts**
+
+- **Start Development Server:**
+  - `pnpm dev` runs `next dev --port 4783`.
+- **Build and Start Production Server:**
+  - `pnpm start` runs `pnpm build && next start --port 4783`.
+
+---
+
+**Additional Updates Based on Your Preferences:**
+
+- **Arrow Functions:**
+  - Prefer using arrow functions (`const a = () => {}`) over traditional `function` declarations.
+- **UI Libraries:**
+  - Removed references to Radix UI and `nuqs` since you're not using them.
+- **HTTP Requests:**
+  - Updated to reflect that you're using the built-in `fetch` API instead of `axios`.

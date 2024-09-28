@@ -1,28 +1,28 @@
-import { videoPlayerTheme } from '@dragverse/browser'
-import { ARWEAVE_GATEWAY_URL, IPFS_GATEWAY_URL } from '@dragverse/constants'
-import type { AspectRatio } from '@livepeer/react'
-import { Player } from '@livepeer/react'
-import type { FC } from 'react'
-import React from 'react'
+import { videoPlayerTheme } from "@dragverse/browser";
+import { IPFS_GATEWAY_URL, IRYS_GATEWAY_URL } from "@dragverse/constants";
+import type { AspectRatio } from "@livepeer/react";
+import { Player } from "@livepeer/react";
+import type { FC } from "react";
+import { memo } from "react";
 
 export interface PlayerProps {
-  playerRef?: (ref: HTMLMediaElement) => void
-  posterUrl?: string
-  url?: string
-  ratio?: AspectRatio
-  showControls?: boolean
-  address?: string
+  playerRef?: (ref: HTMLMediaElement) => void;
+  posterUrl?: string;
+  url?: string;
+  ratio?: AspectRatio;
+  showControls?: boolean;
+  address?: string;
   options: {
-    autoPlay?: boolean
-    muted?: boolean
-    loop?: boolean
-    maxHeight?: boolean
-    loadingSpinner: boolean
-    isCurrentlyShown?: boolean
-  }
-  shouldUpload?: boolean
-  playbackId?: string
-  streamId?: string
+    autoPlay?: boolean;
+    muted?: boolean;
+    loop?: boolean;
+    maxHeight?: boolean;
+    loadingSpinner: boolean;
+    isCurrentlyShown?: boolean;
+  };
+  shouldUpload?: boolean;
+  playbackId?: string;
+  streamId?: string;
 }
 
 const PlayerInstance: FC<PlayerProps> = ({
@@ -40,8 +40,8 @@ const PlayerInstance: FC<PlayerProps> = ({
     <Player
       theme={videoPlayerTheme}
       src={
-        url?.includes(ARWEAVE_GATEWAY_URL)
-          ? url.replace(`${ARWEAVE_GATEWAY_URL}/`, 'ar://')
+        url?.includes(IPFS_GATEWAY_URL)
+          ? url.replace(`${IPFS_GATEWAY_URL}/`, "ar://")
           : url
       }
       poster={posterUrl}
@@ -63,17 +63,16 @@ const PlayerInstance: FC<PlayerProps> = ({
           ? {
               fallback: true,
               ipfsGateway: IPFS_GATEWAY_URL,
-              arweaveGateway: ARWEAVE_GATEWAY_URL
+              arweaveGateway: IRYS_GATEWAY_URL
             }
           : undefined
       }
       playbackId={playbackId}
       refetchPlaybackInfoInterval={1000 * 60 * 60 * 24 * 7} // to disable hls refetching every second
     >
-      {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
       {!showControls ? <></> : null}
     </Player>
-  )
-}
+  );
+};
 
-export default React.memo(PlayerInstance)
+export default memo(PlayerInstance);

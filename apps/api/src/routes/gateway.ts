@@ -1,32 +1,37 @@
-import { zValidator } from '@hono/zod-validator'
-import { Hono } from 'hono'
-import { prettyJSON } from 'hono/pretty-json'
-import { object, string } from 'zod'
+import { IRYS_GATEWAY_URL, TAPE_USER_AGENT } from "@dragverse/constants";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { prettyJSON } from "hono/pretty-json";
+import { object, string } from "zod";
 
-const app = new Hono()
+const app = new Hono();
 
-app.use('*', prettyJSON({ space: 4 }))
+app.use("*", prettyJSON({ space: 4 }));
 app.get(
-  '/ar/:id',
+  "/ar/:id",
   zValidator(
-    'param',
+    "param",
     object({
       id: string()
     })
   ),
   async (c) => {
-    const { id } = c.req.param()
-
-    const result = await fetch(`https://gateway.irys.xyz/${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Tape'
-      }
-    })
-    const viewsRes = (await result.json()) as JSON
-    return c.json(JSON.parse(JSON.stringify(viewsRes)))
+    const { id } = c.req.param();
+    try {
+      const result = await fetch(`${IRYS_GATEWAY_URL}/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": TAPE_USER_AGENT
+        }
+      });
+      const viewsRes = (await result.json()) as JSON;
+      return c.json(JSON.parse(JSON.stringify(viewsRes)));
+    } catch (error) {
+      console.error("[GATEWAY] Error:", error);
+      return c.redirect(`${IRYS_GATEWAY_URL}/${id}`);
+    }
   }
-)
+);
 
-export default app
+export default app;

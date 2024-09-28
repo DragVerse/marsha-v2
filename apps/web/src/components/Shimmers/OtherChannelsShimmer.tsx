@@ -1,6 +1,4 @@
-import React from 'react'
-
-import ChannelCardShimmer from './ChannelCardShimmer'
+import ChannelCardShimmer from "./ChannelCardShimmer";
 
 const OtherChannelsShimmer = () => {
   return (
@@ -10,7 +8,7 @@ const OtherChannelsShimmer = () => {
       <ChannelCardShimmer />
       <ChannelCardShimmer />
     </div>
-  )
-}
+  );
+};
 
-export default OtherChannelsShimmer
+export default OtherChannelsShimmer;

@@ -1,37 +1,38 @@
-import { Hono } from 'hono'
-import { cache } from 'hono/cache'
+import { CACHE_CONTROL, ERROR_MESSAGE, REDIS_KEYS } from "@dragverse/constants";
+import { REDIS_EXPIRY, dragverseDb, rGet, rSet } from "@dragverse/server";
+import { Hono } from "hono";
 
-import { ERROR_MESSAGE } from '@/helpers/constants'
+const app = new Hono();
 
-type Bindings = {
-  TAPE_DB: D1Database
-}
-
-const app = new Hono<{ Bindings: Bindings }>()
-app.get(
-  '*',
-  cache({
-    cacheName: 'allowed-tokens',
-    cacheControl: 'max-age=600' // 10 mins
-  })
-)
-
-app.get('/', async (c) => {
+app.get("/", async (c) => {
   try {
-    const { results } = await c.env.TAPE_DB.prepare(
-      'SELECT * FROM AllowedToken'
-    ).all()
+    c.header("Cache-Control", CACHE_CONTROL.FOR_FIVE_MINUTE);
+
+    const cachedValue = await rGet(REDIS_KEYS.ALLOWED_TOKENS);
+    if (cachedValue) {
+      console.info("CACHE HIT");
+      return c.json({ success: true, tokens: JSON.parse(cachedValue) });
+    }
+    console.info("CACHE MISS");
+
+    const results = await dragverseDb.allowedToken.findMany();
     const tokens = results.map((item: Record<string, unknown>) => ({
       address: item.address,
       decimals: item.decimals,
       name: item.name,
       symbol: item.symbol
-    }))
+    }));
 
-    return c.json({ success: true, tokens })
-  } catch {
-    return c.json({ success: false, message: ERROR_MESSAGE })
+    await rSet(
+      REDIS_KEYS.ALLOWED_TOKENS,
+      JSON.stringify(tokens),
+      REDIS_EXPIRY.ONE_DAY
+    );
+    return c.json({ success: true, tokens });
+  } catch (error) {
+    console.error("[ALLOWED TOKENS] Error:", error);
+    return c.json({ success: false, message: ERROR_MESSAGE });
   }
-})
+});
 
-export default app
+export default app;

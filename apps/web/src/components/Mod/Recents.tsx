@@ -1,27 +1,25 @@
-import Timeline from '@components/Home/Timeline'
-import TimelineShimmer from '@components/Shimmers/TimelineShimmer'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
+import { getUnixTimestampNDaysAgo } from "@/lib/formatTime";
 import {
   INFINITE_SCROLL_ROOT_MARGIN,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID
-} from '@dragverse/constants'
-import type {
-  ExplorePublicationRequest,
-  PrimaryPublication
-} from '@dragverse/lens'
+} from "@dragverse/constants";
 import {
-  ExplorePublicationsOrderByType,
+  type ExplorePublicationRequest,
   ExplorePublicationType,
+  ExplorePublicationsOrderByType,
   LimitType,
+  type PrimaryPublication,
   PublicationMetadataMainFocusType,
   useExplorePublicationsQuery
-} from '@dragverse/lens'
-import { Spinner } from '@dragverse/ui'
-import { getUnixTimestampForDaysAgo } from '@lib/formatTime'
-import { useInView } from 'react-cool-inview'
+} from "@dragverse/lens";
+import { Spinner } from "@dragverse/ui";
+import { useInView } from "react-cool-inview";
+import Timeline from "../Home/Timeline";
+import TimelineShimmer from "../Shimmers/TimelineShimmer";
+import { NoDataFound } from "../UIElements/NoDataFound";
 
-const since = getUnixTimestampForDaysAgo(30)
+const since = getUnixTimestampNDaysAgo(30);
 
 const request: ExplorePublicationRequest = {
   where: {
@@ -34,18 +32,18 @@ const request: ExplorePublicationRequest = {
   },
   orderBy: ExplorePublicationsOrderByType.Latest,
   limit: LimitType.Fifty
-}
+};
 
 const Recents = () => {
   const { data, loading, error, fetchMore } = useExplorePublicationsQuery({
     variables: {
       request
     }
-  })
+  });
 
   const videos = data?.explorePublications
-    ?.items as unknown as PrimaryPublication[]
-  const pageInfo = data?.explorePublications?.pageInfo
+    ?.items as unknown as PrimaryPublication[];
+  const pageInfo = data?.explorePublications?.pageInfo;
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -57,24 +55,18 @@ const Recents = () => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
   if (loading) {
     return (
       <div className="pt-3">
         <TimelineShimmer />
       </div>
-    )
+    );
   }
   if (!videos.length || error) {
-    return (
-      <NoDataFound
-        isCenter
-        withImage
-        text={`No DRAG content to consume yet 🌕 Share your drag make-up tutorial, music videos, and more with your community!`}
-      />
-    )
+    return <NoDataFound isCenter withImage text="No videos found" />;
   }
 
   return (
@@ -90,7 +82,7 @@ const Recents = () => {
         </>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default Recents
+export default Recents;

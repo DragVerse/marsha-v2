@@ -1,24 +1,25 @@
-import { NoDataFound } from '@components/UIElements/NoDataFound'
-import { INFINITE_SCROLL_ROOT_MARGIN } from '@dragverse/constants'
-import type { HandleInfo, OwnedHandlesRequest } from '@dragverse/lens'
-import { useOwnedHandlesQuery } from '@dragverse/lens'
-import { Spinner } from '@dragverse/ui'
-import Link from 'next/link'
-import { useInView } from 'react-cool-inview'
-import { useAccount } from 'wagmi'
+import { INFINITE_SCROLL_ROOT_MARGIN } from "@dragverse/constants";
+import type { HandleInfo, OwnedHandlesRequest } from "@dragverse/lens";
+import { useOwnedHandlesQuery } from "@dragverse/lens";
+import { Spinner } from "@dragverse/ui";
+import Link from "next/link";
+import { useInView } from "react-cool-inview";
+import { useAccount } from "wagmi";
+
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
 
 const List = () => {
-  const { address } = useAccount()
+  const { address } = useAccount();
 
-  const request: OwnedHandlesRequest = { for: address }
+  const request: OwnedHandlesRequest = { for: address };
   const { data, loading, error, fetchMore } = useOwnedHandlesQuery({
     variables: {
       request
     },
     skip: !address
-  })
-  const ownedHandles = data?.ownedHandles.items as HandleInfo[]
-  const pageInfo = data?.ownedHandles.pageInfo
+  });
+  const ownedHandles = data?.ownedHandles.items as HandleInfo[];
+  const pageInfo = data?.ownedHandles.pageInfo;
 
   const { observe } = useInView({
     threshold: 0.25,
@@ -31,9 +32,9 @@ const List = () => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   return (
     <div>
@@ -45,7 +46,7 @@ const List = () => {
         {ownedHandles?.map((handle) => (
           <div
             key={handle.id}
-            className="tape-border rounded-small flex items-center space-x-2 p-5"
+            className="dragverse-border flex items-center space-x-2 rounded-small p-5"
           >
             <div className="flex flex-col">
               <Link
@@ -54,7 +55,7 @@ const List = () => {
               >
                 {handle.fullHandle}
               </Link>
-              <p>{handle.linkedTo?.nftTokenId ?? 'No profile attached'}</p>
+              <p>{handle.linkedTo?.nftTokenId ?? "No profile attached"}</p>
             </div>
           </div>
         ))}
@@ -65,7 +66,7 @@ const List = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default List
+export default List;

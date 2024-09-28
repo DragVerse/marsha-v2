@@ -1,28 +1,27 @@
-import { canUploadedToIpfs } from '@dragverse/generic'
-import useAppStore from '@lib/store'
-import useProfileStore from '@lib/store/idb/profile'
-import { useEffect } from 'react'
-
-import IrysInfo from './IrysInfo'
+import useAppStore from "@/lib/store";
+import useProfileStore from "@/lib/store/idb/profile";
+import { canUploadedToIpfs } from "@dragverse/generic";
+import { useEffect } from "react";
+import IrysInfo from "./IrysInfo";
 
 const UploadMethod = () => {
-  const uploadedMedia = useAppStore((state) => state.uploadedMedia)
-  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia)
-  const activeProfile = useProfileStore((state) => state.activeProfile)
+  const uploadedMedia = useAppStore((state) => state.uploadedMedia);
+  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia);
+  const activeProfile = useProfileStore((state) => state.activeProfile);
 
   const canUploadToIpfs = canUploadedToIpfs(
     uploadedMedia.file?.size || 0,
     activeProfile
-  )
+  );
 
   useEffect(() => {
     if (!canUploadToIpfs) {
-      setUploadedMedia({ isUploadToIpfs: false })
+      setUploadedMedia({ isUploadToIpfs: false });
     }
-  }, [canUploadToIpfs, setUploadedMedia])
+  }, [canUploadToIpfs, setUploadedMedia]);
 
   if (canUploadToIpfs) {
-    return null
+    return null;
   }
 
   return (
@@ -33,7 +32,7 @@ const UploadMethod = () => {
       </span>
       <IrysInfo />
     </div>
-  )
-}
+  );
+};
 
-export default UploadMethod
+export default UploadMethod;
