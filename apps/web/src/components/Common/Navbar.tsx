@@ -31,7 +31,7 @@ const Navbar = () => {
           <Logo />
           <DropdownMenu
             align="start"
-            trigger={<ChevronDownOutline className="h-3 w-3" />}
+            trigger={<ChevronDownOutline className="h-3 w-3 text-white" />}
           >
             <TapeMenu />
           </DropdownMenu>
