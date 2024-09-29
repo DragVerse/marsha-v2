@@ -6,16 +6,16 @@ const terms = () => {
     <div className="relative overflow-hidden py-[5rem]">
       <div className="px-2">
         <div className="relative mx-auto max-w-4xl pb-24 text-center">
-          <h1 className="font-bold text-4xl text-slate-900 tracking-tight sm:text-5xl dark:text-slate-100">
+          <h1 className="font-bold text-4xl text-white tracking-tight sm:text-5xl dark:text-white">
             Terms and Conditions
           </h1>
-          <p className="mt-4 text-base text-slate-600 leading-7 dark:text-slate-400">
+          <p className="mt-4 text-base text-white leading-7 dark:text-white">
             Last updated on Oct 31, 2023
           </p>
         </div>
       </div>
       <div className="relative px-2">
-        <div className="prose-sm md:prose prose-slate dark:prose-invert mx-auto max-w-4xl prose-a:font-bold prose-a:text-brand-500 hover:prose-a:text-brand-600">
+        <div className="prose-sm md:prose prose-white dark:prose-invert mx-auto max-w-4xl prose-a:font-bold prose-h2:text-white prose-li:text-white prose-p:text-white text-white hover:prose-a:text-brand-600">
           <h2>1. Overview</h2>
           <p>
             The website dragverse.app” (the “Site”) offers information, tools

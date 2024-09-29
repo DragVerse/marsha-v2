@@ -81,6 +81,11 @@ const moduleExports = {
         destination:
           "https://www.spatial.io/s/Dragverse-6330ebb42e62cd0001922a97?share=6796815018867406198",
         permanent: true
+      },
+      {
+        source: "/hyperfy",
+        destination: "https://hyperfy.io/dragverse",
+        permanent: true
       }
     ];
   },

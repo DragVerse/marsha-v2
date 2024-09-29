@@ -1,8 +1,4 @@
-import {
-  TAPE_FEEDBACK_URL,
-  TAPE_GITHUB_HANDLE,
-  TAPE_X_HANDLE
-} from "@dragverse/constants";
+import { TAPE_FEEDBACK_URL, TAPE_X_HANDLE } from "@dragverse/constants";
 import { EVENTS } from "@dragverse/generic";
 import Link from "next/link";
 
@@ -13,26 +9,6 @@ const TapeMenu = () => {
 
   return (
     <div className="grid grid-cols-2 py-1 pl-1">
-      <Link
-        className="rounded-lg px-2.5 py-1.5"
-        href={`https://github.com/${TAPE_GITHUB_HANDLE}/brand-kit`}
-        target="_blank"
-        onClick={() => {
-          addEventToQueue(EVENTS.SYSTEM.MORE_MENU.BRAND_KIT);
-        }}
-      >
-        Brand Kit
-      </Link>
-      <Link
-        className="rounded-lg px-2.5 py-1.5"
-        href={`https://github.com/${TAPE_GITHUB_HANDLE}`}
-        onClick={() => {
-          addEventToQueue(EVENTS.SYSTEM.MORE_MENU.GITHUB);
-        }}
-        target="_blank"
-      >
-        Source Code
-      </Link>
       <Link
         className="rounded-lg px-2.5 py-1.5"
         href={`${TAPE_FEEDBACK_URL}/feature-requests`}
@@ -65,27 +41,6 @@ const TapeMenu = () => {
       </Link>
       <Link
         className="rounded-lg px-2.5 py-1.5"
-        href={"/spatial"}
-        onClick={() => {
-          addEventToQueue(EVENTS.SYSTEM.MORE_MENU.DISCORD);
-        }}
-        target="_blank"
-      >
-        Discord
-      </Link>
-
-      <Link
-        className="rounded-lg px-2.5 py-1.5"
-        href="/thanks"
-        target="_blank"
-        onClick={() => {
-          addEventToQueue(EVENTS.SYSTEM.MORE_MENU.THANKS);
-        }}
-      >
-        Thanks
-      </Link>
-      <Link
-        className="rounded-lg px-2.5 py-1.5"
         href={"/decentraland"}
         onClick={() => {
           addEventToQueue(EVENTS.SYSTEM.MORE_MENU.STATUS);
@@ -93,6 +48,26 @@ const TapeMenu = () => {
         target="_blank"
       >
         Decentraland
+      </Link>
+      <Link
+        className="rounded-lg px-2.5 py-1.5"
+        href={"/spatial"}
+        onClick={() => {
+          addEventToQueue(EVENTS.SYSTEM.MORE_MENU.STATUS);
+        }}
+        target="_blank"
+      >
+        Spatial
+      </Link>
+      <Link
+        className="rounded-lg px-2.5 py-1.5"
+        href={"/hyperfy"}
+        onClick={() => {
+          addEventToQueue(EVENTS.SYSTEM.MORE_MENU.STATUS);
+        }}
+        target="_blank"
+      >
+        Hyperfy
       </Link>
       <Link
         className="rounded-lg px-2.5 py-1.5"
