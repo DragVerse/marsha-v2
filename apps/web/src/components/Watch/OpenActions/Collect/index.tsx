@@ -53,16 +53,12 @@ import {
   Tooltip,
   UserOutline
 } from "@dragverse/ui";
+import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
 import { type FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { formatUnits } from "viem";
-import {
-  useAccount,
-  useBalance,
-  useSignTypedData,
-  useWriteContract
-} from "wagmi";
+import { useBalance, useSignTypedData, useWriteContract } from "wagmi";
 import BalanceAlert from "../BalanceAlert";
 import PermissionAlert from "../PermissionAlert";
 
@@ -79,8 +75,8 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
   );
 
   const handleWrongNetwork = useHandleWrongNetwork();
-  const { address } = useAccount();
-
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const [collecting, setCollecting] = useState(false);
   const [isAllowed, setIsAllowed] = useState(true);
   const [haveEnoughBalance, setHaveEnoughBalance] = useState(false);

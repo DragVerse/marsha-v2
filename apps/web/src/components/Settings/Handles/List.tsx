@@ -2,14 +2,15 @@ import { INFINITE_SCROLL_ROOT_MARGIN } from "@dragverse/constants";
 import type { HandleInfo, OwnedHandlesRequest } from "@dragverse/lens";
 import { useOwnedHandlesQuery } from "@dragverse/lens";
 import { Spinner } from "@dragverse/ui";
+import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
 import { useInView } from "react-cool-inview";
-import { useAccount } from "wagmi";
 
 import { NoDataFound } from "@/components/UIElements/NoDataFound";
 
 const List = () => {
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
 
   const request: OwnedHandlesRequest = { for: address };
   const { data, loading, error, fetchMore } = useOwnedHandlesQuery({

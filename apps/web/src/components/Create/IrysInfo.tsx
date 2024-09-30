@@ -18,14 +18,16 @@ import {
   WarningOutline
 } from "@dragverse/ui";
 import type BaseWebIrys from "@irys/web-upload/esm/base";
+import { usePrivy } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { formatEther, formatUnits } from "viem";
-import { useAccount, useBalance, useWalletClient } from "wagmi";
+import { useBalance, useWalletClient } from "wagmi";
 
 const IrysInfo = () => {
   const isMounted = useIsMounted();
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const { data: walletClient } = useWalletClient();
   const { addEventToQueue } = useSw();
 

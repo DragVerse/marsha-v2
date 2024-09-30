@@ -7,7 +7,7 @@ const Custom404 = () => {
   return (
     <>
       <MetaTags title="Not found" />
-      <div className="flex h-[calc(100vh-8rem)] flex-col items-center justify-center space-y-4 text-center">
+      <div className="flex h-[calc(100vh-8rem)] flex-col items-center justify-center space-y-4 text-center text-white">
         <Logo />
         <h1 className="font-bold font-dragverse text-4xl text-brand-500">
           404 👀 FASHION EMERGENCY

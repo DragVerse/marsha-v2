@@ -28,17 +28,13 @@ import {
   Tooltip
 } from "@dragverse/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
 import { type FC, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { formatUnits } from "viem";
-import {
-  useAccount,
-  useBalance,
-  useReadContract,
-  useWriteContract
-} from "wagmi";
+import { useBalance, useReadContract, useWriteContract } from "wagmi";
 import { object, string, type z } from "zod";
 
 type Props = {
@@ -75,7 +71,8 @@ const Signup: FC<Props> = ({ showLogin, onSuccess, setShowSignup }) => {
   const handleWrongNetwork = useHandleWrongNetwork();
   const { addEventToQueue } = useSw();
 
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const handle = watch("handle")?.toLowerCase();
 
   const debouncedValue = useDebounce<string>(handle, 300);

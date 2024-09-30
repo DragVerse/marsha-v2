@@ -11,11 +11,11 @@ import {
 import { AUTH_ROUTES, OWNER_ONLY_ROUTES } from "@dragverse/constants";
 import { getIsProfileOwner, trimify } from "@dragverse/generic";
 import { type Profile, useCurrentProfileQuery } from "@dragverse/lens";
+import { usePrivy } from "@privy-io/react-auth";
 import { useTheme } from "next-themes";
 import { useRouter } from "next/router";
 import { type FC, type ReactNode, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
-import { useAccount } from "wagmi";
 import FullPageLoader from "./FullPageLoader";
 import MetaTags from "./MetaTags";
 import MobileBottomNav from "./MobileBottomNav";
@@ -34,7 +34,8 @@ const Layout: FC<Props> = ({ children, skipNav, skipPadding }) => {
 
   const isMounted = useIsMounted();
   const { resolvedTheme } = useTheme();
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const { pathname, replace, asPath } = useRouter();
   const currentSession = getCurrentSession();
 

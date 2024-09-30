@@ -12,9 +12,9 @@ import {
   UserOutline,
   WarningOutline
 } from "@dragverse/ui";
+import { usePrivy } from "@privy-io/react-auth";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useAccount } from "wagmi";
 import {
   SETTINGS,
   SETTINGS_ALLOWANCE,
@@ -29,14 +29,17 @@ import {
 
 const SettingsSidebar = () => {
   const router = useRouter();
-  const { address } = useAccount();
+  const { user } = usePrivy();
   const activeProfile = useProfileStore((state) => state.activeProfile);
   const isActivePath = (path: string) => router.pathname === path;
-  if (!activeProfile || !address) {
+  if (!activeProfile || !user?.wallet?.address) {
     return null;
   }
 
-  const isProfileOwner = getIsProfileOwner(activeProfile, address);
+  const isProfileOwner = getIsProfileOwner(
+    activeProfile,
+    user?.wallet?.address
+  );
 
   return (
     <div className="flex flex-col space-y-1 pb-10 md:ml-auto md:w-44">

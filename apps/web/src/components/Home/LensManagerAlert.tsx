@@ -6,10 +6,11 @@ import {
   checkLensManagerPermissions,
   getIsProfileOwner
 } from "@dragverse/generic";
-import { useAccount } from "wagmi";
+import { usePrivy } from "@privy-io/react-auth";
 
 const LensManagerAlert = () => {
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const activeProfile = useProfileStore((state) => state.activeProfile);
 
   const isOwner = activeProfile && getIsProfileOwner(activeProfile, address);

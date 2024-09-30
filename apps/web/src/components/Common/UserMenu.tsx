@@ -31,17 +31,18 @@ import {
   SwitchProfileOutline,
   UserOutline
 } from "@dragverse/ui";
+import { usePrivy } from "@privy-io/react-auth";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useMemo } from "react";
-import { useAccount } from "wagmi";
 import Badge from "./Badge";
 
 const UserMenu = () => {
   const { theme, setTheme } = useTheme();
   const { push, asPath } = useRouter();
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const { activeProfile } = useProfileStore();
   const { addEventToQueue } = useSw();
 

@@ -11,13 +11,14 @@ import {
   UserSigNoncesSubscriptionDocument
 } from "@dragverse/lens";
 import { useApolloClient } from "@dragverse/lens/apollo";
+import { usePrivy } from "@privy-io/react-auth";
 import { useEffect } from "react";
 import useWebSocket from "react-use-websocket";
 import { isAddress } from "viem";
-import { useAccount } from "wagmi";
 
 const SubscriptionProvider = () => {
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const { setLensHubOnchainSigNonce } = useNonceStore();
   const { resetStore: resetApolloStore } = useApolloClient();
   const currentSession = getCurrentSession();

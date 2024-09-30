@@ -13,6 +13,7 @@ import {
   SelectItem,
   TipOutline
 } from "@dragverse/ui";
+import { usePrivy } from "@privy-io/react-auth";
 import { type FC, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
@@ -21,7 +22,7 @@ import {
   formatUnits,
   parseUnits
 } from "viem";
-import { useAccount, useBalance } from "wagmi";
+import { useBalance } from "wagmi";
 import BalanceAlert from "../../BalanceAlert";
 import PermissionAlert from "../../PermissionAlert";
 
@@ -38,7 +39,8 @@ const TipOpenAction: FC<Props> = ({
   acting,
   actOnUnknownOpenAction
 }) => {
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const [tip, setTip] = useState({
     value: [5],
     currency: WMATIC_TOKEN_ADDRESS

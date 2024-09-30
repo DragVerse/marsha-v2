@@ -4,11 +4,11 @@ import Authenticate from "@/components/Login/Authenticate";
 import Connectors from "@/components/Login/Connectors";
 import useSw from "@/hooks/useSw";
 import { EVENTS } from "@dragverse/generic";
+import { usePrivy } from "@privy-io/react-auth";
 import { useTheme } from "next-themes";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
 
 const BackgroundComets = dynamic(
   () => import("@/components/Login/BackgroundComets")
@@ -16,7 +16,9 @@ const BackgroundComets = dynamic(
 
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { address, connector, isConnected } = useAccount();
+  const { user, authenticated } = usePrivy();
+  const address = user?.wallet?.address;
+  const isConnected = authenticated && isAuthenticated && !!address;
   const { setTheme } = useTheme();
   setTheme("dark");
   const { addEventToQueue } = useSw();

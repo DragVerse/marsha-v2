@@ -50,16 +50,12 @@ import {
   shortVideo,
   video
 } from "@lens-protocol/metadata";
+import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { v4 as uuidv4 } from "uuid";
-import {
-  useAccount,
-  useSignTypedData,
-  useWalletClient,
-  useWriteContract
-} from "wagmi";
+import { useSignTypedData, useWalletClient, useWriteContract } from "wagmi";
 
 import MetaTags from "@/components/Common/MetaTags";
 import useSw from "@/hooks/useSw";
@@ -86,7 +82,8 @@ const CreateSteps = () => {
   const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore();
   const { queuedVideos, setQueuedVideos } = usePersistStore();
 
-  const { address } = useAccount();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
   const router = useRouter();
   const { data: walletClient } = useWalletClient();
   const { addEventToQueue } = useSw();

@@ -1,5 +1,5 @@
 import MetaTags from "@/components/Common/MetaTags";
-import { STATIC_ASSETS, TAPE_APP_NAME } from "@dragverse/constants";
+import { DRAGVERSE_LOGO, TAPE_APP_NAME } from "@dragverse/constants";
 import { Button } from "@dragverse/ui";
 import Link from "next/link";
 
@@ -7,10 +7,10 @@ const Custom500 = () => {
   return (
     <>
       <MetaTags title="500" />
-      <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center space-y-4 text-center">
+      <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center space-y-4 text-center text-white">
         <div className="mb-10">
           <img
-            src={`${STATIC_ASSETS}/images/illustrations/404.gif`}
+            src={`${DRAGVERSE_LOGO}`}
             draggable={false}
             height={200}
             width={200}

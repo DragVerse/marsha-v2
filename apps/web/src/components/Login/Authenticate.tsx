@@ -15,19 +15,18 @@ import {
   useChallengeLazyQuery,
   useProfilesManagedQuery
 } from "@dragverse/lens";
-import { useApolloClient } from "@dragverse/lens/apollo";
 import {
-  Badge,
   Button,
   Callout,
   Select,
   SelectItem,
   WarningOutline
 } from "@dragverse/ui";
+import { usePrivy } from "@privy-io/react-auth";
 import { useRouter } from "next/router";
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { useAccount, useSignMessage } from "wagmi";
+import { useSignMessage } from "wagmi";
 import ButtonShimmer from "../Shimmers/ButtonShimmer";
 import Signup from "./Signup";
 
@@ -42,9 +41,9 @@ const Authenticate = () => {
   const { activeProfile, setActiveProfile } = useProfileStore();
 
   const router = useRouter();
-  const { address, connector, isConnected } = useAccount();
-
-  const { resetStore: resetApolloStore } = useApolloClient();
+  const { user, authenticated } = usePrivy(); // Get login function from Privy
+  const address = user?.wallet?.address;
+  const isConnected = authenticated && !!address;
 
   useEffect(() => {
     if (signup) {
@@ -154,25 +153,15 @@ const Authenticate = () => {
           router.push("/");
         }
       }
-      resetApolloStore();
     } catch (error) {
       logger.error("[Error Sign In]", {
-        error,
-        connector: connector?.name
+        error
       });
+      toast.error("Error signing in.");
     } finally {
       setLoading(false);
     }
-  }, [
-    router,
-    address,
-    connector,
-    authenticate,
-    isConnected,
-    loadChallenge,
-    profilesManaged,
-    selectedProfileId
-  ]);
+  }, [router, user, isConnected, profilesManaged, selectedProfileId, signIn]);
 
   if (as && as === activeProfile?.id) {
     return null;
@@ -211,9 +200,15 @@ const Authenticate = () => {
                 defaultValue={as ?? profiles[0].id}
                 value={selectedProfileId}
                 onValueChange={(value) => setSelectedProfileId(value)}
+                className="text-white"
               >
                 {profiles?.map((profile) => (
-                  <SelectItem size="lg" key={profile.id} value={profile.id}>
+                  <SelectItem
+                    size="lg"
+                    key={profile.id}
+                    value={profile.id}
+                    className="data-[state=open]:text-black"
+                  >
                     <div className="flex items-center space-x-2">
                       <img
                         src={getProfilePicture(profile, "AVATAR")}
@@ -224,7 +219,6 @@ const Authenticate = () => {
                         alt={getProfile(profile)?.displayName}
                       />
                       <span>{getProfile(profile).slugWithPrefix}</span>
-                      <Badge id={profile?.id} size="sm" />
                     </div>
                   </SelectItem>
                 ))}
@@ -247,7 +241,7 @@ const Authenticate = () => {
               {shortenAddress(address as string)})
             </Callout>
           )}
-          <div className="flex items-center justify-center space-x-2 pt-3 text-sm">
+          <div className="flex items-center justify-center space-x-2 pt-3 text-sm text-white">
             {profiles[0] ? (
               <span>Need new account?</span>
             ) : (
