@@ -1,32 +1,50 @@
-import { Hono } from 'hono'
-import { cache } from 'hono/cache'
+import { CACHE_CONTROL, ERROR_MESSAGE, REDIS_KEYS } from "@dragverse/constants";
+import { REDIS_EXPIRY, dragverseDb, rSet } from "@dragverse/server";
+import { Hono } from "hono";
 
-import { ERROR_MESSAGE } from '@/helpers/constants'
+const app = new Hono();
 
-type Bindings = {
-  TAPE_DB: D1Database
-}
-
-const app = new Hono<{ Bindings: Bindings }>()
-app.get(
-  '*',
-  cache({
-    cacheName: 'verified',
-    cacheControl: 'max-age=300'
-  })
-)
-
-app.get('/', async (c) => {
+app.get("/", async (c) => {
   try {
-    const { results } = await c.env.TAPE_DB.prepare(
-      'SELECT * FROM Verified'
-    ).all()
-    const ids = results.map((item: Record<string, unknown>) => item.profileId)
+    c.header("Cache-Control", CACHE_CONTROL.FOR_FIVE_MINUTE);
 
-    return c.json({ success: true, ids })
-  } catch {
-    return c.json({ success: false, message: ERROR_MESSAGE })
+    const cachedValue = [
+      "0x01b89c",
+      "0x25bb",
+      "0x01b98e",
+      "0x01ec9c",
+      "0x01ed5f",
+      "0x01ecc3",
+      "0x4bed"
+    ];
+    // const cachedValue = await rGet(REDIS_KEYS.VERIFIED_PROFILES);
+    if (cachedValue) {
+      console.info("CACHE HIT");
+      return c.json({ success: true, ids: cachedValue });
+    }
+    console.info("CACHE MISS");
+
+    const results = await dragverseDb.profile.findMany({
+      where: {
+        isVerified: true
+      },
+      select: {
+        profileId: true
+      }
+    });
+
+    const ids = results.map(({ profileId }) => profileId);
+
+    await rSet(
+      REDIS_KEYS.VERIFIED_PROFILES,
+      JSON.stringify(ids),
+      REDIS_EXPIRY.ONE_DAY
+    );
+    return c.json({ success: true, ids });
+  } catch (error) {
+    console.error("[VERIFIED] Error:", error);
+    return c.json({ success: false, message: ERROR_MESSAGE });
   }
-})
+});
 
-export default app
+export default app;

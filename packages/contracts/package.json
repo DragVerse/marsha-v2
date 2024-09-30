@@ -3,18 +3,21 @@
   "version": "0.0.0",
   "author": "sasicodes",
   "license": "AGPL-3.0",
+  "scripts": {
+    "typecheck": "tsc --pretty --noEmit"
+  },
   "devDependencies": {
-    "@nomicfoundation/hardhat-ethers": "^3.0.6",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "@nomicfoundation/hardhat-verify": "^2.0.7",
+    "@nomicfoundation/hardhat-verify": "^2.0.11",
     "@openzeppelin/contracts": "^5.0.2",
     "@openzeppelin/contracts-upgradeable": "^5.0.2",
-    "@openzeppelin/hardhat-upgrades": "^3.1.0",
-    "@dragverse/config": "workspace:*",
+    "@openzeppelin/hardhat-upgrades": "^3.4.0",
+    "@dragverse/tsconfig": "workspace:*",
     "dotenv": "^16.4.5",
-    "ethers": "^6.12.1",
-    "hardhat": "^2.22.4",
+    "ethers": "^6.13.2",
+    "hardhat": "^2.22.11",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.6.2"
   }
 }

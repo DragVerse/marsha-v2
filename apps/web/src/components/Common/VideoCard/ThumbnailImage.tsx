@@ -1,43 +1,43 @@
-import { tw, useAverageColor } from '@dragverse/browser'
+import { tw, useAverageColor } from "@dragverse/browser";
 import {
   FALLBACK_THUMBNAIL_URL,
   LENSTUBE_BYTES_APP_ID,
   STATIC_ASSETS
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
   getIsSensitiveContent,
   getPublication,
   getThumbnailUrl,
   imageCdn
-} from '@dragverse/generic'
-import type { AnyPublication } from '@dragverse/lens'
-import type { FC } from 'react'
+} from "@dragverse/generic";
+import type { AnyPublication } from "@dragverse/lens";
+import type { FC } from "react";
 
 type Props = {
-  video: AnyPublication
-}
+  video: AnyPublication;
+};
 
 const ThumbnailImage: FC<Props> = ({ video }) => {
-  const targetPublication = getPublication(video)
+  const targetPublication = getPublication(video);
 
-  const isSensitiveContent = getIsSensitiveContent(
-    targetPublication.metadata,
-    video.id
-  )
+  const isSensitiveContent = getIsSensitiveContent(targetPublication.metadata);
   const isBytesVideo =
-    targetPublication.publishedOn?.id === LENSTUBE_BYTES_APP_ID
+    targetPublication.publishedOn?.id === LENSTUBE_BYTES_APP_ID;
 
   const thumbnailUrl = isSensitiveContent
     ? `${STATIC_ASSETS}/images/sensor-blur.webp`
-    : getThumbnailUrl(targetPublication.metadata, true)
-  const { color: backgroundColor } = useAverageColor(thumbnailUrl, isBytesVideo)
+    : getThumbnailUrl(targetPublication.metadata, true);
+  const { color: backgroundColor } = useAverageColor(
+    thumbnailUrl,
+    isBytesVideo
+  );
 
   return (
     <img
-      src={imageCdn(thumbnailUrl, isBytesVideo ? 'THUMBNAIL_V' : 'THUMBNAIL')}
+      src={imageCdn(thumbnailUrl, isBytesVideo ? "THUMBNAIL_V" : "THUMBNAIL")}
       className={tw(
-        'dark:bg-brand-250 h-full w-full rounded-lg bg-gray-100 object-center lg:h-full lg:w-full',
-        isBytesVideo ? 'object-contain' : 'object-cover'
+        "h-full w-full rounded-lg bg-gray-100 object-center lg:h-full lg:w-full dark:bg-gray-900",
+        isBytesVideo ? "object-contain" : "object-cover"
       )}
       style={{
         backgroundColor: backgroundColor && `${backgroundColor}95`
@@ -47,10 +47,10 @@ const ThumbnailImage: FC<Props> = ({ video }) => {
       alt="thumbnail"
       draggable={false}
       onError={({ currentTarget }) => {
-        currentTarget.src = FALLBACK_THUMBNAIL_URL
+        currentTarget.src = FALLBACK_THUMBNAIL_URL;
       }}
     />
-  )
-}
+  );
+};
 
-export default ThumbnailImage
+export default ThumbnailImage;

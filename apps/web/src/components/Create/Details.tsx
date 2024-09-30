@@ -1,51 +1,49 @@
-import EmojiPicker from '@components/UIElements/EmojiPicker'
-import InputMentions from '@components/UIElements/InputMentions'
-import { getFileFromDataURL, tw, uploadToIPFS } from '@dragverse/browser'
-import { checkIsBytesVideo } from '@dragverse/generic'
-import type { IPFSUploadResult } from '@dragverse/lens/custom-types'
-import { Button, Switch, Tooltip } from '@dragverse/ui'
-import { zodResolver } from '@hookform/resolvers/zod'
-import useAppStore from '@lib/store'
-import useCollectStore from '@lib/store/idb/collect'
-import type { FC } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
-import type { z } from 'zod'
-import { boolean, object, string } from 'zod'
-
-import CollectModule from './CollectModule'
-import DropZone from './DropZone'
-import MediaCategory from './MediaCategory'
-import MediaLicense from './MediaLicense'
-import ReferenceModule from './ReferenceModule'
-import SelectedMedia from './SelectedMedia'
+import useAppStore from "@/lib/store";
+import { getFileFromDataURL, tw, uploadToIPFS } from "@dragverse/browser";
+import { checkIsBytesVideo } from "@dragverse/generic";
+import type { IPFSUploadResult } from "@dragverse/lens/custom-types";
+import { Button, Switch, Tooltip } from "@dragverse/ui";
+import EmojiPicker from "@emoji-mart/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import type { FC } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import type { z } from "zod";
+import { boolean, object, string } from "zod";
+import InputMentions from "../UIElements/InputMentions";
+import CollectModule from "./CollectModule";
+import DropZone from "./DropZone";
+import MediaCategory from "./MediaCategory";
+import MediaLicense from "./MediaLicense";
+import ReferenceModule from "./ReferenceModule";
+import SelectedMedia from "./SelectedMedia";
 
 const formSchema = object({
   title: string()
     .trim()
-    .min(5, { message: `Title should be atleast 5 characters` })
-    .max(100, { message: `Title should not exceed 100 characters` }),
+    .min(5, { message: "Title should be atleast 5 characters" })
+    .max(100, { message: "Title should not exceed 100 characters" }),
   description: string()
     .trim()
-    .min(5, { message: `Description should be atleast 5 characters` })
-    .max(5000, { message: `Description should not exceed 5000 characters` }),
+    .min(5, { message: "Description should be atleast 5 characters" })
+    .max(5000, { message: "Description should not exceed 5000 characters" }),
   isSensitiveContent: boolean()
-})
+});
 
-export type VideoFormData = z.infer<typeof formSchema>
+export type VideoFormData = z.infer<typeof formSchema>;
 
 type Props = {
-  onUpload: (data: VideoFormData & { thumbnail: string }) => void
-  onCancel: () => void
-}
+  onUpload: (data: VideoFormData & { thumbnail: string }) => void;
+  onCancel: () => void;
+};
 
 const Details: FC<Props> = ({ onUpload, onCancel }) => {
-  const uploadedMedia = useAppStore((state) => state.uploadedMedia)
-  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia)
-  const saveAsDefault = useCollectStore((state) => state.saveAsDefault)
-  const persistedCollectModule = useCollectStore((state) => state.collectModule)
+  const uploadedMedia = useAppStore((state) => state.uploadedMedia);
+  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia);
+  // const saveAsDefault = useCollectStore((state) => state.saveAsDefault)
+  // const persistedCollectModule = useCollectStore((state) => state.collectModule)
 
-  const isByteSizeVideo = checkIsBytesVideo(uploadedMedia.durationInSeconds)
+  const isByteSizeVideo = checkIsBytesVideo(uploadedMedia.durationInSeconds);
 
   const {
     handleSubmit,
@@ -61,42 +59,42 @@ const Details: FC<Props> = ({ onUpload, onCancel }) => {
       title: uploadedMedia.title,
       description: uploadedMedia.description
     }
-  })
+  });
 
-  const onSubmitForm = async (data: VideoFormData) => {
+  const onSubmitForm = (data: VideoFormData) => {
     if (!uploadedMedia.file) {
-      return toast.error(`Please choose a media to upload`)
+      return toast.error("Please choose a media to upload");
     }
-    setUploadedMedia({ uploadingThumbnail: true })
+    setUploadedMedia({ uploadingThumbnail: true });
     return getFileFromDataURL(
       uploadedMedia.thumbnailBlobUrl,
-      'thumbnail.jpeg',
+      "thumbnail.jpeg",
       async (file) => {
         if (!file) {
-          toast.error(`Please upload a custom thumbnail`)
-          return ''
+          toast.error("Please upload a custom thumbnail");
+          return "";
         }
-        const result: IPFSUploadResult = await uploadToIPFS(file)
+        const result: IPFSUploadResult = await uploadToIPFS(file);
         if (!result.url) {
-          toast.error(`Failed to upload thumbnail`)
+          toast.error("Failed to upload thumbnail");
         }
         setUploadedMedia({
           thumbnail: result.url,
-          thumbnailType: file.type || 'image/jpeg',
+          thumbnailType: file.type || "image/jpeg",
           uploadingThumbnail: false,
-          buttonText: 'Uploading...'
-        })
-        onUpload({ ...data, thumbnail: result.url })
+          buttonText: "Uploading..."
+        });
+        onUpload({ ...data, thumbnail: result.url });
       }
-    )
-  }
+    );
+  };
 
   const toggleUploadAsByte = (enable: boolean) => {
     if (isByteSizeVideo && enable) {
-      return setUploadedMedia({ isByteVideo: true })
+      return setUploadedMedia({ isByteVideo: true });
     }
-    setUploadedMedia({ isByteVideo: false })
-  }
+    setUploadedMedia({ isByteVideo: false });
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmitForm)}>
@@ -106,16 +104,16 @@ const Details: FC<Props> = ({ onUpload, onCancel }) => {
         </div>
 
         <div className="flex flex-1 flex-col justify-between">
-          <div className="tape-border rounded-medium p-5">
+          <div className="dragverse-border rounded-medium p-5">
             <InputMentions
               label="Title"
               placeholder="Title that describes your content"
               autoComplete="off"
               error={errors.title?.message}
-              value={watch('title')}
+              value={watch("title")}
               onContentChange={(value) => {
-                setValue('title', value)
-                clearErrors('title')
+                setValue("title", value);
+                clearErrors("title");
               }}
             />
             <div className="relative mt-4">
@@ -124,33 +122,33 @@ const Details: FC<Props> = ({ onUpload, onCancel }) => {
                 placeholder="Tell us more about your content! It can also be @profile, #hashtags or chapters (00:20 - Intro)"
                 autoComplete="off"
                 error={errors.description?.message}
-                value={watch('description')}
+                value={watch("description")}
                 onContentChange={(value) => {
-                  setValue('description', value)
-                  clearErrors('description')
+                  setValue("description", value);
+                  clearErrors("description");
                 }}
                 rows={6}
               />
-              <div className="absolute right-2 top-8">
+              <div className="absolute top-8 right-2">
                 <EmojiPicker
-                  onEmojiSelect={(emoji) =>
+                  onEmojiSelect={(emoji: string) =>
                     setValue(
-                      'description',
-                      `${getValues('description')}${emoji}`
+                      "description",
+                      `${getValues("description")}${emoji}`
                     )
                   }
                 />
               </div>
-              <div className="absolute right-1 top-0 mt-1 flex items-center justify-end">
+              <div className="absolute top-0 right-1 mt-1 flex items-center justify-end">
                 <span
                   className={tw(
-                    'text-xs',
-                    watch('description')?.length > 5000
-                      ? 'text-red-500 opacity-100'
-                      : ' opacity-70'
+                    "text-xs",
+                    watch("description")?.length > 5000
+                      ? "text-red-500 opacity-100"
+                      : "opacity-70"
                   )}
                 >
-                  {watch('description')?.length}/5000
+                  {watch("description")?.length}/5000
                 </span>
               </div>
             </div>
@@ -171,16 +169,16 @@ const Details: FC<Props> = ({ onUpload, onCancel }) => {
                       ...uploadedMedia.collectModule
                     }),
                     isRevertCollect: !canCollect
-                  }
-                  const collectModule = saveAsDefault
-                    ? {
-                        ...(persistedCollectModule && {
-                          ...persistedCollectModule
-                        }),
-                        isRevertCollect: !canCollect
-                      } ?? collectModuleData
-                    : collectModuleData
-                  setUploadedMedia({ collectModule })
+                  };
+                  // const collectModule = saveAsDefault
+                  //   ? {
+                  //       ...(persistedCollectModule && {
+                  //         ...persistedCollectModule
+                  //       }),
+                  //       isRevertCollect: !canCollect
+                  //     } ?? collectModuleData
+                  //   : collectModuleData
+                  setUploadedMedia({ collectModule: collectModuleData });
                 }}
               />
               {!uploadedMedia.collectModule.isRevertCollect && (
@@ -205,15 +203,15 @@ const Details: FC<Props> = ({ onUpload, onCancel }) => {
               {uploadedMedia.hasOpenActions && <OpenActionSettings />}
             </div> */}
 
-            {uploadedMedia.file && uploadedMedia.type === 'VIDEO' ? (
+            {uploadedMedia.file && uploadedMedia.type === "VIDEO" ? (
               <Tooltip
                 visible={!isByteSizeVideo}
                 content="Please note that only videos under 2 minutes in length can be uploaded as bytes"
               >
                 <div
                   className={tw(
-                    'mt-2',
-                    !isByteSizeVideo && 'cursor-not-allowed opacity-50'
+                    "mt-2",
+                    !isByteSizeVideo && "cursor-not-allowed opacity-50"
                   )}
                 >
                   <Switch
@@ -228,9 +226,9 @@ const Details: FC<Props> = ({ onUpload, onCancel }) => {
             <div className="mt-2">
               <Switch
                 label="Sensitive content for a general audience"
-                checked={Boolean(watch('isSensitiveContent'))}
+                checked={Boolean(watch("isSensitiveContent"))}
                 onCheckedChange={(value) =>
-                  setValue('isSensitiveContent', value)
+                  setValue("isSensitiveContent", value)
                 }
               />
             </div>
@@ -250,36 +248,38 @@ const Details: FC<Props> = ({ onUpload, onCancel }) => {
         <Button
           loading={
             uploadedMedia.loading ||
-            uploadedMedia.uploadingThumbnail ||
-            uploadedMedia.durationInSeconds === 0
+            (Boolean(uploadedMedia.file?.size) &&
+              (uploadedMedia.uploadingThumbnail ||
+                uploadedMedia.durationInSeconds === 0))
           }
           disabled={
             uploadedMedia.loading ||
-            uploadedMedia.uploadingThumbnail ||
-            uploadedMedia.durationInSeconds === 0
+            (Boolean(uploadedMedia.file?.size) &&
+              (uploadedMedia.uploadingThumbnail ||
+                uploadedMedia.durationInSeconds === 0))
           }
           type="submit"
         >
           {uploadedMedia.uploadingThumbnail
-            ? 'Uploading poster...'
+            ? "Uploading poster..."
             : uploadedMedia.buttonText}
         </Button>
       </div>
-      <footer className="bg-brand-850 dark:bg-brand-850 block py-4 text-center md:hidden">
-        <p className="text-brand-50 dark:text-brand-50 text-sm">
+      <footer className="block bg-brand-850 py-4 text-center md:hidden dark:bg-brand-850">
+        <p className="text-brand-50 text-sm dark:text-brand-50">
           We are a decentralized open-source social network built by and for the
           Drag community, brick by brick, to create content and share their
-          artistry.🌈 Powered with{' '}
+          artistry.🌈 Powered with{" "}
           <a
-            href="https://tape.xyz"
+            href="https://dragverse.app"
             className="text-blue-500 hover:text-blue-700"
           >
-            tape.xyz
+            dragverse.app
           </a>
         </p>
       </footer>
     </form>
-  )
-}
+  );
+};
 
-export default Details
+export default Details;

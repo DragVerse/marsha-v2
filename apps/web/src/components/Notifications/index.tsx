@@ -1,42 +1,47 @@
-import MetaTags from '@components/Common/MetaTags'
-import NotificationsShimmer from '@components/Shimmers/NotificationsShimmer'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
+import useSw from "@/hooks/useSw";
+import useNotificationStore from "@/lib/store/notification";
+import usePersistStore from "@/lib/store/persist";
 import {
   INFINITE_SCROLL_ROOT_MARGIN,
   LENSTUBE_APP_ID,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID
-} from '@dragverse/constants'
-import { EVENTS, Tower } from '@dragverse/generic'
-import type { Notification, NotificationRequest } from '@dragverse/lens'
-import { CustomFiltersType, useNotificationsQuery } from '@dragverse/lens'
-import { CustomNotificationsFilterEnum } from '@dragverse/lens/custom-types'
-import { Spinner } from '@dragverse/ui'
-import useNotificationStore from '@lib/store/notification'
-import usePersistStore from '@lib/store/persist'
-import { useEffect } from 'react'
-import { useInView } from 'react-cool-inview'
-
-import Acted from './Acted'
-import Commented from './Commented'
-import NotificationsFilter from './Filter'
-import Followed from './Followed'
-import Mentioned from './Mentioned'
-import Mirrored from './Mirrored'
-import Quoted from './Quoted'
-import Reactions from './Reactions'
+} from "@dragverse/constants";
+import { EVENTS } from "@dragverse/generic";
+import {
+  CustomFiltersType,
+  type Notification,
+  type NotificationRequest,
+  useNotificationsQuery
+} from "@dragverse/lens";
+import { CustomNotificationsFilterEnum } from "@dragverse/lens/custom-types";
+import { Spinner } from "@dragverse/ui";
+import { useEffect } from "react";
+import { useInView } from "react-cool-inview";
+import MetaTags from "../Common/MetaTags";
+import NotificationsShimmer from "../Shimmers/NotificationsShimmer";
+import { NoDataFound } from "../UIElements/NoDataFound";
+import Acted from "./Acted";
+import Commented from "./Commented";
+import NotificationsFilter from "./Filter";
+import Followed from "./Followed";
+import Mentioned from "./Mentioned";
+import Mirrored from "./Mirrored";
+import Quoted from "./Quoted";
+import Reactions from "./Reactions";
 
 const Notifications = () => {
   const setHasNewNotification = useNotificationStore(
     (state) => state.setHasNewNotification
-  )
+  );
   const selectedNotificationsFilter = usePersistStore(
     (state) => state.selectedNotificationsFilter
-  )
+  );
+  const { addEventToQueue } = useSw();
 
   useEffect(() => {
-    Tower.track(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.NOTIFICATIONS })
-  }, [])
+    addEventToQueue(EVENTS.PAGEVIEW, { page: EVENTS.PAGE_VIEW.NOTIFICATIONS });
+  }, []);
 
   const request: NotificationRequest = {
     where: {
@@ -46,17 +51,17 @@ const Notifications = () => {
         CustomNotificationsFilterEnum.HIGH_SIGNAL,
       publishedOn: [TAPE_APP_ID, LENSTUBE_BYTES_APP_ID, LENSTUBE_APP_ID]
     }
-  }
+  };
 
   const { data, loading, fetchMore } = useNotificationsQuery({
     variables: {
       request
     },
     onCompleted: () => setHasNewNotification(false)
-  })
+  });
 
-  const notifications = data?.notifications?.items as Notification[]
-  const pageInfo = data?.notifications?.pageInfo
+  const notifications = data?.notifications?.items as Notification[];
+  const pageInfo = data?.notifications?.pageInfo;
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -68,13 +73,13 @@ const Notifications = () => {
             ...request
           }
         }
-      })
+      });
     }
-  })
+  });
 
   return (
     <div className="mx-auto my-2 px-2 md:container md:max-w-3xl md:p-0">
-      <MetaTags title={`Notifications`} />
+      <MetaTags title="Notifications" />
       <div className="mb-4 flex items-center justify-between font-bold md:mb-6">
         <span className="whitespace-nowrap text-xl">All Notifications</span>
         <NotificationsFilter />
@@ -86,25 +91,25 @@ const Notifications = () => {
         )}
         {notifications?.map((notification: Notification, index: number) => (
           <div className="pb-6" key={`${notification.id}_${index}`}>
-            {notification?.__typename === 'MentionNotification' && (
+            {notification?.__typename === "MentionNotification" && (
               <Mentioned notification={notification} />
             )}
-            {notification?.__typename === 'FollowNotification' && (
+            {notification?.__typename === "FollowNotification" && (
               <Followed notification={notification} />
             )}
-            {notification?.__typename === 'MirrorNotification' && (
+            {notification?.__typename === "MirrorNotification" && (
               <Mirrored notification={notification} />
             )}
-            {notification?.__typename === 'QuoteNotification' && (
+            {notification?.__typename === "QuoteNotification" && (
               <Quoted notification={notification} />
             )}
-            {notification?.__typename === 'ActedNotification' && (
+            {notification?.__typename === "ActedNotification" && (
               <Acted notification={notification} />
             )}
-            {notification?.__typename === 'CommentNotification' && (
+            {notification?.__typename === "CommentNotification" && (
               <Commented notification={notification} />
             )}
-            {notification?.__typename === 'ReactionNotification' && (
+            {notification?.__typename === "ReactionNotification" && (
               <Reactions notification={notification} />
             )}
           </div>
@@ -116,7 +121,7 @@ const Notifications = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Notifications
+export default Notifications;

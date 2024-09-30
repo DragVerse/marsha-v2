@@ -1,52 +1,53 @@
-import { useCopyToClipboard } from '@dragverse/browser'
+import { useCopyToClipboard } from "@dragverse/browser";
 import {
   DRAGVERSE_LOGO,
   TAPE_APP_NAME,
   TAPE_WEBSITE_URL
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
   EVENTS,
   getLennyPicture,
   getProfile,
   getProfilePicture,
-  getPublicationData,
-  Tower
-} from '@dragverse/generic'
-import type { PrimaryPublication } from '@dragverse/lens'
-import { CopyOutline } from '@dragverse/ui'
-import Link from 'next/link'
-import type { FC } from 'react'
-import { useEffect, useState } from 'react'
+  getPublicationData
+} from "@dragverse/generic";
+import type { PrimaryPublication } from "@dragverse/lens";
+import { CopyOutline } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
+import { useEffect, useState } from "react";
+
+import { Tower } from "@/tower";
 
 type OverlayProps = {
-  playerRef: HTMLMediaElement | undefined
-  video: PrimaryPublication
-}
+  playerRef: HTMLMediaElement | undefined;
+  video: PrimaryPublication;
+};
 
 const TopOverlay: FC<OverlayProps> = ({ playerRef, video }) => {
-  const [showVideoOverlay, setShowVideoOverlay] = useState(true)
-  const [copy] = useCopyToClipboard()
+  const [showVideoOverlay, setShowVideoOverlay] = useState(true);
+  const [copy] = useCopyToClipboard();
 
   useEffect(() => {
     if (playerRef) {
       playerRef.onpause = () => {
-        setShowVideoOverlay(true)
-      }
+        setShowVideoOverlay(true);
+      };
       playerRef.onplay = () => {
-        setShowVideoOverlay(false)
-      }
+        setShowVideoOverlay(false);
+      };
     }
-  }, [playerRef])
+  }, [playerRef]);
 
   const onCopyVideoUrl = async () => {
-    await copy(`${TAPE_WEBSITE_URL}/watch/${video.id}`)
-    Tower.track(EVENTS.EMBED_VIDEO.CLICK_COPY_URL)
-  }
+    await copy(`${TAPE_WEBSITE_URL}/watch/${video.id}`);
+    Tower.track(EVENTS.EMBED_VIDEO.CLICK_COPY_URL);
+  };
 
   return (
     <div
       className={`${
-        showVideoOverlay ? 'visible' : 'invisible'
+        showVideoOverlay ? "visible" : "invisible"
       } transition-all duration-200 ease-in-out group-hover:visible`}
     >
       <div className="absolute top-0 z-10 w-full text-white">
@@ -61,10 +62,10 @@ const TopOverlay: FC<OverlayProps> = ({ playerRef, video }) => {
               }
             >
               <img
-                src={getProfilePicture(video.by, 'AVATAR')}
+                src={getProfilePicture(video.by, "AVATAR")}
                 className="size-9 rounded-full"
                 onError={({ currentTarget }) => {
-                  currentTarget.src = getLennyPicture(video.by?.id)
+                  currentTarget.src = getLennyPicture(video.by?.id);
                 }}
                 alt={getProfile(video.by)?.slug}
                 draggable={false}
@@ -96,16 +97,17 @@ const TopOverlay: FC<OverlayProps> = ({ playerRef, video }) => {
             </div>
           </div>
           <button
+            type="button"
             onClick={() => onCopyVideoUrl()}
-            className="bg-brand-850/50 invisible rounded-full p-3 transition-all duration-200 ease-in-out group-hover:visible"
+            className="invisible rounded-full bg-black/50 p-3 transition-all duration-200 ease-in-out group-hover:visible"
           >
             <CopyOutline className="size-3.5" />
           </button>
         </div>
       </div>
-      <div className="absolute bottom-2 right-0 md:bottom-4">
+      <div className="absolute right-0 bottom-2 md:bottom-4">
         <Link
-          className="bg-brand-850/50 flex items-center space-x-1.5 rounded-l-full px-3 py-1.5 text-white"
+          className="flex items-center space-x-1.5 rounded-l-full bg-brand-850/50 px-3 py-1.5 text-white"
           title={`Watch on ${TAPE_APP_NAME}`}
           href={`${TAPE_WEBSITE_URL}/watch/${video?.id}`}
           target="_blank"
@@ -122,7 +124,7 @@ const TopOverlay: FC<OverlayProps> = ({ playerRef, video }) => {
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default TopOverlay
+export default TopOverlay;

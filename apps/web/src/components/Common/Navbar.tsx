@@ -1,40 +1,37 @@
-import { tw } from '@dragverse/browser'
-import { FEATURE_FLAGS } from '@dragverse/constants'
-import { getIsFeatureEnabled } from '@dragverse/generic'
+import useProfileStore from "@/lib/store/idb/profile";
+import usePersistStore from "@/lib/store/persist";
+import { tw } from "@dragverse/browser";
 import {
   BellOutline,
   Button,
   ChevronDownOutline,
   DropdownMenu
-} from '@dragverse/ui'
-import useProfileStore from '@lib/store/idb/profile'
-import usePersistStore from '@lib/store/persist'
-import Link from 'next/link'
-import { useRouter } from 'next/router'
-
-import Logo from './Logo'
-import GlobalSearch from './Search/GlobalSearch'
-import TapeMenu from './TapeMenu'
-import UserMenu from './UserMenu'
+} from "@dragverse/ui";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import Logo from "./Logo";
+import GlobalSearch from "./Search/GlobalSearch";
+import TapeMenu from "./TapeMenu";
+import UserMenu from "./UserMenu";
 
 const Navbar = () => {
-  const { pathname, asPath } = useRouter()
+  const { pathname, asPath } = useRouter();
 
-  const isActivePath = (path: string) => pathname === path
-  const { activeProfile } = useProfileStore()
+  const isActivePath = (path: string) => pathname === path;
+  const { activeProfile } = useProfileStore();
   const {
     latestNotificationId,
     setLastOpenedNotificationId,
     lastOpenedNotificationId
-  } = usePersistStore()
+  } = usePersistStore();
   return (
-    <div className="ultrawide:px-8 laptop:px-6 dark:bg-brand-850/80 fixed top-0 z-10 flex h-14 w-full items-center bg-white/80 px-4 backdrop-blur-2xl">
+    <div className="fixed top-0 z-10 flex h-14 w-full items-center laptop:px-6 px-4 ultrawide:px-8 backdrop-blur-2xl dark:bg-brand-850/80">
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center space-x-2 md:w-1/5">
           <Logo />
           <DropdownMenu
             align="start"
-            trigger={<ChevronDownOutline className="h-3 w-3" />}
+            trigger={<ChevronDownOutline className="h-3 w-3 text-white" />}
           >
             <TapeMenu />
           </DropdownMenu>
@@ -43,9 +40,9 @@ const Navbar = () => {
           <Link
             href="/"
             className={tw(
-              isActivePath('/')
-                ? 'font-bold'
-                : 'text-dust font-medium hover:opacity-90'
+              isActivePath("/")
+                ? "font-bold text-white"
+                : "font-medium text-dust hover:opacity-90"
             )}
           >
             Home
@@ -53,9 +50,9 @@ const Navbar = () => {
           <Link
             href="/bytes"
             className={tw(
-              isActivePath('/bytes')
-                ? 'font-bold'
-                : 'text-dust font-medium hover:opacity-90'
+              isActivePath("/bytes")
+                ? "font-bold text-white"
+                : "font-medium text-dust hover:opacity-90"
             )}
           >
             Bytes
@@ -63,25 +60,13 @@ const Navbar = () => {
           <Link
             href="/feed"
             className={tw(
-              isActivePath('/feed')
-                ? 'font-bold'
-                : 'text-dust font-medium hover:opacity-90'
+              isActivePath("/feed")
+                ? "font-bold text-white"
+                : "font-medium text-dust hover:opacity-90"
             )}
           >
             Feed
           </Link>
-          {getIsFeatureEnabled(FEATURE_FLAGS.BANGERS, activeProfile?.id) && (
-            <Link
-              href="/bangers"
-              className={tw(
-                isActivePath('/bangers')
-                  ? 'font-bold'
-                  : 'text-dust font-medium hover:opacity-90'
-              )}
-            >
-              Bangers
-            </Link>
-          )}
         </div>
         <div className="flex w-1/5 items-center justify-end space-x-3">
           <GlobalSearch />
@@ -90,17 +75,17 @@ const Navbar = () => {
               <Link
                 onClick={() => {
                   if (latestNotificationId) {
-                    setLastOpenedNotificationId(latestNotificationId)
+                    setLastOpenedNotificationId(latestNotificationId);
                   }
                 }}
                 href="/notifications"
                 className="relative hidden md:block"
               >
-                <div className="bg-brand-250 rounded-full p-2.5">
+                <div className="rounded-full bg-brand-250 p-2.5">
                   <BellOutline className="size-3.5" />
                 </div>
                 {lastOpenedNotificationId !== latestNotificationId ? (
-                  <span className="bg-brand-500 absolute right-0.5 top-0 h-2 w-2 rounded-full" />
+                  <span className="absolute top-0 right-0.5 h-2 w-2 rounded-full bg-brand-500" />
                 ) : null}
               </Link>
               <Link href="/create" className="hidden md:block">
@@ -116,7 +101,7 @@ const Navbar = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

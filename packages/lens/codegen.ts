@@ -1,24 +1,24 @@
-import { LensEndpoint } from '@dragverse/constants';
-import type { CodegenConfig } from '@graphql-codegen/cli';
+import { LensEndpoint } from "@dragverse/constants";
+import type { CodegenConfig } from "@graphql-codegen/cli";
 
 const config: CodegenConfig = {
   overwrite: true,
   schema: LensEndpoint.Staging,
-  documents: './documents/**/*.graphql',
-  customFetch: 'node-fetch',
+  documents: "./documents/**/*.graphql",
+  customFetch: "node-fetch",
   generates: {
-    'generated.ts': {
+    "generated.ts": {
       plugins: [
-        'typescript',
-        'typescript-operations',
-        'typescript-react-apollo',
-        'fragment-matcher'
+        "typescript",
+        "typescript-operations",
+        "typescript-react-apollo",
+        "fragment-matcher"
       ]
     }
   },
   hooks: {
-    afterAllFileWrite: ['eslint --fix', 'prettier --write']
+    afterAllFileWrite: ["biome format --write ."]
   }
-}
+};
 
-export default config
+export default config;

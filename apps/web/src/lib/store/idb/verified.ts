@@ -1,11 +1,12 @@
-import { LocalIDBStore } from '@dragverse/lens/custom-types'
-import createIdbStorage from '@lib/createIdbStorage'
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { LocalIDBStore } from "@dragverse/lens/custom-types";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+import createIdbStorage from "@/lib/createIdbStorage";
 
 interface State {
-  verifiedProfiles: string[]
-  setVerifiedProfiles: (verifiedProfiles: string[]) => void
+  verifiedProfiles: string[];
+  setVerifiedProfiles: (verifiedProfiles: string[]) => void;
 }
 
 const useVerifiedStore = create(
@@ -19,6 +20,6 @@ const useVerifiedStore = create(
       storage: createIdbStorage()
     }
   )
-)
+);
 
-export default useVerifiedStore
+export default useVerifiedStore;

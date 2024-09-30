@@ -1,5 +1,2 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
-pnpm lint
-pnpm typecheck
+pnpm run biome:fix
+pnpm run biome:check

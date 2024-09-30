@@ -1,27 +1,24 @@
-import { TAPE_CURATOR_ID } from '@dragverse/constants'
-import type { FollowingRequest } from '@dragverse/lens'
-import { LimitType, useFollowingQuery } from '@dragverse/lens'
-import useCuratedProfiles from '@lib/store/idb/curated'
-
-const followingRequest: FollowingRequest = {
-  for: TAPE_CURATOR_ID,
-  limit: LimitType.Fifty
-}
+import useCuratedProfiles from "@/lib/store/idb/curated";
+import { WORKER_CURATED_PROFILES_URL } from "@dragverse/constants";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const CuratedProfilesProvider = () => {
   const setCuratedProfiles = useCuratedProfiles(
     (state) => state.setCuratedProfiles
-  )
+  );
 
-  useFollowingQuery({
-    variables: { request: followingRequest },
-    onCompleted: ({ following }) => {
-      const followings = following?.items.map((p) => p.id)
-      setCuratedProfiles(followings)
-    }
-  })
+  const fetchCuratedProfiles = async () => {
+    const { data } = await axios.get(WORKER_CURATED_PROFILES_URL);
+    setCuratedProfiles(data?.ids ?? []);
+  };
 
-  return null
-}
+  useQuery({
+    queryKey: ["fetchCuratedProfiles"],
+    queryFn: fetchCuratedProfiles
+  });
 
-export default CuratedProfilesProvider
+  return null;
+};
+
+export default CuratedProfilesProvider;

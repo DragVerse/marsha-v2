@@ -1,22 +1,21 @@
-import Badge from '@components/Common/Badge'
-import HoverableProfile from '@components/Common/HoverableProfile'
-import MetaTags from '@components/Common/MetaTags'
-import Stats from '@components/Profile/BasicInfo/Stats'
+import Badge from "@/components/Common/Badge";
+import HoverableProfile from "@/components/Common/HoverableProfile";
+import MetaTags from "@/components/Common/MetaTags";
+import Stats from "@/components/Profile/BasicInfo/Stats";
+import useProfileStore from "@/lib/store/idb/profile";
 import {
   getLennyPicture,
   getProfile,
   getProfilePicture
-} from '@dragverse/generic'
-import useProfileStore from '@lib/store/idb/profile'
-
-import Delete from './Delete'
-import Guardian from './Guardian'
+} from "@dragverse/generic";
+import Delete from "./Delete";
+import Guardian from "./Guardian";
 
 const DangerZone = () => {
-  const activeProfile = useProfileStore((state) => state.activeProfile)
+  const activeProfile = useProfileStore((state) => state.activeProfile);
 
   if (!activeProfile) {
-    return null
+    return null;
   }
 
   return (
@@ -24,15 +23,15 @@ const DangerZone = () => {
       <MetaTags title="Danger Zone" />
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center">
-          <div className="mr-3 mt-0.5 flex-none">
+          <div className="mt-0.5 mr-3 flex-none">
             <HoverableProfile profile={activeProfile}>
               <img
-                src={getProfilePicture(activeProfile, 'AVATAR')}
+                src={getProfilePicture(activeProfile, "AVATAR")}
                 className="size-10 rounded-full"
                 alt={getProfile(activeProfile)?.displayName}
                 draggable={false}
                 onError={({ currentTarget }) => {
-                  currentTarget.src = getLennyPicture(activeProfile?.id)
+                  currentTarget.src = getLennyPicture(activeProfile?.id);
                 }}
               />
             </HoverableProfile>
@@ -54,7 +53,7 @@ const DangerZone = () => {
       <Guardian />
       <Delete />
     </>
-  )
-}
+  );
+};
 
-export default DangerZone
+export default DangerZone;

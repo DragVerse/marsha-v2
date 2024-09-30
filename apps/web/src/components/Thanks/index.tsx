@@ -1,12 +1,12 @@
-import { STATIC_ASSETS, TAPE_APP_NAME } from '@dragverse/constants'
-import Link from 'next/link'
+import { STATIC_ASSETS, TAPE_APP_NAME } from "@dragverse/constants";
+import Link from "next/link";
 
 const Thanks = () => {
   return (
     <div className="space-y-5">
       <div className="flex h-[25vh] w-full items-center justify-center">
         <div className="relative text-center">
-          <div className="flex items-center space-x-2 text-3xl font-bold md:text-4xl">
+          <div className="flex items-center space-x-2 font-bold text-3xl md:text-4xl">
             Thanks for supporting our community!
           </div>
         </div>
@@ -62,7 +62,7 @@ const Thanks = () => {
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Thanks
+export default Thanks;

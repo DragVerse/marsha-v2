@@ -1,47 +1,50 @@
-import MetaTags from '@components/Common/MetaTags'
-import { ERROR_MESSAGE } from '@dragverse/constants'
-import { EVENTS, Tower } from '@dragverse/generic'
-import type { Profile } from '@dragverse/lens'
-import { useReportProfileMutation } from '@dragverse/lens'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
-import { Button, Select, SelectItem } from '@dragverse/ui'
-import type { FC } from 'react'
-import { useState } from 'react'
-import toast from 'react-hot-toast'
+import { ERROR_MESSAGE } from "@dragverse/constants";
+import { EVENTS } from "@dragverse/generic";
+import type { Profile } from "@dragverse/lens";
+import { useReportProfileMutation } from "@dragverse/lens";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
+import { Button, Select, SelectItem } from "@dragverse/ui";
+import type { FC } from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+
+import MetaTags from "@/components/Common/MetaTags";
+import useSw from "@/hooks/useSw";
 
 type Props = {
-  profile: Profile
-  close?: () => void
-}
+  profile: Profile;
+  close?: () => void;
+};
 
 const ReportProfile: FC<Props> = ({ profile, close }) => {
-  const [reason, setReason] = useState('SPAM-REPETITIVE')
+  const [reason, setReason] = useState("SPAM-REPETITIVE");
+  const { addEventToQueue } = useSw();
 
   const [createReport, { loading: reporting }] = useReportProfileMutation({
     onError: (error: CustomErrorWithData) => {
-      toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
+      toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
     },
     onCompleted: () => {
-      toast.success(`Profile reported.`)
-      Tower.track(EVENTS.PROFILE.REPORT, {
+      toast.success("Profile reported.");
+      addEventToQueue(EVENTS.PROFILE.REPORT, {
         profile_id: profile.id
-      })
+      });
     }
-  })
+  });
 
   const getReasonType = (type: string) => {
-    if (type === 'FRAUD') {
-      return 'fraudReason'
+    if (type === "FRAUD") {
+      return "fraudReason";
     }
-    if (type === 'SPAM') {
-      return 'spamReason'
+    if (type === "SPAM") {
+      return "spamReason";
     }
-    return 'spamReason'
-  }
+    return "spamReason";
+  };
 
   const onReport = async () => {
-    const type = reason.split('-')[0]
-    const subReason = reason.split('-')[1]
+    const type = reason.split("-")[0] ?? "";
+    const subReason = reason.split("-")[1];
     await createReport({
       variables: {
         request: {
@@ -55,9 +58,9 @@ const ReportProfile: FC<Props> = ({ profile, close }) => {
           additionalComments: `${type} - ${subReason}`
         }
       }
-    })
-    close?.()
-  }
+    });
+    close?.();
+  };
 
   return (
     <>
@@ -89,7 +92,7 @@ const ReportProfile: FC<Props> = ({ profile, close }) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ReportProfile
+export default ReportProfile;

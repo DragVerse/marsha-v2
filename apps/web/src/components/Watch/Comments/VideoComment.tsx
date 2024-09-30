@@ -1,10 +1,10 @@
-import { DRAGVERSE_LOGO, TAPE_APP_NAME } from '@dragverse/constants'
-import Link from 'next/link'
-import type { FC } from 'react'
+import { DRAGVERSE_LOGO, TAPE_APP_NAME } from "@dragverse/constants";
+import Link from "next/link";
+import type { FC } from "react";
 
 type Props = {
-  commentId: string
-}
+  commentId: string;
+};
 
 const VideoComment: FC<Props> = ({ commentId }) => {
   return (
@@ -23,6 +23,6 @@ const VideoComment: FC<Props> = ({ commentId }) => {
         <span>Watch Video</span>
       </Link>
     </div>
-  )
-}
-export default VideoComment
+  );
+};
+export default VideoComment;

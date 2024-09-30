@@ -1,13 +1,13 @@
-import { TAPE_LOGO } from '@dragverse/constants'
-import Link from 'next/link'
-import { useTheme } from 'next-themes'
+import { TAPE_LOGO } from "@dragverse/constants";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 
 const Logo = () => {
-  const { resolvedTheme } = useTheme()
+  const { resolvedTheme } = useTheme();
 
   return (
     <Link href="/" className="inline-flex">
-      {resolvedTheme === 'dark' ? (
+      {resolvedTheme === "dark" ? (
         <img
           src={`${TAPE_LOGO}`}
           className="-mb-0.5 h-20"
@@ -27,7 +27,7 @@ const Logo = () => {
         />
       )}
     </Link>
-  )
-}
+  );
+};
 
-export default Logo
+export default Logo;

@@ -3,18 +3,17 @@ import {
   getLennyPicture,
   getProfile,
   getProfilePicture
-} from '@dragverse/generic'
-import type { Profile } from '@dragverse/lens'
-import { UserOutline } from '@dragverse/ui'
-import Link from 'next/link'
-import type { FC } from 'react'
-
-import Badge from '../Badge'
+} from "@dragverse/generic";
+import type { Profile } from "@dragverse/lens";
+import { UserOutline } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
+import Badge from "../Badge";
 
 interface Props {
-  results: Profile[]
-  loading: boolean
-  clearSearch: () => void
+  results: Profile[];
+  loading: boolean;
+  clearSearch: () => void;
 }
 
 const Profiles: FC<Props> = ({ results, loading, clearSearch }) => {
@@ -23,7 +22,7 @@ const Profiles: FC<Props> = ({ results, loading, clearSearch }) => {
       {results?.map((profile: Profile) => (
         <div
           key={profile.id}
-          className="hover:bg-gallery dark:hover:bg-smoke relative cursor-default select-none rounded-md pl-3 pr-4"
+          className="relative cursor-default select-none rounded-md pr-4 pl-3 hover:bg-gallery dark:hover:bg-smoke"
         >
           <Link
             onClick={() => clearSearch()}
@@ -35,11 +34,11 @@ const Profiles: FC<Props> = ({ results, loading, clearSearch }) => {
               <div className="inline-flex w-3/4 items-center space-x-2">
                 <img
                   className="size-5 rounded-full"
-                  src={getProfilePicture(profile, 'AVATAR')}
+                  src={getProfilePicture(profile, "AVATAR")}
                   draggable={false}
                   alt="pfp"
                   onError={({ currentTarget }) => {
-                    currentTarget.src = getLennyPicture(profile?.id)
+                    currentTarget.src = getLennyPicture(profile?.id);
                   }}
                 />
                 <div className="flex items-center space-x-1">
@@ -68,7 +67,7 @@ const Profiles: FC<Props> = ({ results, loading, clearSearch }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Profiles
+export default Profiles;

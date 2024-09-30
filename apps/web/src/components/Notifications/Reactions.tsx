@@ -1,21 +1,21 @@
-import HoverableProfile from '@components/Common/HoverableProfile'
 import {
   getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData
-} from '@dragverse/generic'
+} from "@dragverse/generic";
 import type {
   ProfileReactedResult,
   ReactionNotification
-} from '@dragverse/lens'
-import { HeartOutline } from '@dragverse/ui'
-import Link from 'next/link'
-import type { FC } from 'react'
+} from "@dragverse/lens";
+import { HeartOutline } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
+import HoverableProfile from "../Common/HoverableProfile";
 
 type Props = {
-  notification: ReactionNotification
-}
+  notification: ReactionNotification;
+};
 
 const Reactions: FC<Props> = ({ notification: { publication, reactions } }) => {
   return (
@@ -24,14 +24,14 @@ const Reactions: FC<Props> = ({ notification: { publication, reactions } }) => {
         <HeartOutline className="size-5" />
       </div>
       <div>
-        <span className="flex -space-x-1.5">
+        <span className="-space-x-1.5 flex">
           {reactions.slice(0, 30).map(({ profile }: ProfileReactedResult) => (
             <HoverableProfile profile={profile} key={profile?.id}>
               <img
                 className="size-7 rounded-full border dark:border-gray-700/80"
-                src={getProfilePicture(profile, 'AVATAR')}
+                src={getProfilePicture(profile, "AVATAR")}
                 onError={({ currentTarget }) => {
-                  currentTarget.src = getLennyPicture(profile?.id)
+                  currentTarget.src = getLennyPicture(profile?.id);
                 }}
                 alt={getProfile(profile)?.displayName}
                 draggable={false}
@@ -42,13 +42,13 @@ const Reactions: FC<Props> = ({ notification: { publication, reactions } }) => {
         <div className="py-2">reacted to your publication</div>
         <Link
           href={`/watch/${publication.id}`}
-          className="text-dust line-clamp-2 font-medium"
+          className="line-clamp-2 font-medium text-dust"
         >
           {getPublicationData(publication.metadata)?.title}
         </Link>
       </div>
     </span>
-  )
-}
+  );
+};
 
-export default Reactions
+export default Reactions;

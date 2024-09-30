@@ -1,74 +1,88 @@
-import { getLivepeerClient, videoPlayerTheme } from '@dragverse/browser'
-import { PRIVY_APP_ID } from '@dragverse/constants'
-import { apolloClient, ApolloProvider } from '@dragverse/lens/apollo'
-import authLink from '@lib/authLink'
-import { LivepeerConfig } from '@livepeer/react'
-import type { PrivyClientConfig } from '@privy-io/react-auth'
-import { PrivyProvider } from '@privy-io/react-auth'
-import { createConfig, WagmiProvider } from '@privy-io/wagmi'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import dynamic from 'next/dynamic'
-import { useRouter } from 'next/router'
-import type { ReactNode } from 'react'
-import { mainnet, polygon, polygonMumbai, sepolia } from 'viem/chains'
-import { http } from 'wagmi'
+import authLink from "@/lib/authLink";
+import { getLivepeerClient, videoPlayerTheme } from "@dragverse/browser";
+import {
+  PRIVY_APP_ID,
+  TAPE_APP_NAME,
+  WC_PROJECT_ID
+} from "@dragverse/constants";
+import { ApolloProvider, apolloClient } from "@dragverse/lens/apollo";
+import { LivepeerConfig } from "@livepeer/react";
+import { type PrivyClientConfig, PrivyProvider } from "@privy-io/react-auth";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "next-themes";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
+import type { ReactNode } from "react";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import {
+  mainnet,
+  polygon,
+  polygonAmoy,
+  polygonMumbai,
+  sepolia
+} from "wagmi/chains";
+import { coinbaseWallet, injected, walletConnect } from "wagmi/connectors";
+import ErrorBoundary from "../ErrorBoundary";
+import CuratedProfilesProvider from "./CuratedProfilesProvider";
+import ServiceWorkerProvider from "./ServiceWorkerProvider";
 
-import ErrorBoundary from '../ErrorBoundary'
-import CuratedProfilesProvider from './CuratedProfilesProvider'
-import ThemeProvider from './ThemeProvider'
+const SubscriptionProvider = dynamic(() => import("./SubscriptionProvider"));
+const TogglesProvider = dynamic(() => import("./TogglesProvider"));
+const Layout = dynamic(() => import("../Layout"));
 
-const SubscriptionProvider = dynamic(() => import('./SubscriptionProvider'))
-const TogglesProvider = dynamic(() => import('./TogglesProvider'))
-const Web3Provider = dynamic(() => import('./Web3Provider'))
-const Layout = dynamic(() => import('../Layout'))
-
-const NO_TOP_NAV_PATHS = ['/login']
-const NO_BOTTOM_NAV_PATHS = ['/bangers']
+const NO_TOP_NAV_PATHS = ["/login"];
 const NO_PADDING_PATHS = [
-  '/u/[[...handle]]',
-  '/bangers',
-  '/profile/[id]',
-  '/login',
-  '/bytes',
-  '/bytes/[id]',
-  '/404',
-  '/500'
-]
+  "/u/[[...handle]]",
+  "/profile/[id]",
+  "/login",
+  "/bytes",
+  "/bytes/[id]",
+  "/404",
+  "/500"
+];
 
-const apolloQueryClient = apolloClient(authLink)
-const livepeerClient = getLivepeerClient()
+const apolloQueryClient = apolloClient(authLink);
+const livepeerClient = getLivepeerClient();
 const reactQueryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false } }
-})
+});
 
-export const config = createConfig({
-  chains: [mainnet, sepolia, polygonMumbai, polygon],
+const connectors = [
+  injected(),
+  walletConnect({ projectId: WC_PROJECT_ID }),
+  coinbaseWallet({ appName: TAPE_APP_NAME })
+];
+
+export const wagmiConfig = createConfig({
+  connectors,
+  chains: [mainnet, sepolia, polygonMumbai, polygon, polygonAmoy],
   transports: {
     [mainnet.id]: http(),
     [sepolia.id]: http(),
     [polygonMumbai.id]: http(),
-    [polygon.id]: http()
+    [polygon.id]: http(),
+    [polygonAmoy.id]: http()
   }
-})
+});
 
 export const privyConfig: PrivyClientConfig = {
   embeddedWallets: {
-    createOnLogin: 'users-without-wallets',
+    createOnLogin: "users-without-wallets",
     requireUserPasswordOnCreate: true,
     noPromptOnSignature: false
   },
-  loginMethods: ['email', 'wallet', 'google', 'farcaster', 'tiktok', 'sms'],
+  loginMethods: ["email", "wallet", "google", "farcaster", "tiktok", "sms"],
   appearance: {
     showWalletLoginFirst: true
   }
-}
+};
 
 const Providers = ({ children }: { children: ReactNode }) => {
-  const { pathname } = useRouter()
+  const { pathname } = useRouter();
 
   return (
     <ErrorBoundary>
-      <Web3Provider>
+      <ServiceWorkerProvider>
         <ApolloProvider client={apolloQueryClient}>
           <PrivyProvider appId={PRIVY_APP_ID} config={privyConfig}>
             <QueryClientProvider client={reactQueryClient}>
@@ -80,10 +94,9 @@ const Providers = ({ children }: { children: ReactNode }) => {
                   client={livepeerClient}
                   theme={videoPlayerTheme}
                 >
-                  <WagmiProvider config={config}>
+                  <WagmiProvider config={wagmiConfig}>
                     <Layout
                       skipNav={NO_TOP_NAV_PATHS.includes(pathname)}
-                      skipBottomNav={NO_BOTTOM_NAV_PATHS.includes(pathname)}
                       skipPadding={NO_PADDING_PATHS.includes(pathname)}
                     >
                       {children}
@@ -94,9 +107,9 @@ const Providers = ({ children }: { children: ReactNode }) => {
             </QueryClientProvider>
           </PrivyProvider>
         </ApolloProvider>
-      </Web3Provider>
+      </ServiceWorkerProvider>
     </ErrorBoundary>
-  )
-}
+  );
+};
 
-export default Providers
+export default Providers;

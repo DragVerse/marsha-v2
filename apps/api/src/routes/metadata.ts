@@ -1,56 +1,58 @@
-import { signMetadata } from '@lens-protocol/metadata'
-import { Hono } from 'hono'
-import { privateKeyToAccount } from 'viem/accounts'
+import {
+  ERROR_MESSAGE,
+  IRYS_GATEWAY_URL,
+  TAPE_APP_NAME
+} from "@dragverse/constants";
+import { Uploader } from "@irys/upload";
+import { Matic } from "@irys/upload-ethereum";
+import { signMetadata } from "@lens-protocol/metadata";
+import { Hono } from "hono";
+import { privateKeyToAccount } from "viem/accounts";
 
-import { ERROR_MESSAGE, IRYS_NODE_URL } from '@/helpers/constants'
-import { createData, EthereumSigner } from '@/helpers/metadata'
+const app = new Hono();
 
-type Bindings = {
-  WALLET_PRIVATE_KEY: string
-}
+const { WALLET_PRIVATE_KEY } = process.env;
+const getIrysUploader = async () =>
+  await Uploader(Matic).withWallet(WALLET_PRIVATE_KEY);
 
-const app = new Hono<{ Bindings: Bindings }>()
-
-app.post('/', async (c) => {
+app.post("/", async (c) => {
   try {
-    const payload = await c.req.json()
+    const payload = await c.req.json();
 
-    const signer = new EthereumSigner(c.env.WALLET_PRIVATE_KEY)
+    const irys = await getIrysUploader();
 
-    const account = privateKeyToAccount(`0x${c.env.WALLET_PRIVATE_KEY}`)
-    const signed = await signMetadata(payload, (message) =>
+    const account = privateKeyToAccount(`0x${WALLET_PRIVATE_KEY}`);
+    const signedMetadata = await signMetadata(payload, (message) =>
       account.signMessage({ message })
-    )
+    );
 
-    const tx = createData(JSON.stringify(signed), signer, {
+    const startTime = performance.now();
+    const receipt = await irys.upload(JSON.stringify(signedMetadata), {
       tags: [
-        { name: 'Content-Type', value: 'application/json' },
-        { name: 'App-Name', value: 'Tape' }
+        { name: "Content-Type", value: "application/json" },
+        { name: "App-Name", value: TAPE_APP_NAME }
       ]
-    })
-    await tx.sign(signer)
-    const irysRes = await fetch(IRYS_NODE_URL, {
-      method: 'POST',
-      headers: { 'content-type': 'application/octet-stream' },
-      body: tx.getRaw()
-    })
+    });
+    const took = performance.now() - startTime;
+    console.log(`[METADATA] irys upload took ${took}ms`);
 
-    if (irysRes.statusText !== 'Created' && irysRes.statusText !== 'OK') {
+    if (!receipt.id) {
       return c.json({
         success: true,
         message: ERROR_MESSAGE,
-        irysRes: JSON.stringify(irysRes)
-      })
+        irysRes: JSON.stringify(receipt)
+      });
     }
 
     return c.json({
       success: true,
-      id: tx.id,
-      url: `ar://${tx.id}`
-    })
-  } catch {
-    return c.json({ success: false, message: ERROR_MESSAGE })
+      id: receipt.id,
+      url: `${IRYS_GATEWAY_URL}/${receipt.id}`
+    });
+  } catch (error) {
+    console.error("[METADATA] Error:", error);
+    return c.json({ success: false, message: ERROR_MESSAGE });
   }
-})
+});
 
-export default app
+export default app;

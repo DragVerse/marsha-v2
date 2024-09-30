@@ -1,19 +1,19 @@
-import HoverableProfile from '@components/Common/HoverableProfile'
+import { getShortHandTime } from "@/lib/formatTime";
 import {
   getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData
-} from '@dragverse/generic'
-import type { QuoteNotification } from '@dragverse/lens'
-import { QuoteOutline } from '@dragverse/ui'
-import { getShortHandTime } from '@lib/formatTime'
-import Link from 'next/link'
-import type { FC } from 'react'
+} from "@dragverse/generic";
+import type { QuoteNotification } from "@dragverse/lens";
+import { QuoteOutline } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
+import HoverableProfile from "../Common/HoverableProfile";
 
 type Props = {
-  notification: QuoteNotification
-}
+  notification: QuoteNotification;
+};
 
 const Quoted: FC<Props> = ({ notification: { quote } }) => {
   return (
@@ -23,15 +23,15 @@ const Quoted: FC<Props> = ({ notification: { quote } }) => {
           <QuoteOutline className="size-5" />
         </div>
         <div>
-          <span className="flex -space-x-1.5">
+          <span className="-space-x-1.5 flex">
             <HoverableProfile profile={quote.by} key={quote.by?.id}>
               <img
                 className="size-7 rounded-full border dark:border-gray-700/80"
-                src={getProfilePicture(quote.by, 'AVATAR')}
+                src={getProfilePicture(quote.by, "AVATAR")}
                 draggable={false}
                 alt={getProfile(quote.by)?.displayName}
                 onError={({ currentTarget }) => {
-                  currentTarget.src = getLennyPicture(quote.by?.id)
+                  currentTarget.src = getLennyPicture(quote.by?.id);
                 }}
               />
             </HoverableProfile>
@@ -39,7 +39,7 @@ const Quoted: FC<Props> = ({ notification: { quote } }) => {
           <div className="py-2">quoted your publication</div>
           <Link
             href={`/watch/${quote.id}`}
-            className="text-dust line-clamp-2 font-medium"
+            className="line-clamp-2 font-medium text-dust"
           >
             {getPublicationData(quote.metadata)?.content}
           </Link>
@@ -49,7 +49,7 @@ const Quoted: FC<Props> = ({ notification: { quote } }) => {
         {getShortHandTime(quote.createdAt)}
       </span>
     </div>
-  )
-}
+  );
+};
 
-export default Quoted
+export default Quoted;

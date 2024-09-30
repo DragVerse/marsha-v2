@@ -1,70 +1,68 @@
-import { NoDataFound } from '@components/UIElements/NoDataFound'
-import ProfileSuggestion from '@components/UIElements/ProfileSuggestion'
-import { tw, useDebounce, useOutsideClick } from '@dragverse/browser'
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
+import ProfileSuggestion from "@/components/UIElements/ProfileSuggestion";
+import useAppStore from "@/lib/store";
+import { tw, useDebounce, useOutsideClick } from "@dragverse/browser";
 import {
   DRAGVERSE_ADMIN_ADDRESS,
-  LENS_NAMESPACE_PREFIX,
+  TAPE_ADMIN_ADDRESS,
   TAPE_APP_NAME
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
   getProfile,
   getProfilePicture,
   splitNumber,
   trimify
-} from '@dragverse/generic'
-import type { Profile, RecipientDataInput } from '@dragverse/lens'
+} from "@dragverse/generic";
 import {
   CustomFiltersType,
   LimitType,
+  type Profile,
+  type RecipientDataInput,
   useSearchProfilesLazyQuery
-} from '@dragverse/lens'
+} from "@dragverse/lens";
 import {
   InfoOutline,
   Input,
   Spinner,
   TimesOutline,
   Tooltip
-} from '@dragverse/ui'
-import useAppStore from '@lib/store'
-import type { FC, RefObject } from 'react'
-import { useEffect, useRef, useState } from 'react'
-import { isAddress } from 'viem'
+} from "@dragverse/ui";
+import { type FC, type RefObject, useEffect, useRef, useState } from "react";
+import { isAddress } from "viem";
 
 type Props = {
-  submitContainerRef: RefObject<HTMLDivElement>
-}
+  submitContainerRef: RefObject<HTMLDivElement>;
+};
 
 const Splits: FC<Props> = ({ submitContainerRef }) => {
-  const uploadedMedia = useAppStore((state) => state.uploadedMedia)
-  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia)
-  const splitRecipients = uploadedMedia.collectModule.multiRecipients ?? []
-  const [searchKeyword, setSearchKeyword] = useState('')
-  const debouncedValue = useDebounce<string>(searchKeyword, 500)
+  const uploadedMedia = useAppStore((state) => state.uploadedMedia);
+  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia);
+  const splitRecipients = uploadedMedia.collectModule.multiRecipients ?? [];
+  const { isFeeCollect } = uploadedMedia.collectModule;
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const debouncedValue = useDebounce<string>(searchKeyword, 500);
 
   const [searchProfiles, { data: profilesData, loading: profilesLoading }] =
-    useSearchProfilesLazyQuery()
-  const profiles = profilesData?.searchProfiles?.items as Profile[]
+    useSearchProfilesLazyQuery();
+  const profiles = profilesData?.searchProfiles?.items as Profile[];
 
   const setSplitRecipients = (multiRecipients: RecipientDataInput[]) => {
-    const enabled = Boolean(splitRecipients.length)
+    const enabled = isFeeCollect ? true : Boolean(splitRecipients.length);
     setUploadedMedia({
       collectModule: {
         ...uploadedMedia.collectModule,
         multiRecipients,
         isMultiRecipientFeeCollect: enabled
       }
-    })
-  }
+    });
+  };
 
-  const getIsValidAddress = (address: string) => isAddress(address)
-  const isIncludesDonationAddress =
-    splitRecipients.filter((el) => el.recipient === DRAGVERSE_ADMIN_ADDRESS)
-      .length > 0
+  const getIsValidAddress = (address: string) => isAddress(address);
 
-  const resultsRef = useRef(null)
+  const resultsRef = useRef(null);
   useOutsideClick(resultsRef, () => {
-    setSearchKeyword('')
-  })
+    setSearchKeyword("");
+  });
 
   const onDebounce = async () => {
     if (trimify(searchKeyword).length) {
@@ -78,78 +76,75 @@ const Splits: FC<Props> = ({ submitContainerRef }) => {
             }
           }
         }
-      })
+      });
     }
-  }
+  };
 
   useEffect(() => {
-    onDebounce()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedValue])
+    onDebounce();
+  }, [debouncedValue]);
 
-  const onChangeSplit = async (
-    key: 'recipient' | 'split',
+  const onChangeSplit = (
+    key: "recipient" | "split",
     value: string,
     index: number
   ) => {
-    const splits = splitRecipients
-    const changedSplit = splits[index]
-    if (key === 'split') {
-      changedSplit[key] = Number(Number(value).toFixed(2))
-    } else {
-      changedSplit[key] = value
-      if (!getIsValidAddress(value)) {
-        setSearchKeyword(value)
+    const splits = splitRecipients;
+    const changedSplit = splits[index];
+    if (changedSplit) {
+      if (key === "split") {
+        changedSplit[key] = Number(Number(value).toFixed(2));
+      } else {
+        changedSplit[key] = value;
+        if (!getIsValidAddress(value)) {
+          setSearchKeyword(value);
+        }
       }
+      splits[index] = changedSplit;
     }
-    splits[index] = changedSplit
-    setSplitRecipients([...splits])
-  }
+    setSplitRecipients([...splits]);
+  };
 
   const scrollToSubmit = () => {
     // requires some time because the input fields shifts the layout back down
     setTimeout(() => {
-      submitContainerRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, 50)
-  }
-
-  const addDonation = () => {
-    const splits = splitRecipients
-    splits.push({ recipient: DRAGVERSE_ADMIN_ADDRESS, split: 2 })
-    setSplitRecipients([...splits])
-    scrollToSubmit()
-  }
-
-  const addRecipient = () => {
-    const splits = splitRecipients
-    splits.push({ recipient: '', split: 1 })
-    setSplitRecipients([...splits])
-    scrollToSubmit()
-  }
-
-  const removeRecipient = (index: number) => {
-    const splits = splitRecipients
-    if (index >= 0) {
-      splits.splice(index, 1)
-    }
-    setSplitRecipients([...splits])
-  }
+      submitContainerRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
+  };
 
   const splitEvenly = () => {
-    const equalSplits = splitNumber(100, splitRecipients.length)
+    const equalSplits = splitNumber(100, splitRecipients.length);
     const splits = splitRecipients.map((splitRecipient, i) => {
       return {
         recipient: splitRecipient.recipient,
-        split: equalSplits[i]
-      }
-    })
-    setSplitRecipients([...splits])
-  }
+        split: equalSplits[i] ?? 0
+      };
+    });
+    if (splits.length) {
+      setSplitRecipients([...splits]);
+    }
+  };
+
+  const addRecipient = () => {
+    const splits = splitRecipients;
+    splits.push({ recipient: "", split: 20 });
+    setSplitRecipients([...splits]);
+    scrollToSubmit();
+    splitEvenly();
+  };
+
+  const removeRecipient = (index: number) => {
+    const splits = splitRecipients;
+    if (index >= 0) {
+      splits.splice(index, 1);
+    }
+    setSplitRecipients([...splits]);
+  };
 
   return (
     <div className="space-y-1">
       <div className="flex items-center">
-        <span className="text-sm font-medium">Split revenue</span>
+        <span className="font-medium text-sm">Split revenue</span>
         <Tooltip content="Split collect revenue with anyone" placement="top">
           <span>
             <InfoOutline className="mx-1 size-3 opacity-70" />
@@ -157,12 +152,12 @@ const Splits: FC<Props> = ({ submitContainerRef }) => {
         </Tooltip>
       </div>
       {splitRecipients.map((splitRecipient, i) => (
-        <div className="flex gap-1.5" key={i}>
+        <div className="flex gap-1.5" key={splitRecipient.recipient}>
           <div className="relative w-full">
             <Input
-              placeholder={`0x12345...89 or ${LENS_NAMESPACE_PREFIX}dragverse`}
+              placeholder="0x12345...89 or handle"
               value={splitRecipient.recipient}
-              onChange={(e) => onChangeSplit('recipient', e.target.value, i)}
+              onChange={(e) => onChangeSplit("recipient", e.target.value, i)}
               autoFocus
               autoComplete="off"
               spellCheck="false"
@@ -172,43 +167,50 @@ const Splits: FC<Props> = ({ submitContainerRef }) => {
                   : undefined
               }
               suffix={
-                splitRecipient.recipient === DRAGVERSE_ADMIN_ADDRESS
-                  ? `${TAPE_APP_NAME}.app`.toLowerCase()
-                  : ''
+                splitRecipient.recipient === TAPE_ADMIN_ADDRESS
+                  ? `${TAPE_APP_NAME}.xyz`.toLowerCase()
+                  : ""
               }
-              disabled={splitRecipient.recipient === DRAGVERSE_ADMIN_ADDRESS}
-              error={getIsValidAddress(splitRecipient.recipient) ? '' : ' '}
+              disabled={splitRecipient.recipient === TAPE_ADMIN_ADDRESS}
+              error={getIsValidAddress(splitRecipient.recipient) ? "" : " "}
               showError={false}
             />
             {searchKeyword.length &&
-            !getIsValidAddress(splitRecipients[i].recipient) ? (
+            !getIsValidAddress(splitRecipients[i]?.recipient) ? (
               <div
                 ref={resultsRef}
-                className="tape-border dark:bg-brand-850 z-10 mt-1 w-full overflow-hidden rounded-md bg-white focus:outline-none md:absolute"
+                className="dragverse-border z-10 mt-1 w-full overflow-hidden rounded-md bg-white focus:outline-none md:absolute dark:bg-brand-850"
               >
                 {profilesLoading && <Spinner className="my-4" />}
                 {!profiles?.length && !profilesLoading ? (
                   <NoDataFound isCenter text="No profiles found" />
                 ) : null}
-                {profiles?.slice(0, 2)?.map((profile) => (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onChangeSplit('recipient', getProfile(profile).address, i)
-                      setSearchKeyword('')
-                    }}
-                    className="w-full"
-                    key={profile.id}
-                  >
-                    <ProfileSuggestion
-                      id={profile.id}
-                      pfp={getProfilePicture(profile, 'AVATAR')}
-                      handle={getProfile(profile).slug}
-                      followers={profile.stats.followers}
-                      className="hover:bg-brand-50 dark:hover:bg-brand-850 text-left"
-                    />
-                  </button>
-                ))}
+                {profiles?.slice(0, 2)?.map(
+                  (profile) =>
+                    profile.ownedBy.address !== TAPE_ADMIN_ADDRESS && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onChangeSplit(
+                            "recipient",
+                            getProfile(profile).address,
+                            i
+                          );
+                          setSearchKeyword("");
+                        }}
+                        className="w-full"
+                        key={profile.id}
+                      >
+                        <ProfileSuggestion
+                          id={profile.id}
+                          pfp={getProfilePicture(profile, "AVATAR")}
+                          handle={getProfile(profile).slug}
+                          followers={profile.stats.followers}
+                          className="text-left hover:bg-brand-50 dark:hover:bg-black"
+                        />
+                      </button>
+                    )
+                )}
               </div>
             ) : null}
           </div>
@@ -218,7 +220,7 @@ const Splits: FC<Props> = ({ submitContainerRef }) => {
               placeholder="2"
               suffix="%"
               value={splitRecipient.split}
-              onChange={(e) => onChangeSplit('split', e.target.value, i)}
+              onChange={(e) => onChangeSplit("split", e.target.value, i)}
             />
           </div>
           <button
@@ -231,34 +233,22 @@ const Splits: FC<Props> = ({ submitContainerRef }) => {
         </div>
       ))}
       <div className="flex items-center justify-between space-x-1.5 pt-1">
-        <div className="flex items-center space-x-1">
+        <div className="flex">
           <button
             type="button"
             className={tw(
-              'rounded border border-gray-700 px-1 text-[10px] font-bold uppercase tracking-wider opacity-70 dark:border-gray-300',
-              splitRecipients.length >= 5 && 'invisible'
+              "rounded border border-gray-700 px-1 font-bold text-[10px] uppercase tracking-wider opacity-70 dark:border-gray-300",
+              splitRecipients.length >= 4 && "invisible"
             )}
             onClick={() => addRecipient()}
           >
             Add recipient
           </button>
-          {!isIncludesDonationAddress && (
-            <button
-              type="button"
-              className={tw(
-                'rounded border border-gray-700 px-1 text-[10px] font-bold uppercase tracking-wider opacity-70 dark:border-gray-300',
-                splitRecipients.length >= 5 && 'invisible'
-              )}
-              onClick={() => addDonation()}
-            >
-              Add Donation
-            </button>
-          )}
         </div>
         {splitRecipients?.length > 1 && (
           <button
             type="button"
-            className="rounded border border-gray-700 px-1 text-[10px] font-bold uppercase tracking-wider opacity-70 dark:border-gray-300"
+            className="rounded border border-gray-700 px-1 font-bold text-[10px] uppercase tracking-wider opacity-70 dark:border-gray-300"
             onClick={() => splitEvenly()}
           >
             Split evenly
@@ -266,7 +256,7 @@ const Splits: FC<Props> = ({ submitContainerRef }) => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Splits
+export default Splits;

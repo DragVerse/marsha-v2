@@ -1,11 +1,13 @@
-import { NoDataFound } from '@components/UIElements/NoDataFound'
-import { INFINITE_SCROLL_ROOT_MARGIN } from '@dragverse/constants'
-import type { ApprovedAuthenticationRequest } from '@dragverse/lens'
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
+import { getReadableDateWithTime } from "@/lib/formatTime";
+import useProfileStore from "@/lib/store/idb/profile";
+import { INFINITE_SCROLL_ROOT_MARGIN } from "@dragverse/constants";
 import {
+  type ApprovedAuthenticationRequest,
   LimitType,
   useApprovedAuthenticationsQuery,
   useRevokeAuthenticationMutation
-} from '@dragverse/lens'
+} from "@dragverse/lens";
 import {
   Accordion,
   AccordionContent,
@@ -14,35 +16,33 @@ import {
   Button,
   ChevronDownOutline,
   Spinner
-} from '@dragverse/ui'
-import { getDateString } from '@lib/formatTime'
-import useProfileStore from '@lib/store/idb/profile'
-import { useState } from 'react'
-import { useInView } from 'react-cool-inview'
-import toast from 'react-hot-toast'
+} from "@dragverse/ui";
+import { useState } from "react";
+import { useInView } from "react-cool-inview";
+import toast from "react-hot-toast";
 
 const List = () => {
-  const [revokingSessionId, setRevokingSessionId] = useState('')
-  const { activeProfile } = useProfileStore()
+  const [revokingSessionId, setRevokingSessionId] = useState("");
+  const { activeProfile } = useProfileStore();
 
   const onError = (error: any) => {
-    setRevokingSessionId('')
-    toast.error(error)
-  }
+    setRevokingSessionId("");
+    toast.error(error);
+  };
 
   const onCompleted = () => {
-    setRevokingSessionId('')
-    toast.success('Session revoked successfully!')
-  }
+    setRevokingSessionId("");
+    toast.success("Session revoked successfully!");
+  };
 
-  const request: ApprovedAuthenticationRequest = { limit: LimitType.Fifty }
+  const request: ApprovedAuthenticationRequest = { limit: LimitType.Fifty };
   const { data, loading, error, fetchMore } = useApprovedAuthenticationsQuery({
     variables: { request },
     skip: !activeProfile?.id
-  })
-  const sessions = data?.approvedAuthentications?.items
+  });
+  const sessions = data?.approvedAuthentications?.items;
 
-  const pageInfo = data?.approvedAuthentications?.pageInfo
+  const pageInfo = data?.approvedAuthentications?.pageInfo;
 
   const { observe } = useInView({
     threshold: 0.25,
@@ -55,43 +55,43 @@ const List = () => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   const [revokeAuthentication] = useRevokeAuthenticationMutation({
     onCompleted,
     onError,
     update: (cache) => {
-      cache.evict({ id: 'ROOT_QUERY' })
+      cache.evict({ id: "ROOT_QUERY" });
     }
-  })
+  });
 
   if (loading) {
-    return <Spinner className="my-20" />
+    return <Spinner className="my-20" />;
   }
 
   if (!sessions?.length || error) {
-    return <NoDataFound withImage isCenter />
+    return <NoDataFound withImage isCenter />;
   }
 
   const revoke = async (authorizationId: string) => {
     try {
-      setRevokingSessionId(authorizationId)
+      setRevokingSessionId(authorizationId);
       return await revokeAuthentication({
         variables: { request: { authorizationId } }
-      })
+      });
     } catch (error) {
-      onError(error)
+      onError(error);
     }
-  }
+  };
 
   return (
     <Accordion type="single" className="w-full space-y-3" collapsible>
       {sessions?.map((session) => {
         return (
           <AccordionItem
-            className="bg-brand-50 dark:bg-brand-950/30 rounded-small group p-5"
+            className="group rounded-small bg-brand-50 p-5 dark:bg-brand-950/30"
             key={session.authorizationId}
             value={session.authorizationId}
           >
@@ -109,8 +109,8 @@ const List = () => {
             <AccordionContent className="pt-5">
               <div className="flex items-center justify-between">
                 <p>
-                  {session.browser}, created at{' '}
-                  {getDateString(session.createdAt)}
+                  {session.browser}, created at{" "}
+                  {getReadableDateWithTime(session.createdAt)}
                 </p>
                 <Button
                   onClick={() => revoke(session.authorizationId)}
@@ -123,7 +123,7 @@ const List = () => {
               </div>
             </AccordionContent>
           </AccordionItem>
-        )
+        );
       })}
       {pageInfo?.next && (
         <span ref={observe} className="flex justify-center p-10">
@@ -131,7 +131,7 @@ const List = () => {
         </span>
       )}
     </Accordion>
-  )
-}
+  );
+};
 
-export default List
+export default List;

@@ -1,17 +1,14 @@
-import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts'
-import { Hono } from 'hono'
+import { AssumeRoleCommand, STSClient } from "@aws-sdk/client-sts";
+import {
+  ERROR_MESSAGE,
+  EVER_BUCKET_NAME,
+  EVER_ENDPOINT,
+  EVER_REGION
+} from "@dragverse/constants";
+import { Hono } from "hono";
 
-import { ERROR_MESSAGE } from '@/helpers/constants'
+const app = new Hono();
 
-type Bindings = {
-  EVER_ACCESS_KEY: string
-  EVER_ACCESS_SECRET: string
-}
-
-const app = new Hono<{ Bindings: Bindings }>()
-
-const bucketName = 'dragverse'
-const everEndpoint = 'https://endpoint.4everland.co'
 const params = {
   DurationSeconds: 3600,
   Policy: `{
@@ -25,41 +22,44 @@ const params = {
 		      "s3:AbortMultipartUpload"
         ],
         "Resource": [
-          "arn:aws:s3:::${bucketName}/*"
+          "arn:aws:s3:::${EVER_BUCKET_NAME}/*"
         ]
       }
     ]
   }`
-}
+};
 
-app.get('/', async (c) => {
+const { EVER_ACCESS_KEY, EVER_ACCESS_SECRET } = process.env;
+
+const stsClient = new STSClient({
+  endpoint: EVER_ENDPOINT,
+  region: EVER_REGION,
+  credentials: {
+    accessKeyId: EVER_ACCESS_KEY,
+    secretAccessKey: EVER_ACCESS_SECRET
+  }
+});
+
+app.get("/", async (c) => {
   try {
-    const accessKeyId = c.env.EVER_ACCESS_KEY
-    const secretAccessKey = c.env.EVER_ACCESS_SECRET
-
-    const stsClient = new STSClient({
-      endpoint: everEndpoint,
-      region: 'us-west-2',
-      credentials: { accessKeyId, secretAccessKey }
-    })
-
     const data = await stsClient.send(
       new AssumeRoleCommand({
         ...params,
         RoleArn: undefined,
         RoleSessionName: undefined
       })
-    )
+    );
 
     return c.json({
       success: true,
       accessKeyId: data.Credentials?.AccessKeyId,
       secretAccessKey: data.Credentials?.SecretAccessKey,
       sessionToken: data.Credentials?.SessionToken
-    })
-  } catch {
-    return c.json({ success: false, message: ERROR_MESSAGE })
+    });
+  } catch (error) {
+    console.error("[STS] Error:", error);
+    return c.json({ success: false, message: ERROR_MESSAGE });
   }
-})
+});
 
-export default app
+export default app;

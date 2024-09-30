@@ -1,41 +1,39 @@
+import common from "@/common";
 import {
   LENS_NAMESPACE_PREFIX,
   TAPE_APP_DESCRIPTION,
   TAPE_APP_NAME,
   TAPE_WEBSITE_URL
-} from '@dragverse/constants'
-import { getProfile, getProfilePicture } from '@dragverse/generic'
-import type { Profile } from '@dragverse/lens'
-import { ProfileDocument } from '@dragverse/lens'
-import { apolloClient } from '@dragverse/lens/apollo'
-import type { Metadata } from 'next'
-
-import common from '@/common'
+} from "@dragverse/constants";
+import { getProfile, getProfilePicture } from "@dragverse/generic";
+import { apolloClient } from "@dragverse/lens/apollo";
+import { type Profile, ProfileDocument } from "@dragverse/lens/generated";
+import type { Metadata } from "next";
 
 type Props = {
-  params: { handle: string }
-}
+  params: { handle: string };
+};
 
-const client = apolloClient()
+const client = apolloClient();
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { handle } = params
+  const { handle } = params;
   const { data } = await client.query({
     query: ProfileDocument,
     variables: { request: { forHandle: `${LENS_NAMESPACE_PREFIX}${handle}` } }
-  })
+  });
 
   if (!data.profile) {
-    return common
+    return common;
   }
 
-  const profile: Profile = data?.profile
+  const profile: Profile = data?.profile;
 
   const title = `${getProfile(profile).displayName} (${
     getProfile(profile).slugWithPrefix
-  }) • ${TAPE_APP_NAME}`
-  const description = profile?.metadata?.bio || TAPE_APP_DESCRIPTION
-  const pfp = getProfilePicture(profile, 'AVATAR_LG')
+  }) • ${TAPE_APP_NAME}`;
+  const description = profile?.metadata?.bio || TAPE_APP_DESCRIPTION;
+  const pfp = getProfilePicture(profile, "AVATAR_LG");
 
   return {
     title,
@@ -44,19 +42,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      type: 'profile',
+      type: "profile",
       images: [pfp],
       siteName: TAPE_APP_NAME
     },
     twitter: {
       title,
       description,
-      card: 'summary',
+      card: "summary",
       images: [pfp]
     }
-  }
+  };
 }
 
-export default async function Page({ params }: Props) {
-  return <div>{params.handle}</div>
+export default function Page({ params }: Props) {
+  return <div>{params.handle}</div>;
 }

@@ -1,64 +1,52 @@
-import { zValidator } from '@hono/zod-validator'
-import { Hono } from 'hono'
-import { cache } from 'hono/cache'
-import { parseHTML } from 'linkedom'
-import { object, string } from 'zod'
+import {
+  CACHE_CONTROL,
+  ERROR_MESSAGE,
+  TAPE_USER_AGENT
+} from "@dragverse/constants";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { parseHTML } from "linkedom";
+import { object, string } from "zod";
 
-import { ERROR_MESSAGE } from '@/helpers/constants'
-import extractOgTags from '@/helpers/oembed/extractOgTags'
-import { COMMON_REGEX } from '@/helpers/oembed/regex'
+import extractOgTags from "@/helpers/oembed/extractOgTags";
+import { COMMON_REGEX } from "@/helpers/oembed/regex";
 
-type Bindings = {
-  LIVEPEER_API_TOKEN: string
-}
-
-const app = new Hono<{ Bindings: Bindings }>()
-app.get(
-  '*',
-  cache({
-    cacheName: 'oembed',
-    cacheControl: 'max-age=3600'
-  })
-)
+const app = new Hono();
 
 const validationSchema = object({
   url: string().url(),
   format: string().optional()
-})
+});
 
-app.get('/', zValidator('query', validationSchema), async (c) => {
+app.get("/", zValidator("query", validationSchema), async (c) => {
   try {
-    const reqUrl = c.req.url.replace(/&amp;/g, '&')
-    const reqUrlParams = new URL(reqUrl).searchParams
+    const reqUrl = c.req.url.replace(/&amp;/g, "&");
+    const reqUrlParams = new URL(reqUrl).searchParams;
 
-    let url = reqUrlParams.get('url') as string
-    const format = reqUrlParams.get('format') as string
+    let url = reqUrlParams.get("url") as string;
+    const format = reqUrlParams.get("format") as string;
 
-    if (COMMON_REGEX.TAPE_WATCH.test(url)) {
+    if (COMMON_REGEX.DRAGVERSE_WATCH.test(url)) {
       // Fetch metatags directly from dragverse.app
-      const path = new URL(url).pathname
-      url = `https://og.dragverse.app${path}`
+      const path = new URL(url).pathname;
+      url = `https://og.dragverse.app${path}`;
     }
 
     // Fetch metatags from URL
     const response = await fetch(url, {
-      headers: { 'User-Agent': 'bot' },
-      cf: {
-        cacheTtl: 60 * 60 * 24 * 7,
-        cacheEverything: true
-      }
-    })
-    const html = await response.text()
-    const { document } = parseHTML(html)
+      headers: { "User-Agent": TAPE_USER_AGENT }
+    });
+    const html = await response.text();
+    const { document } = parseHTML(html);
 
-    const ogData = await extractOgTags(document)
+    const ogData = await extractOgTags(document);
 
-    if (format === 'json') {
-      return c.json(ogData)
+    if (format === "json") {
+      return c.json(ogData);
     }
 
-    if (format === 'xml') {
-      c.res.headers.set('Content-Type', 'application/xml')
+    if (format === "xml") {
+      c.res.headers.set("Content-Type", "application/xml");
       return c.body(`<?xml version="1.0" encoding="utf-8"?>
         <oembed>
           <title>${ogData.title}</title>
@@ -74,13 +62,15 @@ app.get('/', zValidator('query', validationSchema), async (c) => {
           <thumbnail_width>${ogData.thumbnail_width}</thumbnail_width>
           <thumbnail_url>${ogData.thumbnail_url}</thumbnail_url>
           <html>${ogData.html}</html>
-        </oembed>`)
+        </oembed>`);
     }
 
-    return c.json({ success: true, og: ogData })
-  } catch {
-    return c.json({ success: false, message: ERROR_MESSAGE })
+    c.header("Cache-Control", CACHE_CONTROL.FOR_ONE_WEEK);
+    return c.json({ success: true, og: ogData });
+  } catch (error) {
+    console.error("[OEMBED] Error:", error);
+    return c.json({ success: false, message: ERROR_MESSAGE });
   }
-})
+});
 
-export default app
+export default app;

@@ -1,3 +1,3 @@
-import Listen from '@components/Listen'
+import Listen from "@/components/Listen";
 
-export default Listen
+export default Listen;

@@ -1,4 +1,4 @@
-import Stats from '@components/Profile/BasicInfo/Stats'
+import useProfileStore from "@/lib/store/idb/profile";
 import {
   getLennyPicture,
   getProfile,
@@ -6,25 +6,24 @@ import {
   getProfilePicture,
   imageCdn,
   sanitizeDStorageUrl
-} from '@dragverse/generic'
-import type { Profile } from '@dragverse/lens'
-import { HoverCard, HoverCardContent, HoverCardTrigger } from '@dragverse/ui'
-import useProfileStore from '@lib/store/idb/profile'
-import Link from 'next/link'
-import type { FC, ReactElement } from 'react'
-
-import Badge from './Badge'
-import FollowActions from './FollowActions'
+} from "@dragverse/generic";
+import type { Profile } from "@dragverse/lens";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC, ReactElement } from "react";
+import Stats from "../Profile/BasicInfo/Stats";
+import Badge from "./Badge";
+import FollowActions from "./FollowActions";
 
 type Props = {
-  profile: Profile
-  children?: ReactElement
-  pfp?: ReactElement
-}
+  profile: Profile;
+  children?: ReactElement;
+  pfp?: ReactElement;
+};
 
 const HoverableProfile: FC<Props> = ({ profile, children, pfp }) => {
-  const activeProfile = useProfileStore((state) => state.activeProfile)
-  const isMyProfile = activeProfile?.id === profile.id
+  const activeProfile = useProfileStore((state) => state.activeProfile);
+  const isMyProfile = activeProfile?.id === profile.id;
 
   return (
     <HoverCard>
@@ -39,7 +38,7 @@ const HoverableProfile: FC<Props> = ({ profile, children, pfp }) => {
           </Link>
         )}
       </HoverCardTrigger>
-      <HoverCardContent className="tape-border dark:bg-brand-850 z-10 w-80 overflow-hidden rounded-xl bg-white shadow">
+      <HoverCardContent className="dragverse-border z-10 w-80 overflow-hidden rounded-xl bg-white shadow dark:bg-brand-850">
         <div className="inset-0">
           <div
             style={{
@@ -47,20 +46,20 @@ const HoverableProfile: FC<Props> = ({ profile, children, pfp }) => {
                 sanitizeDStorageUrl(getProfileCoverPicture(profile, true))
               )})`
             }}
-            className="bg-brand-500 relative h-24 w-full bg-cover bg-center bg-no-repeat"
+            className="relative h-24 w-full bg-brand-500 bg-center bg-cover bg-no-repeat"
           >
             <div className="absolute bottom-3 left-3 flex-none">
               <img
-                className="dark:bg-brand-600 size-10 rounded-lg border-2 border-white bg-white object-cover"
-                src={getProfilePicture(profile, 'AVATAR')}
+                className="size-10 rounded-lg border-2 border-white bg-white object-cover dark:bg-gray-900"
+                src={getProfilePicture(profile, "AVATAR")}
                 alt={getProfile(activeProfile)?.displayName}
                 draggable={false}
                 onError={({ currentTarget }) => {
-                  currentTarget.src = getLennyPicture(profile?.id)
+                  currentTarget.src = getLennyPicture(profile?.id);
                 }}
               />
             </div>
-            <div className="absolute bottom-3 right-3 flex-none">
+            <div className="absolute right-3 bottom-3 flex-none">
               {!profile.operations.isFollowedByMe.value && !isMyProfile ? (
                 <FollowActions profile={profile} />
               ) : null}
@@ -72,7 +71,7 @@ const HoverableProfile: FC<Props> = ({ profile, children, pfp }) => {
             href={getProfile(profile)?.link}
             className="flex items-center space-x-1"
           >
-            <span className="truncate text-xl font-bold">
+            <span className="truncate font-bold text-xl">
               {getProfile(profile)?.displayName}
             </span>
             <Badge id={profile?.id} size="lg" />
@@ -86,7 +85,7 @@ const HoverableProfile: FC<Props> = ({ profile, children, pfp }) => {
         </div>
       </HoverCardContent>
     </HoverCard>
-  )
-}
+  );
+};
 
-export default HoverableProfile
+export default HoverableProfile;

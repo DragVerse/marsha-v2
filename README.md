@@ -21,30 +21,32 @@ https://user-images.githubusercontent.com/8083958/222954569-b88fde67-8b95-466d-a
 | ------- | -------------------------------------- |
 | Mainnet | [dragverse.app](https://dragverse.app) |
 
-## 🔭 What's inside?
+> [!NOTE]
+> This monorepo uses [Pnpm](https://pnpm.io/) as a package manager. It includes the following apps and packages.
 
-This turborepo uses [Pnpm](https://pnpm.io/) as a package manager. It includes the following apps and packages:
+#### 🌐 Apps
 
-### ✨ Apps
+| Name    | Description                    |
+| ------- | ------------------------------ |
+| `web`   | Frontend application           |
+| `embed` | Embed Video Player             |
+| `cron`  | Cron jobs for background tasks |
+| `api`   | Backend application            |
+| `og`    | Open graph meta tags generator |
 
-| Name     | Description                         |
-| -------- | ----------------------------------- |
-| `web`    | NextJs dragverse website            |
-| `embed`  | NextJs application for video embeds |
-| `api`    | Cloudflare functions                |
-| `og`     | Open graph meta tags generator      |
+#### 📦 Packages
 
-### ✨ Packages
-
-| Name             | Description                               |
-| ---------------- | ----------------------------------------- |
-| `lens`           | Everything related to Lens                |
-| `abis`           | Contract Interfaces                       |
-| `helpers`        | Collection of browser and generic helpers |
-| `ui`             | UI components                             |
-| `constants`      | Constants for the entire application      |
-| `config`         | Shared lint config                        |
-| `contracts`      | Permissionless signup contracts           |
+| Name        | Description                          |
+| ----------- | ------------------------------------ |
+| `abis`      | Contract Interfaces                  |
+| `config`    | Shared lint config                   |
+| `constants` | Constants for the entire application |
+| `contracts` | Permissionless signup contracts      |
+| `generic`   | Collection of generic helpers        |
+| `server`    | Collection of server helpers         |
+| `browser`   | Collection of client helpers         |
+| `lens`      | Everything related to lens indexer   |
+| `ui`        | Web UI components                    |
 
 ## ✨ Getting Started
 

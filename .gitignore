@@ -28,18 +28,16 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 .env
-# turbo
-.turbo
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
+next-env.d.ts
 
 dist
 .gitsigners
 
-# cloudflare workers
-.dev.vars
-.wrangler
+# Service Workers
+sw.js

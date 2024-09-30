@@ -1,31 +1,27 @@
-import CommentsShimmer from '@components/Shimmers/CommentsShimmer'
-import { INFINITE_SCROLL_ROOT_MARGIN } from '@dragverse/constants'
-import type {
-  AnyPublication,
-  Comment,
-  MirrorablePublication,
-  PublicationsRequest
-} from '@dragverse/lens'
+import CommentsShimmer from "@/components/Shimmers/CommentsShimmer";
+import { INFINITE_SCROLL_ROOT_MARGIN } from "@dragverse/constants";
 import {
+  type AnyPublication,
+  type Comment,
   CommentRankingFilterType,
   CustomFiltersType,
   LimitType,
+  type MirrorablePublication,
+  type PublicationsRequest,
   usePublicationsQuery
-} from '@dragverse/lens'
-import { ChevronDownOutline, ChevronUpOutline, Spinner } from '@dragverse/ui'
-import type { FC } from 'react'
-import { useState } from 'react'
-import { useInView } from 'react-cool-inview'
-
-import RenderComment from './RenderComment'
+} from "@dragverse/lens";
+import { ChevronDownOutline, ChevronUpOutline, Spinner } from "@dragverse/ui";
+import { type FC, useState } from "react";
+import { useInView } from "react-cool-inview";
+import RenderComment from "./RenderComment";
 
 type Props = {
-  video: MirrorablePublication
-  className?: string
-}
+  video: MirrorablePublication;
+  className?: string;
+};
 
 const NonRelevantComments: FC<Props> = ({ video, className }) => {
-  const [showSection, setShowSection] = useState(false)
+  const [showSection, setShowSection] = useState(false);
 
   const request: PublicationsRequest = {
     limit: LimitType.Fifty,
@@ -38,14 +34,14 @@ const NonRelevantComments: FC<Props> = ({ video, className }) => {
         }
       }
     }
-  }
+  };
 
   const { data, loading, fetchMore } = usePublicationsQuery({
     variables: { request }
-  })
+  });
 
-  const comments = data?.publications?.items as AnyPublication[]
-  const pageInfo = data?.publications?.pageInfo
+  const comments = data?.publications?.items as AnyPublication[];
+  const pageInfo = data?.publications?.pageInfo;
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -57,26 +53,27 @@ const NonRelevantComments: FC<Props> = ({ video, className }) => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   const onToggle = () => {
-    setShowSection(!showSection)
-  }
+    setShowSection(!showSection);
+  };
 
   if (!comments?.length) {
-    return null
+    return null;
   }
 
   return (
     <div className={className}>
       <button
+        type="button"
         className="group flex w-full items-center space-x-2 text-center text-sm"
         onClick={() => onToggle()}
       >
         <span className="opacity-80 group-hover:opacity-100">
-          {showSection ? 'Hide more comments' : 'Show more comments'}
+          {showSection ? "Hide more comments" : "Show more comments"}
         </span>
         {showSection ? (
           <ChevronUpOutline className="size-2" />
@@ -106,7 +103,7 @@ const NonRelevantComments: FC<Props> = ({ video, className }) => {
         </>
       ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default NonRelevantComments
+export default NonRelevantComments;

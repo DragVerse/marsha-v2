@@ -1,6 +1,6 @@
-import { getPublication } from '@dragverse/generic'
-import isOpenActionAllowed from '@dragverse/generic/functions/isOpenActionAllowed'
-import { type AnyPublication, type OpenActionModule } from '@dragverse/lens'
+import { getPublication } from "@dragverse/generic";
+import isOpenActionAllowed from "@dragverse/generic/functions/isOpenActionAllowed";
+import type { AnyPublication, OpenActionModule } from "@dragverse/lens";
 import {
   Accordion,
   AccordionContent,
@@ -9,37 +9,35 @@ import {
   Button,
   CollectOutline,
   Modal
-} from '@dragverse/ui'
-import type { FC, ReactNode } from 'react'
-import { useState } from 'react'
-
-import CollectPublication from './Collect'
-import UnknownOpenAction from './Unknown'
+} from "@dragverse/ui";
+import { type FC, type ReactNode, useState } from "react";
+import CollectPublication from "./Collect";
+import UnknownOpenAction from "./Unknown";
 
 type Props = {
-  publication: AnyPublication
-  text?: string
-  children?: ReactNode
-}
+  publication: AnyPublication;
+  text?: string;
+  children?: ReactNode;
+};
 
 const OpenActions: FC<Props> = ({ publication, text, children }) => {
-  const [showActionModal, setShowActionModal] = useState(false)
-  const targetPublication = getPublication(publication)
-  const openActions = targetPublication.openActionModules
-  const hasOpenActions = (targetPublication.openActionModules?.length || 0) > 0
+  const [showActionModal, setShowActionModal] = useState(false);
+  const targetPublication = getPublication(publication);
+  const openActions = targetPublication.openActionModules;
+  const hasOpenActions = (targetPublication.openActionModules?.length || 0) > 0;
 
   const renderAction = (action: OpenActionModule) => {
     switch (action.__typename) {
-      case 'SimpleCollectOpenActionSettings':
-      case 'MultirecipientFeeCollectOpenActionSettings':
-      case 'LegacySimpleCollectModuleSettings':
-      case 'LegacyMultirecipientFeeCollectModuleSettings':
+      case "SimpleCollectOpenActionSettings":
+      case "MultirecipientFeeCollectOpenActionSettings":
+      case "LegacySimpleCollectModuleSettings":
+      case "LegacyMultirecipientFeeCollectModuleSettings":
         return (
           <AccordionItem
             value="item-1"
-            className="rounded-small group border dark:border-gray-700"
+            className="group rounded-small border dark:border-gray-700"
           >
-            <AccordionTrigger className="bg-brand-50/50 dark:bg-brand-950/30 rounded-small w-full px-4 py-3 text-left">
+            <AccordionTrigger className="w-full rounded-small bg-brand-50/50 px-4 py-3 text-left dark:bg-brand-950/30">
               <h6 className="font-bold">Collect publication</h6>
             </AccordionTrigger>
             <AccordionContent className="p-3">
@@ -49,29 +47,33 @@ const OpenActions: FC<Props> = ({ publication, text, children }) => {
               />
             </AccordionContent>
           </AccordionItem>
-        )
-      case 'UnknownOpenActionModuleSettings':
+        );
+      case "UnknownOpenActionModuleSettings":
         return (
           <UnknownOpenAction
             action={action}
             publicationId={targetPublication.id}
           />
-        )
+        );
       default:
-        break
+        break;
     }
-  }
+  };
 
   const canAct =
-    hasOpenActions && isOpenActionAllowed(targetPublication.openActionModules)
+    hasOpenActions && isOpenActionAllowed(targetPublication.openActionModules);
 
   if (!canAct) {
-    return null
+    return null;
   }
 
   return (
     <>
-      {<button onClick={() => setShowActionModal(true)}>{children}</button> ?? (
+      {children ? (
+        <button type="button" onClick={() => setShowActionModal(true)}>
+          {children}
+        </button>
+      ) : (
         <Button
           onClick={() => setShowActionModal(true)}
           icon={<CollectOutline className="size-4" />}
@@ -96,14 +98,14 @@ const OpenActions: FC<Props> = ({ publication, text, children }) => {
             defaultValue="item-1"
             collapsible
           >
-            {openActions?.map((action, i) => {
-              return <div key={i}>{renderAction(action)}</div>
+            {openActions?.map((action) => {
+              return <div key={action.type}>{renderAction(action)}</div>;
             })}
           </Accordion>
         </div>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default OpenActions
+export default OpenActions;

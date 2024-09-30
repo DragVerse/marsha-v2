@@ -1,18 +1,19 @@
-import { LocalIDBStore } from '@dragverse/lens/custom-types'
-import createIdbStorage from '@lib/createIdbStorage'
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { LocalIDBStore } from "@dragverse/lens/custom-types";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+import createIdbStorage from "@/lib/createIdbStorage";
 
 type Token = {
-  address: string
-  decimals: number
-  name: string
-  symbol: string
-}
+  address: string;
+  decimals: number;
+  name: string;
+  symbol: string;
+};
 
 interface State {
-  allowedTokens: Token[]
-  setAllowedTokens: (allowedTokens: Token[]) => void
+  allowedTokens: Token[];
+  setAllowedTokens: (allowedTokens: Token[]) => void;
 }
 
 const useAllowedTokensStore = create(
@@ -26,6 +27,6 @@ const useAllowedTokensStore = create(
       storage: createIdbStorage()
     }
   )
-)
+);
 
-export default useAllowedTokensStore
+export default useAllowedTokensStore;

@@ -1,28 +1,27 @@
-import HorizontalScroller from '@components/Common/HorizontalScroller'
+import useCuratedProfiles from "@/lib/store/idb/curated";
 import {
   ALLOWED_APP_IDS,
   INFINITE_SCROLL_ROOT_MARGIN,
   IS_MAINNET,
   TAPE_APP_ID
-} from '@dragverse/constants'
-import type { PrimaryPublication, PublicationsRequest } from '@dragverse/lens'
+} from "@dragverse/constants";
+import type { PrimaryPublication, PublicationsRequest } from "@dragverse/lens";
 import {
   LimitType,
   PublicationMetadataMainFocusType,
   PublicationType,
   usePublicationsQuery
-} from '@dragverse/lens'
-import { Spinner } from '@dragverse/ui'
-import useCuratedProfiles from '@lib/store/idb/curated'
-import { useRef } from 'react'
-import { useInView } from 'react-cool-inview'
-
-import DragverseCommunity from './DragverseCommunity'
-import HorizontalVideos from './HorizontalVideos'
+} from "@dragverse/lens";
+import { Spinner } from "@dragverse/ui";
+import { useRef } from "react";
+import { useInView } from "react-cool-inview";
+import HorizontalScroller from "../Common/HorizontalScroller";
+import DragverseCommunity from "./DragverseCommunity";
+import HorizontalVideos from "./HorizontalVideos";
 
 const MidSection = () => {
-  const sectionRef = useRef<HTMLDivElement>(null)
-  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles)
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const curatedProfiles = useCuratedProfiles((state) => state.curatedProfiles);
 
   const request: PublicationsRequest = {
     where: {
@@ -34,15 +33,15 @@ const MidSection = () => {
       from: curatedProfiles
     },
     limit: LimitType.Fifty
-  }
+  };
 
   const { data, loading, error, fetchMore } = usePublicationsQuery({
     variables: { request },
     skip: !curatedProfiles?.length
-  })
+  });
 
-  const pageInfo = data?.publications?.pageInfo
-  const videos = data?.publications?.items as unknown as PrimaryPublication[]
+  const pageInfo = data?.publications?.pageInfo;
+  const videos = data?.publications?.items as unknown as PrimaryPublication[];
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -54,20 +53,20 @@ const MidSection = () => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   return (
     <div className="flex flex-col">
       <HorizontalScroller
         sectionRef={sectionRef}
         heading=""
-        headingClassName="font-syne font-extrabold"
+        headingClassName="font-dragverse font-extrabold"
       />
       <div
         ref={sectionRef}
-        className="no-scrollbar laptop:pt-6 relative flex items-start space-x-4 overflow-x-auto overflow-y-hidden scroll-smooth pt-4"
+        className="no-scrollbar relative flex items-start space-x-4 overflow-x-auto overflow-y-hidden scroll-smooth laptop:pt-6 pt-4"
       >
         <DragverseCommunity />
         {loading && <Spinner />}
@@ -81,7 +80,7 @@ const MidSection = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default MidSection
+export default MidSection;

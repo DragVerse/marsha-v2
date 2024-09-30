@@ -1,30 +1,28 @@
-import { Countdown } from '@components/UIElements/CountDown'
-import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
-import { tw } from '@dragverse/browser'
+import { Countdown } from "@/components/UIElements/CountDown";
+import useHandleWrongNetwork from "@/hooks/useHandleWrongNetwork";
+import useProfileStore from "@/lib/store/idb/profile";
+import { LENSHUB_PROXY_ABI } from "@dragverse/abis";
+import { tw } from "@dragverse/browser";
 import {
   ERROR_MESSAGE,
   LENSHUB_PROXY_ADDRESS,
   SIGN_IN_REQUIRED
-} from '@dragverse/constants'
-import type { Profile } from '@dragverse/lens'
-import { useProfileLazyQuery } from '@dragverse/lens'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
-import { Button } from '@dragverse/ui'
-import useProfileStore from '@lib/store/idb/profile'
-import type { FC } from 'react'
-import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
-import useHandleWrongNetwork from 'src/hooks/useHandleWrongNetwork'
-import { useWaitForTransactionReceipt, useWriteContract } from 'wagmi'
+} from "@dragverse/constants";
+import { type Profile, useProfileLazyQuery } from "@dragverse/lens";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
+import { Button } from "@dragverse/ui";
+import { type FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 
 const Guardian: FC = () => {
-  const { activeProfile, setActiveProfile } = useProfileStore()
+  const { activeProfile, setActiveProfile } = useProfileStore();
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [guardianEnabled, setGuardianEnabled] = useState(
     activeProfile?.guardian?.protected
-  )
-  const handleWrongNetwork = useHandleWrongNetwork()
+  );
+  const handleWrongNetwork = useHandleWrongNetwork();
 
   const [fetchProfile] = useProfileLazyQuery({
     variables: {
@@ -32,76 +30,75 @@ const Guardian: FC = () => {
         forHandle: activeProfile?.handle?.fullHandle
       }
     },
-    fetchPolicy: 'no-cache',
+    fetchPolicy: "no-cache",
     onCompleted: ({ profile }) => {
       if (profile) {
-        setActiveProfile(profile as Profile)
+        setActiveProfile(profile as Profile);
       }
     }
-  })
+  });
 
   const onError = (error: CustomErrorWithData) => {
-    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-    setLoading(false)
-  }
+    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
+    setLoading(false);
+  };
 
   const { data: txnHash, writeContractAsync } = useWriteContract({
     mutation: {
       onError
     }
-  })
+  });
 
   const { isSuccess } = useWaitForTransactionReceipt({
     hash: txnHash,
     query: {
       enabled: txnHash && txnHash.length > 0
     }
-  })
+  });
 
   useEffect(() => {
     if (isSuccess) {
-      setGuardianEnabled(!guardianEnabled)
-      setLoading(false)
-      fetchProfile()
+      setGuardianEnabled(!guardianEnabled);
+      setLoading(false);
+      fetchProfile();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess])
+  }, [isSuccess]);
 
   const toggle = async () => {
     if (!activeProfile?.id) {
-      return toast.error(SIGN_IN_REQUIRED)
+      return toast.error(SIGN_IN_REQUIRED);
     }
 
-    await handleWrongNetwork()
+    await handleWrongNetwork();
 
     try {
-      setLoading(true)
+      setLoading(true);
       if (guardianEnabled) {
         return await writeContractAsync({
           address: LENSHUB_PROXY_ADDRESS,
           abi: LENSHUB_PROXY_ABI,
-          functionName: 'DANGER__disableTokenGuardian'
-        })
+          functionName: "DANGER__disableTokenGuardian"
+        });
       }
       return await writeContractAsync({
         address: LENSHUB_PROXY_ADDRESS,
         abi: LENSHUB_PROXY_ABI,
-        functionName: 'DANGER__disableTokenGuardian'
-      })
+        functionName: "DANGER__disableTokenGuardian"
+      });
     } catch (error) {
-      onError(error as any)
+      onError(error as any);
     }
-  }
+  };
 
   const isCooldownEnded = () => {
-    const cooldownDate = activeProfile?.guardian?.cooldownEndsOn
-    return new Date(cooldownDate).getTime() < Date.now()
-  }
+    const cooldownDate = activeProfile?.guardian?.cooldownEndsOn;
+    return new Date(cooldownDate).getTime() < Date.now();
+  };
 
   return (
-    <div className="tape-border rounded-medium dark:bg-cod mb-4 bg-white">
+    <div className="dragverse-border mb-4 rounded-medium bg-white dark:bg-cod">
       <div className="space-y-2 p-5">
-        <h1 className="text-xl font-bold text-red-500">
+        <h1 className="font-bold text-red-500 text-xl">
           Disable profile guardian
         </h1>
         <p>
@@ -126,8 +123,8 @@ const Guardian: FC = () => {
 
       <div
         className={tw(
-          'rounded-b-medium flex border-b-0 bg-red-100 px-5 py-3 dark:bg-red-900/20',
-          isCooldownEnded() ? 'justify-end' : 'justify-between'
+          "flex rounded-b-medium border-b-0 bg-red-100 px-5 py-3 dark:bg-red-900/20",
+          isCooldownEnded() ? "justify-end" : "justify-between"
         )}
       >
         {!isCooldownEnded() && (
@@ -146,16 +143,16 @@ const Guardian: FC = () => {
             loading={loading}
             onClick={() => toggle()}
           >
-            {loading ? 'Disabling' : 'Disable'}
+            {loading ? "Disabling" : "Disable"}
           </Button>
         ) : (
           <Button disabled={loading} loading={loading} onClick={() => toggle()}>
-            {loading ? 'Enabling' : 'Enable'}
+            {loading ? "Enabling" : "Enable"}
           </Button>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Guardian
+export default Guardian;

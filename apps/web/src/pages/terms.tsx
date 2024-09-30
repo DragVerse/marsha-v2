@@ -1,21 +1,21 @@
-import { TAPE_APP_NAME } from '@dragverse/constants'
-import Link from 'next/link'
+import { TAPE_APP_NAME } from "@dragverse/constants";
+import Link from "next/link";
 
 const terms = () => {
   return (
     <div className="relative overflow-hidden py-[5rem]">
       <div className="px-2">
         <div className="relative mx-auto max-w-4xl pb-24 text-center">
-          <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl dark:text-slate-100">
+          <h1 className="font-bold text-4xl text-white tracking-tight sm:text-5xl dark:text-white">
             Terms and Conditions
           </h1>
-          <p className="mt-4 text-base leading-7 text-slate-600 dark:text-slate-400">
+          <p className="mt-4 text-base text-white leading-7 dark:text-white">
             Last updated on Oct 31, 2023
           </p>
         </div>
       </div>
       <div className="relative px-2">
-        <div className="prose-sm md:prose prose-slate dark:prose-invert prose-a:font-bold prose-a:text-brand-500 hover:prose-a:text-brand-600 mx-auto max-w-4xl">
+        <div className="prose-sm md:prose prose-white dark:prose-invert mx-auto max-w-4xl prose-a:font-bold prose-h2:text-white prose-li:text-white prose-p:text-white text-white hover:prose-a:text-brand-600">
           <h2>1. Overview</h2>
           <p>
             The website dragverse.app” (the “Site”) offers information, tools
@@ -87,15 +87,15 @@ const terms = () => {
             entity is a party to any transaction on the blockchain networks
             underlying the Lens Protocol; we do not have possession, custody or
             control over any items on your wallet and we do not have possession,
-            custody, ability to delete or control over any items on any user's
-            wallet or interactions with the Lens Protocol.
+            custody, ability to delete or control over any items on any
+            user&apos;s wallet or interactions with the Lens Protocol.
           </p>
           <p>
-            If you're not comfortable with interacting with an inherently
+            If you&apos;re not comfortable with interacting with an inherently
             transparent blockchain, you should not engage with our Site to
             create and manage a User Content on the lens protocol. You are
             solely responsible for the safekeeping of the private key associated
-            with the blockchain address used to interact with the Lens Protocol.{' '}
+            with the blockchain address used to interact with the Lens Protocol.{" "}
             <b>
               The transactions on blockchain including transfer of tokens and
               data attached to it are permanent and cannot be undone.
@@ -116,12 +116,12 @@ const terms = () => {
           <h2>4. User Content</h2>
           <p>
             You are solely responsible for any content you provide by
-            interacting with the Lens Protocol ("User Content"). You should only
-            provide User Content to Lens Protocol that you are comfortable
-            sharing with others. You represent and warrant that you have, or
-            have obtained all rights, licenses, consents, permissions, power
-            and/or authority necessary to grant the rights granted herein for
-            any User Content you post.
+            interacting with the Lens Protocol (&quot;User Content&quot;). You
+            should only provide User Content to Lens Protocol that you are
+            comfortable sharing with others. You represent and warrant that you
+            have, or have obtained all rights, licenses, consents, permissions,
+            power and/or authority necessary to grant the rights granted herein
+            for any User Content you post.
           </p>
           <p>
             We take no responsibility for the User Content on the Lens Protocol,
@@ -149,10 +149,10 @@ const terms = () => {
           </p>
           <p>
             User Content may embody, comprise or otherwise be associated with
-            certain characters, artwork, or other work of authorship ("Artwork")
-            made available by Profiles (who may represent artists, musicians and
-            other creators) for collecting in the form of non-fungible tokens (a
-            “Token" or “Tokens”).
+            certain characters, artwork, or other work of authorship
+            (&quot;Artwork&quot;) made available by Profiles (who may represent
+            artists, musicians and other creators) for collecting in the form of
+            non-fungible tokens (a &quot;Token&quot; or &quot;Tokens&quot;).
           </p>
           <p>
             All transactions related to the Service, including making a Token
@@ -295,15 +295,18 @@ const terms = () => {
           <p>
             <b>Disclaimer</b>: We are not responsible for the User Content
             posted by users on our Site and do not have control over the
-            materials that are made available through the Site. We will comply
-            with takedown notices and take steps to prevent repeat infringers,
-            but we do not assume any liability for material posted by users.
+            materials that are made available through the Site.{" "}
+            <b>
+              We will comply with takedown notices and take steps to prevent
+              repeat infringers, but we do not assume any liability for material
+              posted by users.
+            </b>
           </p>
           <h2>6. Accuracy, Completeness and Timeliness of information</h2>
           <p>
             We are not responsible for any mistakes or inaccuracies on contents
-            published on this Site. Profile's are fully responsible for what
-            they are doing in the Site.
+            published on this Site. Profile&apos;s are fully responsible for
+            what they are doing in the Site.
           </p>
           <p>
             As a Site, we offer information about the content and interaction on
@@ -326,10 +329,10 @@ const terms = () => {
             Those are governed by the terms of use of the third-party providers.
           </p>
           <p>
-            Please review carefully the third-party's policies and practices and
-            make sure you understand them before you engage in any transaction.
-            Complaints, claims, concerns, or questions regarding third-party
-            products should be directed to the third-party.
+            Please review carefully the third-party&apos;s policies and
+            practices and make sure you understand them before you engage in any
+            transaction. Complaints, claims, concerns, or questions regarding
+            third-party products should be directed to the third-party.
           </p>
           <h2>9. Personal Information</h2>
           <p>
@@ -398,13 +401,13 @@ const terms = () => {
           </p>
           <h2>14. Contact Information</h2>
           <p>
-            Questions about the Terms should be sent to us at{' '}
-            <Link href="mailto:terms@dragverse">terms@dragverse</Link>.
+            Questions about the Terms should be sent to us at{" "}
+            <Link href="mailto:terms@dragverse.io">terms@dragverse.io</Link>.
           </p>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default terms
+export default terms;

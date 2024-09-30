@@ -1,38 +1,42 @@
-import HoverableProfile from '@components/Common/HoverableProfile'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
+import HoverableProfile from "@/components/Common/HoverableProfile";
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
 import {
   formatNumber,
   getLennyPicture,
   getProfile,
   getProfilePicture
-} from '@dragverse/generic'
-import type { FollowingRequest, Profile, ProfileStats } from '@dragverse/lens'
-import { LimitType, useFollowingQuery } from '@dragverse/lens'
-import { Modal, Spinner } from '@dragverse/ui'
-import type { FC } from 'react'
-import { useState } from 'react'
-import { useInView } from 'react-cool-inview'
+} from "@dragverse/generic";
+import {
+  type FollowingRequest,
+  LimitType,
+  type Profile,
+  type ProfileStats,
+  useFollowingQuery
+} from "@dragverse/lens";
+import { Modal, Spinner } from "@dragverse/ui";
+import { type FC, useState } from "react";
+import { useInView } from "react-cool-inview";
 
 type Props = {
-  stats: ProfileStats
-  profileId: string
-}
+  stats: ProfileStats;
+  profileId: string;
+};
 
 const Following: FC<Props> = ({ stats, profileId }) => {
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(false);
 
   const request: FollowingRequest = {
     for: profileId,
     limit: LimitType.Fifty
-  }
+  };
 
   const { data, loading, fetchMore } = useFollowingQuery({
     variables: { request },
     skip: !profileId
-  })
+  });
 
-  const followings = data?.following?.items as Profile[]
-  const pageInfo = data?.following?.pageInfo
+  const followings = data?.following?.items as Profile[];
+  const pageInfo = data?.following?.pageInfo;
 
   const { observe } = useInView({
     onEnter: async () => {
@@ -43,13 +47,14 @@ const Following: FC<Props> = ({ stats, profileId }) => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   return (
     <>
       <button
+        type="button"
         className="flex items-end gap-1"
         onClick={() => setShowModal(true)}
       >
@@ -77,12 +82,12 @@ const Following: FC<Props> = ({ stats, profileId }) => {
                     profile={profile}
                     pfp={
                       <img
-                        src={getProfilePicture(profile, 'AVATAR')}
+                        src={getProfilePicture(profile, "AVATAR")}
                         className="size-5 rounded-full"
                         draggable={false}
                         alt={getProfile(profile)?.displayName}
                         onError={({ currentTarget }) => {
-                          currentTarget.src = getLennyPicture(profile?.id)
+                          currentTarget.src = getLennyPicture(profile?.id);
                         }}
                       />
                     }
@@ -99,7 +104,7 @@ const Following: FC<Props> = ({ stats, profileId }) => {
         </div>
       </Modal>
     </>
-  )
-}
+  );
+};
 
-export default Following
+export default Following;

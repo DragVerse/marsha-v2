@@ -1,8 +1,8 @@
-import '../styles/index.css'
+import "../styles/index.css";
 
-import Providers from '@components/Common/Providers'
-import { tapeFont } from '@dragverse/browser/font'
-import type { AppProps } from 'next/app'
+import Providers from "@/components/Common/Providers";
+import { tapeFont } from "@dragverse/browser/font";
+import type { AppProps } from "next/app";
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (
@@ -14,7 +14,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       `}</style>
       <Component {...pageProps} />
     </Providers>
-  )
-}
+  );
+};
 
-export default App
+export default App;

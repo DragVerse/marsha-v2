@@ -1,15 +1,16 @@
-import { tw } from '@dragverse/browser'
-import { CustomNotificationsFilterEnum } from '@dragverse/lens/custom-types'
-import { CogOutline, DropdownMenu, DropdownMenuItem } from '@dragverse/ui'
-import usePersistStore from '@lib/store/persist'
+import { tw } from "@dragverse/browser";
+import { CustomNotificationsFilterEnum } from "@dragverse/lens/custom-types";
+import { CogOutline, DropdownMenu, DropdownMenuItem } from "@dragverse/ui";
+
+import usePersistStore from "@/lib/store/persist";
 
 const NotificationsFilter = () => {
   const selectedNotificationsFilter = usePersistStore(
     (state) => state.selectedNotificationsFilter
-  )
+  );
   const setSelectedNotificationsFilter = usePersistStore(
     (state) => state.setSelectedNotificationsFilter
-  )
+  );
 
   return (
     <DropdownMenu trigger={<CogOutline className="size-4" />}>
@@ -22,9 +23,9 @@ const NotificationsFilter = () => {
       >
         <p
           className={tw(
-            'whitespace-nowrap',
+            "whitespace-nowrap",
             selectedNotificationsFilter ===
-              CustomNotificationsFilterEnum.HIGH_SIGNAL && 'font-bold'
+              CustomNotificationsFilterEnum.HIGH_SIGNAL && "font-bold"
           )}
         >
           High signal
@@ -39,16 +40,16 @@ const NotificationsFilter = () => {
       >
         <p
           className={tw(
-            'whitespace-nowrap',
+            "whitespace-nowrap",
             selectedNotificationsFilter ===
-              CustomNotificationsFilterEnum.ALL_NOTIFICATIONS && 'font-bold'
+              CustomNotificationsFilterEnum.ALL_NOTIFICATIONS && "font-bold"
           )}
         >
           Show all
         </p>
       </DropdownMenuItem>
     </DropdownMenu>
-  )
-}
+  );
+};
 
-export default NotificationsFilter
+export default NotificationsFilter;

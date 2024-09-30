@@ -1,25 +1,23 @@
-import MetaTags from '@components/Common/MetaTags'
-import { STATIC_ASSETS, TAPE_APP_NAME } from '@dragverse/constants'
-import { Button } from '@dragverse/ui'
-import Link from 'next/link'
+import MetaTags from "@/components/Common/MetaTags";
+import { DRAGVERSE_LOGO, TAPE_APP_NAME } from "@dragverse/constants";
+import { Button } from "@dragverse/ui";
+import Link from "next/link";
 
 const Custom500 = () => {
   return (
     <>
       <MetaTags title="500" />
-      <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center space-y-4 text-center">
+      <div className="flex h-[calc(100vh-4rem)] flex-col items-center justify-center space-y-4 text-center text-white">
         <div className="mb-10">
           <img
-            src={`${STATIC_ASSETS}/images/illustrations/404.gif`}
+            src={`${DRAGVERSE_LOGO}`}
             draggable={false}
             height={200}
             width={200}
             alt={TAPE_APP_NAME}
           />
         </div>
-        <h1 className="text-3xl font-bold">
-          Oh no, something is not right bish!
-        </h1>
+        <h1 className="font-bold text-3xl">Looks like something went wrong!</h1>
         <div className="mb-6 max-w-lg">
           We track these errors automatically, but if the problem persists feel
           free to contact us. In the meantime, try refreshing.
@@ -29,7 +27,7 @@ const Custom500 = () => {
         </Link>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default Custom500
+export default Custom500;

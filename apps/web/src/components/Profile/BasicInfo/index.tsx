@@ -1,9 +1,11 @@
-import Badge from '@components/Common/Badge'
-import FollowActions from '@components/Common/FollowActions'
-import InterweaveContent from '@components/Common/InterweaveContent'
-import ReportProfile from '@components/Report/Profile'
-import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
-import { useCopyToClipboard } from '@dragverse/browser'
+import Badge from "@/components/Common/Badge";
+import FollowActions from "@/components/Common/FollowActions";
+import InterweaveContent from "@/components/Common/InterweaveContent";
+import ReportProfile from "@/components/Report/Profile";
+import useProfileStore from "@/lib/store/idb/profile";
+import useNonceStore from "@/lib/store/nonce";
+import { LENSHUB_PROXY_ABI } from "@dragverse/abis";
+import { useCopyToClipboard } from "@dragverse/browser";
 import {
   ENS_ICON_URL,
   ERROR_MESSAGE,
@@ -12,27 +14,25 @@ import {
   REQUESTING_SIGNATURE_MESSAGE,
   STATIC_ASSETS,
   TAPE_WEBSITE_URL
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
   checkLensManagerPermissions,
   getProfile,
   getSignature,
   trimify
-} from '@dragverse/generic'
-import type {
-  CreateBlockProfilesBroadcastItemResult,
-  CreateUnblockProfilesBroadcastItemResult,
-  Profile
-} from '@dragverse/lens'
+} from "@dragverse/generic";
 import {
+  type CreateBlockProfilesBroadcastItemResult,
+  type CreateUnblockProfilesBroadcastItemResult,
+  type Profile,
   useBlockMutation,
   useBroadcastOnchainMutation,
   useCreateBlockProfilesTypedDataMutation,
   useCreateUnblockProfilesTypedDataMutation,
   useUnblockMutation
-} from '@dragverse/lens'
-import { useApolloClient } from '@dragverse/lens/apollo'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
+} from "@dragverse/lens";
+import { useApolloClient } from "@dragverse/lens/apollo";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
 import {
   Badge as BadgeUI,
   Callout,
@@ -45,42 +45,38 @@ import {
   ThreeDotsOutline,
   Tooltip,
   WarningOutline
-} from '@dragverse/ui'
-import useProfileStore from '@lib/store/idb/profile'
-import useNonceStore from '@lib/store/nonce'
-import type { FC } from 'react'
-import { useState } from 'react'
-import toast from 'react-hot-toast'
-import { useSignTypedData, useWriteContract } from 'wagmi'
-
-import Bubbles from '../Mutual/Bubbles'
-import Stats from './Stats'
+} from "@dragverse/ui";
+import { type FC, useState } from "react";
+import toast from "react-hot-toast";
+import { useSignTypedData, useWriteContract } from "wagmi";
+import Bubbles from "../Mutual/Bubbles";
+import Stats from "./Stats";
 
 type Props = {
-  profile: Profile
-}
+  profile: Profile;
+};
 
 const BasicInfo: FC<Props> = ({ profile }) => {
-  const [copy] = useCopyToClipboard()
-  const [loading, setLoading] = useState(false)
-  const [showReportModal, setShowReportModal] = useState(false)
+  const [copy] = useCopyToClipboard();
+  const [loading, setLoading] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
-  const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore()
-  const { activeProfile } = useProfileStore()
-  const { canBroadcast } = checkLensManagerPermissions(activeProfile)
+  const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore();
+  const { activeProfile } = useProfileStore();
+  const { canBroadcast } = checkLensManagerPermissions(activeProfile);
 
   const hasOnChainId =
     profile.onchainIdentity?.ens?.name ||
     profile.onchainIdentity?.proofOfHumanity ||
     profile.onchainIdentity?.worldcoin.isHuman ||
-    profile.onchainIdentity?.sybilDotOrg.verified
+    profile.onchainIdentity?.sybilDotOrg.verified;
 
-  const isOwnChannel = profile?.id === activeProfile?.id
+  const isOwnChannel = profile?.id === activeProfile?.id;
 
-  const misused = MISUSED_CHANNELS.find((c) => c.id === profile?.id)
-  const isBlockedByMe = profile.operations.isBlockedByMe.value
+  const misused = MISUSED_CHANNELS.find((c) => c.id === profile?.id);
+  const isBlockedByMe = profile.operations.isBlockedByMe.value;
 
-  const { cache } = useApolloClient()
+  const { cache } = useApolloClient();
 
   const updateCache = (value: boolean) => {
     cache.modify({
@@ -91,128 +87,128 @@ const BasicInfo: FC<Props> = ({ profile }) => {
           isBlockedByMe: { value }
         })
       }
-    })
-  }
+    });
+  };
 
   const onError = (error: CustomErrorWithData) => {
-    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-    setLoading(false)
-  }
+    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
+    setLoading(false);
+  };
 
   const onCompleted = (
-    __typename?: 'RelayError' | 'RelaySuccess' | 'LensProfileManagerRelayError'
+    __typename?: "RelayError" | "RelaySuccess" | "LensProfileManagerRelayError"
   ) => {
     if (
-      __typename === 'RelayError' ||
-      __typename === 'LensProfileManagerRelayError'
+      __typename === "RelayError" ||
+      __typename === "LensProfileManagerRelayError"
     ) {
-      return
+      return;
     }
-    setLoading(false)
-    updateCache(!isBlockedByMe)
-    const displayName = getProfile(profile)?.displayName
-    toast.success(`${isBlockedByMe ? `Unblocked` : `Blocked`} ${displayName}`)
-  }
+    setLoading(false);
+    updateCache(!isBlockedByMe);
+    const displayName = getProfile(profile)?.displayName;
+    toast.success(`${isBlockedByMe ? "Unblocked" : "Blocked"} ${displayName}`);
+  };
 
   const { signTypedDataAsync } = useSignTypedData({
     mutation: { onError }
-  })
+  });
 
   const { writeContractAsync } = useWriteContract({
     mutation: {
       onSuccess: () => onCompleted(),
       onError
     }
-  })
+  });
 
   const write = async ({ args }: { args: any[] }) => {
     return await writeContractAsync({
       address: LENSHUB_PROXY_ADDRESS,
       abi: LENSHUB_PROXY_ABI,
-      functionName: 'setBlockStatus',
+      functionName: "setBlockStatus",
       args
-    })
-  }
+    });
+  };
 
   const [broadcast] = useBroadcastOnchainMutation({
     onCompleted: ({ broadcastOnchain }) =>
       onCompleted(broadcastOnchain.__typename),
     onError
-  })
+  });
 
   const broadcastTypedData = async (
     typedDataResult:
       | CreateBlockProfilesBroadcastItemResult
       | CreateUnblockProfilesBroadcastItemResult
   ) => {
-    const { typedData, id } = typedDataResult
+    const { typedData, id } = typedDataResult;
     const { byProfileId, idsOfProfilesToSetBlockStatus, blockStatus } =
-      typedData.value
-    const args = [byProfileId, idsOfProfilesToSetBlockStatus, blockStatus]
+      typedData.value;
+    const args = [byProfileId, idsOfProfilesToSetBlockStatus, blockStatus];
     try {
-      toast.loading(REQUESTING_SIGNATURE_MESSAGE)
+      toast.loading(REQUESTING_SIGNATURE_MESSAGE);
       if (canBroadcast) {
-        const signature = await signTypedDataAsync(getSignature(typedData))
-        setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1)
+        const signature = await signTypedDataAsync(getSignature(typedData));
+        setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1);
         const { data } = await broadcast({
           variables: { request: { id, signature } }
-        })
-        if (data?.broadcastOnchain.__typename === 'RelayError') {
-          return await write({ args })
+        });
+        if (data?.broadcastOnchain.__typename === "RelayError") {
+          return await write({ args });
         }
-        return
+        return;
       }
-      return await write({ args })
+      return await write({ args });
     } catch {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const [createBlockTypedData] = useCreateBlockProfilesTypedDataMutation({
-    onCompleted: async ({ createBlockProfilesTypedData }) => {
-      broadcastTypedData(createBlockProfilesTypedData)
+    onCompleted: ({ createBlockProfilesTypedData }) => {
+      broadcastTypedData(createBlockProfilesTypedData);
     },
     onError
-  })
+  });
 
   const [createUnBlockTypedData] = useCreateUnblockProfilesTypedDataMutation({
-    onCompleted: async ({ createUnblockProfilesTypedData }) => {
-      broadcastTypedData(createUnblockProfilesTypedData)
+    onCompleted: ({ createUnblockProfilesTypedData }) => {
+      broadcastTypedData(createUnblockProfilesTypedData);
     },
     onError
-  })
+  });
 
   const [block] = useBlockMutation({
     onCompleted: async ({ block }) => {
-      onCompleted(block.__typename)
-      if (block.__typename === 'LensProfileManagerRelayError') {
+      onCompleted(block.__typename);
+      if (block.__typename === "LensProfileManagerRelayError") {
         return await createBlockTypedData({
           variables: {
             options: { overrideSigNonce: lensHubOnchainSigNonce },
             request: { profiles: [profile.id] }
           }
-        })
+        });
       }
     },
     onError
-  })
+  });
   const [unBlock] = useUnblockMutation({
     onCompleted: async ({ unblock }) => {
-      onCompleted(unblock.__typename)
-      if (unblock.__typename === 'LensProfileManagerRelayError') {
+      onCompleted(unblock.__typename);
+      if (unblock.__typename === "LensProfileManagerRelayError") {
         return await createUnBlockTypedData({
           variables: {
             options: { overrideSigNonce: lensHubOnchainSigNonce },
             request: { profiles: [profile.id] }
           }
-        })
+        });
       }
     },
     onError
-  })
+  });
 
   const toggleBlockProfile = async () => {
-    setLoading(true)
+    setLoading(true);
     if (isBlockedByMe) {
       return await unBlock({
         variables: {
@@ -220,7 +216,7 @@ const BasicInfo: FC<Props> = ({ profile }) => {
             profiles: [profile.id]
           }
         }
-      })
+      });
     }
 
     await block({
@@ -229,9 +225,9 @@ const BasicInfo: FC<Props> = ({ profile }) => {
           profiles: [profile.id]
         }
       }
-    })
-    setLoading(false)
-  }
+    });
+    setLoading(false);
+  };
 
   return (
     <div className="px-2 xl:px-0">
@@ -249,9 +245,9 @@ const BasicInfo: FC<Props> = ({ profile }) => {
           </div>
         </Callout>
       )}
-      <div className="flex flex-1 flex-wrap justify-between pb-1 pt-4 md:gap-5">
+      <div className="flex flex-1 flex-wrap justify-between pt-4 pb-1 text-white md:gap-5">
         <div className="flex flex-col items-start">
-          <p className="flex items-center space-x-1.5 text-lg font-bold md:text-3xl">
+          <p className="flex items-center space-x-1.5 font-bold text-lg md:text-3xl">
             <span>{getProfile(profile)?.displayName}</span>
             <Badge id={profile?.id} size="xl" />
           </p>
@@ -277,7 +273,7 @@ const BasicInfo: FC<Props> = ({ profile }) => {
                     </Tooltip>
                   )}
                   {profile?.onchainIdentity?.sybilDotOrg.verified && (
-                    <Tooltip content={`Sybil Verified`} placement="top">
+                    <Tooltip content={"Sybil Verified"} placement="top">
                       <img
                         src={`${STATIC_ASSETS}/images/social/sybil.png`}
                         alt="sybil"
@@ -287,7 +283,7 @@ const BasicInfo: FC<Props> = ({ profile }) => {
                     </Tooltip>
                   )}
                   {profile?.onchainIdentity?.proofOfHumanity && (
-                    <Tooltip content={`Proof of Humanity`} placement="top">
+                    <Tooltip content={"Proof of Humanity"} placement="top">
                       <img
                         src={`${STATIC_ASSETS}/images/social/poh.png`}
                         alt="poh"
@@ -297,7 +293,7 @@ const BasicInfo: FC<Props> = ({ profile }) => {
                     </Tooltip>
                   )}
                   {profile?.onchainIdentity?.worldcoin.isHuman && (
-                    <Tooltip content={`Proof of Personhood`} placement="top">
+                    <Tooltip content={"Proof of Personhood"} placement="top">
                       <img
                         src={`${STATIC_ASSETS}/images/social/worldcoin.png`}
                         alt="worldcoin"
@@ -331,8 +327,8 @@ const BasicInfo: FC<Props> = ({ profile }) => {
               <>
                 <DropdownMenuItem
                   onClick={(e) => {
-                    e.preventDefault()
-                    setShowReportModal(true)
+                    e.preventDefault();
+                    setShowReportModal(true);
                   }}
                 >
                   <div className="flex items-center gap-2">
@@ -362,7 +358,7 @@ const BasicInfo: FC<Props> = ({ profile }) => {
                 <div className="flex items-center gap-2 text-red-500">
                   <ProfileBanOutline className="size-4" />
                   <span className="whitespace-nowrap">
-                    {isBlockedByMe ? 'Unblock' : 'Block'}
+                    {isBlockedByMe ? "Unblock" : "Block"}
                   </span>
                 </div>
               </DropdownMenuItem>
@@ -371,18 +367,18 @@ const BasicInfo: FC<Props> = ({ profile }) => {
           <FollowActions profile={profile} />
         </div>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-white">
         {profile.metadata?.bio && (
           <div className="line-clamp-5">
             <InterweaveContent
-              content={trimify(profile.metadata.bio).replaceAll('\n', ' ')}
+              content={trimify(profile.metadata.bio).replaceAll("\n", " ")}
             />
           </div>
         )}
         <Stats profile={profile} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default BasicInfo
+export default BasicInfo;

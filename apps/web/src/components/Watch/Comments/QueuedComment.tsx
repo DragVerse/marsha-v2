@@ -1,46 +1,46 @@
-import Badge from '@components/Common/Badge'
-import InterweaveContent from '@components/Common/InterweaveContent'
+import Badge from "@/components/Common/Badge";
+import InterweaveContent from "@/components/Common/InterweaveContent";
+import useProfileStore from "@/lib/store/idb/profile";
+import usePersistStore from "@/lib/store/persist";
 import {
   getLennyPicture,
   getProfile,
   getProfilePicture
-} from '@dragverse/generic'
+} from "@dragverse/generic";
 import {
   LensTransactionStatusType,
   PublicationDocument,
   useLensTransactionStatusQuery,
   usePublicationLazyQuery,
   useTxIdToTxHashLazyQuery
-} from '@dragverse/lens'
-import { useApolloClient } from '@dragverse/lens/apollo'
-import type { QueuedCommentType } from '@dragverse/lens/custom-types'
-import { Tooltip } from '@dragverse/ui'
-import useProfileStore from '@lib/store/idb/profile'
-import usePersistStore from '@lib/store/persist'
-import Link from 'next/link'
-import type { FC } from 'react'
+} from "@dragverse/lens";
+import { useApolloClient } from "@dragverse/lens/apollo";
+import type { QueuedCommentType } from "@dragverse/lens/custom-types";
+import { Tooltip } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
 
 type Props = {
-  queuedComment: QueuedCommentType
-}
+  queuedComment: QueuedCommentType;
+};
 
 const QueuedComment: FC<Props> = ({ queuedComment }) => {
-  const { activeProfile } = useProfileStore()
-  const { queuedComments, setQueuedComments } = usePersistStore()
+  const { activeProfile } = useProfileStore();
+  const { queuedComments, setQueuedComments } = usePersistStore();
 
-  const { cache } = useApolloClient()
-  const [getTxnHash] = useTxIdToTxHashLazyQuery()
+  const { cache } = useApolloClient();
+  const [getTxnHash] = useTxIdToTxHashLazyQuery();
 
   const removeFromQueue = () => {
     if (!queuedComment.txnId) {
       return setQueuedComments(
         queuedComments.filter((q) => q.txnHash !== queuedComment.txnHash)
-      )
+      );
     }
     setQueuedComments(
       queuedComments.filter((q) => q.txnId !== queuedComment.txnId)
-    )
-  }
+    );
+  };
 
   const [getPublication] = usePublicationLazyQuery({
     onCompleted: (data) => {
@@ -51,27 +51,27 @@ const QueuedComment: FC<Props> = ({ queuedComment }) => {
               cache.writeQuery({
                 data: { publication: data?.publication },
                 query: PublicationDocument
-              })
+              });
             }
           }
-        })
-        removeFromQueue()
+        });
+        removeFromQueue();
       }
     }
-  })
+  });
 
   const getCommentByTxnId = async () => {
     const { data } = await getTxnHash({
       variables: {
         for: queuedComment?.txnId
       }
-    })
+    });
     if (data?.txIdToTxHash) {
       getPublication({
         variables: { request: { forTxHash: data?.txIdToTxHash } }
-      })
+      });
     }
-  }
+  };
 
   const { stopPolling } = useLensTransactionStatusQuery({
     variables: {
@@ -85,31 +85,31 @@ const QueuedComment: FC<Props> = ({ queuedComment }) => {
     notifyOnNetworkStatusChange: true,
     onCompleted: async (data) => {
       if (
-        data?.lensTransactionStatus?.__typename === 'LensTransactionResult' &&
+        data?.lensTransactionStatus?.__typename === "LensTransactionResult" &&
         data?.lensTransactionStatus?.reason
       ) {
-        return removeFromQueue()
+        return removeFromQueue();
       }
       if (
-        data?.lensTransactionStatus?.__typename === 'LensTransactionResult' &&
+        data?.lensTransactionStatus?.__typename === "LensTransactionResult" &&
         data?.lensTransactionStatus?.status ===
           LensTransactionStatusType.Complete
       ) {
-        stopPolling()
+        stopPolling();
         if (queuedComment.txnHash) {
           return getPublication({
             variables: {
               request: { forTxHash: queuedComment.txnHash }
             }
-          })
+          });
         }
-        await getCommentByTxnId()
+        await getCommentByTxnId();
       }
     }
-  })
+  });
 
   if ((!queuedComment?.txnId && !queuedComment?.txnHash) || !activeProfile) {
-    return null
+    return null;
   }
 
   return (
@@ -117,15 +117,15 @@ const QueuedComment: FC<Props> = ({ queuedComment }) => {
       <div className="flex items-start justify-between">
         <Link
           href={getProfile(activeProfile)?.link}
-          className="mr-3 mt-0.5 flex-none"
+          className="mt-0.5 mr-3 flex-none"
         >
           <img
-            src={getProfilePicture(activeProfile, 'AVATAR')}
+            src={getProfilePicture(activeProfile, "AVATAR")}
             className="size-7 rounded-full"
             draggable={false}
             alt={getProfile(activeProfile)?.slug}
             onError={({ currentTarget }) => {
-              currentTarget.src = getLennyPicture(activeProfile?.id)
+              currentTarget.src = getLennyPicture(activeProfile?.id);
             }}
           />
         </Link>
@@ -133,7 +133,7 @@ const QueuedComment: FC<Props> = ({ queuedComment }) => {
           <span className="mb-1 flex items-center space-x-1">
             <Link
               href={getProfile(activeProfile)?.link}
-              className="flex items-center space-x-1 text-sm font-medium"
+              className="flex items-center space-x-1 font-medium text-sm"
             >
               <span>{getProfile(activeProfile)?.slug}</span>
               <Badge id={activeProfile.id} />
@@ -146,14 +146,14 @@ const QueuedComment: FC<Props> = ({ queuedComment }) => {
         <div className="p-2">
           <Tooltip content="Indexing" placement="top">
             <span className="relative flex size-2 items-center justify-center">
-              <span className="bg-brand-400 absolute inline-flex size-2 animate-ping rounded-full opacity-75" />
-              <span className="bg-brand-500 relative inline-flex size-1.5 rounded-full" />
+              <span className="absolute inline-flex size-2 animate-ping rounded-full bg-brand-400 opacity-75" />
+              <span className="relative inline-flex size-1.5 rounded-full bg-brand-500" />
             </span>
           </Tooltip>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default QueuedComment
+export default QueuedComment;

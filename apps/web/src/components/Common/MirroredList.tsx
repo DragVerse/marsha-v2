@@ -1,26 +1,26 @@
-import { NoDataFound } from '@components/UIElements/NoDataFound'
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
+
 import {
   getLennyPicture,
   getProfile,
   getProfilePicture
-} from '@dragverse/generic'
+} from "@dragverse/generic";
 import {
   LimitType,
   type Profile,
   type ProfilesRequest,
   useProfilesQuery
-} from '@dragverse/lens'
-import { Spinner, UserOutline } from '@dragverse/ui'
-import Link from 'next/link'
-import type { FC } from 'react'
-import { useInView } from 'react-cool-inview'
-
-import Badge from './Badge'
-import HoverableProfile from './HoverableProfile'
+} from "@dragverse/lens";
+import { Spinner, UserOutline } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
+import { useInView } from "react-cool-inview";
+import Badge from "./Badge";
+import HoverableProfile from "./HoverableProfile";
 
 type Props = {
-  videoId: string
-}
+  videoId: string;
+};
 
 const MirroredList: FC<Props> = ({ videoId }) => {
   const request: ProfilesRequest = {
@@ -28,17 +28,17 @@ const MirroredList: FC<Props> = ({ videoId }) => {
       whoMirroredPublication: videoId
     },
     limit: LimitType.Fifty
-  }
+  };
 
   const { data, loading, fetchMore } = useProfilesQuery({
     variables: {
       request
     },
     skip: !videoId
-  })
+  });
 
-  const mirroredByProfiles = data?.profiles?.items as Profile[]
-  const pageInfo = data?.profiles?.pageInfo
+  const mirroredByProfiles = data?.profiles?.items as Profile[];
+  const pageInfo = data?.profiles?.pageInfo;
 
   const { observe } = useInView({
     onEnter: async () => {
@@ -49,19 +49,19 @@ const MirroredList: FC<Props> = ({ videoId }) => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   if (loading) {
-    return <Spinner />
+    return <Spinner />;
   }
   if (mirroredByProfiles?.length === 0) {
     return (
       <div className="pt-5">
         <NoDataFound text="No mirrors yet" isCenter />
       </div>
-    )
+    );
   }
 
   return (
@@ -70,17 +70,17 @@ const MirroredList: FC<Props> = ({ videoId }) => {
         <div className="flex flex-col" key={getProfile(profile)?.slug}>
           <Link
             href={getProfile(profile)?.link}
-            className="font-base flex items-center justify-between"
+            className="flex items-center justify-between font-base"
           >
             <HoverableProfile profile={profile} key={profile?.id}>
               <div className="flex items-center space-x-1.5">
                 <img
                   className="size-5 rounded-full"
-                  src={getProfilePicture(profile, 'AVATAR')}
+                  src={getProfilePicture(profile, "AVATAR")}
                   alt={getProfile(profile)?.slug}
                   draggable={false}
                   onError={({ currentTarget }) => {
-                    currentTarget.src = getLennyPicture(profile?.id)
+                    currentTarget.src = getLennyPicture(profile?.id);
                   }}
                 />
                 <div className="flex items-center space-x-1">
@@ -102,7 +102,7 @@ const MirroredList: FC<Props> = ({ videoId }) => {
         </span>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MirroredList
+export default MirroredList;

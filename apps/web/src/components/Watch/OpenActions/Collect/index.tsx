@@ -1,11 +1,19 @@
-import AddressExplorerLink from '@components/Common/Links/AddressExplorerLink'
-import { Countdown } from '@components/UIElements/CountDown'
-import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
+import AddressExplorerLink from "@/components/Common/Links/AddressExplorerLink";
+import { Countdown } from "@/components/UIElements/CountDown";
+import useHandleWrongNetwork from "@/hooks/useHandleWrongNetwork";
+import { getTimeAgo } from "@/lib/formatTime";
+import { getCollectModuleOutput } from "@/lib/getCollectModuleOutput";
+import useProfileStore from "@/lib/store/idb/profile";
+import useNonceStore from "@/lib/store/nonce";
+import { LENSHUB_PROXY_ABI } from "@dragverse/abis";
 import {
+  DRAGVERSE_LOGO,
   ERROR_MESSAGE,
   LENSHUB_PROXY_ADDRESS,
-  SIGN_IN_REQUIRED
-} from '@dragverse/constants'
+  SIGN_IN_REQUIRED,
+  TAPE_ADMIN_ADDRESS,
+  TAPE_APP_NAME
+} from "@dragverse/constants";
 import {
   checkLensManagerPermissions,
   formatNumber,
@@ -14,17 +22,15 @@ import {
   getSignature,
   imageCdn,
   shortenAddress
-} from '@dragverse/generic'
-import type {
-  ActOnOpenActionLensManagerRequest,
-  HandleInfo,
-  LegacyCollectRequest,
-  PrimaryPublication,
-  Profile,
-  RecipientDataOutput
-} from '@dragverse/lens'
+} from "@dragverse/generic";
 import {
+  type ActOnOpenActionLensManagerRequest,
+  type HandleInfo,
+  type LegacyCollectRequest,
   OpenActionModuleType,
+  type PrimaryPublication,
+  type Profile,
+  type RecipientDataOutput,
   useActOnOpenActionMutation,
   useApprovedModuleAllowanceAmountQuery,
   useBroadcastOnchainMutation,
@@ -34,72 +40,68 @@ import {
   useProfilesQuery,
   usePublicationQuery,
   useRevenueFromPublicationQuery
-} from '@dragverse/lens'
+} from "@dragverse/lens";
 import type {
   CustomErrorWithData,
   SupportedOpenActionModuleType
-} from '@dragverse/lens/custom-types'
-import { Button, Callout, Spinner, Tooltip, UserOutline } from '@dragverse/ui'
-import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
-import { getRelativeTime } from '@lib/formatTime'
-import { getCollectModuleOutput } from '@lib/getCollectModuleOutput'
-import useProfileStore from '@lib/store/idb/profile'
-import useNonceStore from '@lib/store/nonce'
-import Link from 'next/link'
-import type { FC } from 'react'
-import { useEffect, useState } from 'react'
-import toast from 'react-hot-toast'
-import { formatUnits } from 'viem'
+} from "@dragverse/lens/custom-types";
 import {
-  useAccount,
-  useBalance,
-  useSignTypedData,
-  useWriteContract
-} from 'wagmi'
-
-import BalanceAlert from '../BalanceAlert'
-import PermissionAlert from '../PermissionAlert'
+  Button,
+  Callout,
+  InfoOutline,
+  Spinner,
+  Tooltip,
+  UserOutline
+} from "@dragverse/ui";
+import { usePrivy } from "@privy-io/react-auth";
+import Link from "next/link";
+import { type FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { formatUnits } from "viem";
+import { useBalance, useSignTypedData, useWriteContract } from "wagmi";
+import BalanceAlert from "../BalanceAlert";
+import PermissionAlert from "../PermissionAlert";
 
 type Props = {
-  action: SupportedOpenActionModuleType
-  publication: PrimaryPublication
-}
+  action: SupportedOpenActionModuleType;
+  publication: PrimaryPublication;
+};
 
 const CollectPublication: FC<Props> = ({ publication, action }) => {
-  const activeProfile = useProfileStore((state) => state.activeProfile)
-  const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore()
+  const activeProfile = useProfileStore((state) => state.activeProfile);
+  const { lensHubOnchainSigNonce, setLensHubOnchainSigNonce } = useNonceStore();
   const [alreadyCollected, setAlreadyCollected] = useState(
     publication.operations.hasActed.value
-  )
+  );
 
-  const handleWrongNetwork = useHandleWrongNetwork()
-  const { address } = useAccount()
+  const handleWrongNetwork = useHandleWrongNetwork();
+  const { user } = usePrivy();
+  const address = user?.wallet?.address;
+  const [collecting, setCollecting] = useState(false);
+  const [isAllowed, setIsAllowed] = useState(true);
+  const [haveEnoughBalance, setHaveEnoughBalance] = useState(false);
+  const details = getCollectModuleOutput(action);
 
-  const [collecting, setCollecting] = useState(false)
-  const [isAllowed, setIsAllowed] = useState(true)
-  const [haveEnoughBalance, setHaveEnoughBalance] = useState(false)
-  const details = getCollectModuleOutput(action)
-
-  const assetAddress = details?.amount?.assetAddress
-  const assetDecimals = details?.amount?.assetDecimals || 18
-  const amount = parseFloat(details?.amount?.value || '0')
+  const assetAddress = details?.amount?.assetAddress;
+  const assetDecimals = details?.amount?.assetDecimals || 18;
+  const amount = Number.parseFloat(details?.amount?.value || "0");
   const isLegacyCollectModule =
-    action.__typename === 'LegacySimpleCollectModuleSettings' ||
-    action.__typename === 'LegacyMultirecipientFeeCollectModuleSettings'
+    action.__typename === "LegacySimpleCollectModuleSettings" ||
+    action.__typename === "LegacyMultirecipientFeeCollectModuleSettings";
 
   const { canUseLensManager, canBroadcast } =
-    checkLensManagerPermissions(activeProfile)
-  const isFreeCollect = !amount
-  const isFreeForAnyone = !action?.followerOnly && isFreeCollect
+    checkLensManagerPermissions(activeProfile);
+  const isFreeCollect = !amount;
+  const isFreeForAnyone = !action?.followerOnly && isFreeCollect;
 
   usePublicationQuery({
     variables: { request: { forId: publication.id } },
     onCompleted: ({ publication }) => {
-      const { operations } = publication as PrimaryPublication
-      setAlreadyCollected(operations.hasActed.value)
+      const { operations } = publication as PrimaryPublication;
+      setAlreadyCollected(operations.hasActed.value);
     },
-    fetchPolicy: 'cache-and-network'
-  })
+    fetchPolicy: "cache-and-network"
+  });
 
   const { data: recipientProfilesData } = useProfilesQuery({
     variables: {
@@ -111,8 +113,8 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
         }
       }
     },
-    skip: !Boolean(details?.recipients?.length) || isFreeCollect
-  })
+    skip: !details?.recipients?.length || isFreeCollect
+  });
 
   const { data: balanceData, isLoading: balanceLoading } = useBalance({
     address,
@@ -121,7 +123,7 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
       enabled: Boolean(details?.amount.value) && !isFreeCollect,
       refetchInterval: 2000
     }
-  })
+  });
 
   const { data: revenueData } = useRevenueFromPublicationQuery({
     variables: {
@@ -130,7 +132,7 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
       }
     },
     skip: !publication?.id
-  })
+  });
 
   const {
     loading: allowanceLoading,
@@ -147,26 +149,29 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
     },
     skip: !assetAddress || isFreeCollect || !activeProfile?.id,
     onCompleted: (data) => {
-      setIsAllowed(
-        parseFloat(data.approvedModuleAllowanceAmount[0].allowance.value) >
-          amount
-      )
+      if (data.approvedModuleAllowanceAmount[0]) {
+        setIsAllowed(
+          Number.parseFloat(
+            data.approvedModuleAllowanceAmount[0].allowance.value
+          ) > amount
+        );
+      }
     }
-  })
+  });
 
   useEffect(() => {
     if (
       balanceData &&
       details?.amount.value &&
-      parseFloat(formatUnits(balanceData.value, assetDecimals)) <
-        parseFloat(details?.amount.value)
+      Number.parseFloat(formatUnits(balanceData.value, assetDecimals)) <
+        Number.parseFloat(details?.amount.value)
     ) {
-      setHaveEnoughBalance(false)
+      setHaveEnoughBalance(false);
     } else {
-      setHaveEnoughBalance(true)
+      setHaveEnoughBalance(true);
     }
     if (assetAddress && !isFreeCollect && activeProfile?.id) {
-      refetchAllowance()
+      refetchAllowance();
     }
   }, [
     balanceData,
@@ -176,50 +181,64 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
     activeProfile,
     isFreeCollect,
     assetDecimals
-  ])
+  ]);
 
   const getDefaultProfileByAddress = (address: string) => {
-    const profiles = recipientProfilesData?.profiles?.items
+    const profiles = recipientProfilesData?.profiles?.items;
     if (profiles) {
       // profile.isDefault check not required
-      return profiles.filter((p) => p.ownedBy.address === address)[0]
+      return profiles.filter((p) => p.ownedBy.address === address)[0];
     }
-  }
+  };
 
   const getProfilesByAddress = (address: string) => {
-    const profiles = recipientProfilesData?.profiles?.items
+    const profiles = recipientProfilesData?.profiles?.items;
     if (profiles) {
       const handles = profiles
         .filter((p) => p.ownedBy.address === address)
-        .map((p) => p.handle)
-      return handles as HandleInfo[]
+        .map((p) => p.handle);
+      return handles as HandleInfo[];
     }
-    return []
-  }
+    return [];
+  };
 
   const renderRecipients = (recipients: RecipientDataOutput[]) => {
     return recipients.map((splitRecipient) => {
       const defaultProfile = getDefaultProfileByAddress(
         splitRecipient.recipient
-      ) as Profile
+      ) as Profile;
       const pfp = imageCdn(
         defaultProfile
           ? getProfilePicture(defaultProfile)
           : `https://cdn.stamp.fyi/avatar/${splitRecipient.recipient}?s=300`,
-        'AVATAR'
-      )
+        "AVATAR"
+      );
       const label =
         getProfile(defaultProfile)?.slug ??
-        shortenAddress(splitRecipient?.recipient)
+        shortenAddress(splitRecipient?.recipient);
       const hasManyProfiles =
-        getProfilesByAddress(splitRecipient.recipient)?.length > 1
-      const handles = getProfilesByAddress(splitRecipient.recipient)
+        getProfilesByAddress(splitRecipient.recipient)?.length > 1;
+      const handles = getProfilesByAddress(splitRecipient.recipient);
+
+      const { recipient } = splitRecipient;
+      if (recipient === TAPE_ADMIN_ADDRESS) {
+        return (
+          <div key={recipient} className="flex items-center space-x-2 py-1">
+            <div className="flex items-center space-x-1">
+              <img
+                className="size-4 rounded-full"
+                src={imageCdn(`${DRAGVERSE_LOGO}`, "SQUARE")}
+                alt="dragverse"
+              />
+              <span>{TAPE_APP_NAME}</span>
+            </div>
+            <span className="text-sm">({splitRecipient?.split}%)</span>
+          </div>
+        );
+      }
 
       return (
-        <div
-          key={splitRecipient.recipient}
-          className="flex items-center space-x-2 py-1"
-        >
+        <div key={recipient} className="flex items-center space-x-2 py-1">
           <div className="flex items-center space-x-1">
             <img className="size-4 rounded-full" src={pfp} alt="pfp" />
             <Tooltip
@@ -234,7 +253,7 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
                   {label}
                 </Link>
               ) : (
-                <AddressExplorerLink address={splitRecipient?.recipient}>
+                <AddressExplorerLink address={recipient}>
                   <span>{label}</span>
                 </AddressExplorerLink>
               )}
@@ -244,179 +263,179 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
             <span className="text-sm">({splitRecipient?.split}%)</span>
           ) : null}
         </div>
-      )
-    })
-  }
+      );
+    });
+  };
 
   const onError = (error: CustomErrorWithData) => {
-    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-    setCollecting(false)
-  }
+    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
+    setCollecting(false);
+  };
 
   const onCompleted = (
-    __typename?: 'RelayError' | 'RelaySuccess' | 'LensProfileManagerRelayError'
+    __typename?: "RelayError" | "RelaySuccess" | "LensProfileManagerRelayError"
   ) => {
     if (
-      __typename === 'RelayError' ||
-      __typename === 'LensProfileManagerRelayError'
+      __typename === "RelayError" ||
+      __typename === "LensProfileManagerRelayError"
     ) {
-      return
+      return;
     }
-    setCollecting(false)
-    setAlreadyCollected(true)
-    toast.success('Collected as NFT')
-  }
-  const { signTypedDataAsync } = useSignTypedData({ mutation: { onError } })
+    setCollecting(false);
+    setAlreadyCollected(true);
+    toast.success("Collected as NFT");
+  };
+  const { signTypedDataAsync } = useSignTypedData({ mutation: { onError } });
 
   const { writeContractAsync } = useWriteContract({
     mutation: {
       onSuccess: () => {
-        onCompleted()
-        setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1)
+        onCompleted();
+        setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1);
       },
       onError: (error) => {
-        onError(error)
-        setLensHubOnchainSigNonce(lensHubOnchainSigNonce - 1)
+        onError(error);
+        setLensHubOnchainSigNonce(lensHubOnchainSigNonce - 1);
       }
     }
-  })
+  });
 
   const write = async ({ args }: { args: any[] }) => {
     return await writeContractAsync({
       address: LENSHUB_PROXY_ADDRESS,
       abi: LENSHUB_PROXY_ABI,
-      functionName: isLegacyCollectModule ? 'collectLegacy' : 'act',
+      functionName: isLegacyCollectModule ? "collectLegacy" : "act",
       args
-    })
-  }
+    });
+  };
 
   const [broadcastOnchain] = useBroadcastOnchainMutation({
     onCompleted: ({ broadcastOnchain }) =>
       onCompleted(broadcastOnchain.__typename)
-  })
+  });
 
   const [createActOnOpenActionTypedData] =
     useCreateActOnOpenActionTypedDataMutation({
       onCompleted: async ({ createActOnOpenActionTypedData }) => {
-        const { id, typedData } = createActOnOpenActionTypedData
-        const args = [typedData.value]
+        const { id, typedData } = createActOnOpenActionTypedData;
+        const args = [typedData.value];
         if (canBroadcast) {
-          const signature = await signTypedDataAsync(getSignature(typedData))
-          setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1)
+          const signature = await signTypedDataAsync(getSignature(typedData));
+          setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1);
           const { data } = await broadcastOnchain({
             variables: { request: { id, signature } }
-          })
-          if (data?.broadcastOnchain.__typename === 'RelayError') {
-            return await write({ args })
+          });
+          if (data?.broadcastOnchain.__typename === "RelayError") {
+            return await write({ args });
           }
-          return
+          return;
         }
-        return await write({ args })
+        return await write({ args });
       },
       onError
-    })
+    });
 
   // Legacy Collect
   const [createLegacyCollectTypedData] =
     useCreateLegacyCollectTypedDataMutation({
       onCompleted: async ({ createLegacyCollectTypedData }) => {
-        const { id, typedData } = createLegacyCollectTypedData
-        const args = [typedData.value]
+        const { id, typedData } = createLegacyCollectTypedData;
+        const args = [typedData.value];
         if (canBroadcast) {
-          const signature = await signTypedDataAsync(getSignature(typedData))
-          setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1)
+          const signature = await signTypedDataAsync(getSignature(typedData));
+          setLensHubOnchainSigNonce(lensHubOnchainSigNonce + 1);
           const { data } = await broadcastOnchain({
             variables: { request: { id, signature } }
-          })
-          if (data?.broadcastOnchain.__typename === 'RelayError') {
-            return await write({ args })
+          });
+          if (data?.broadcastOnchain.__typename === "RelayError") {
+            return await write({ args });
           }
-          return
+          return;
         }
-        return await write({ args })
+        return await write({ args });
       },
       onError
-    })
+    });
 
   // Act
   const [actOnOpenAction] = useActOnOpenActionMutation({
     onCompleted: ({ actOnOpenAction }) =>
       onCompleted(actOnOpenAction.__typename),
     onError
-  })
+  });
 
   // Legacy Collect
   const [legacyCollect] = useLegacyCollectMutation({
     onCompleted: ({ legacyCollect }) => onCompleted(legacyCollect.__typename),
     onError
-  })
+  });
 
   const getOpenActionActOnKey = (name: string): string => {
     switch (name) {
       case OpenActionModuleType.SimpleCollectOpenActionModule:
-        return 'simpleCollectOpenAction'
+        return "simpleCollectOpenAction";
       case OpenActionModuleType.MultirecipientFeeCollectOpenActionModule:
-        return 'multirecipientCollectOpenAction'
+        return "multirecipientCollectOpenAction";
       default:
-        return 'unknownOpenAction'
+        return "unknownOpenAction";
     }
-  }
+  };
 
   // Act via Lens Manager
   const actViaLensManager = async (
     request: ActOnOpenActionLensManagerRequest
   ) => {
-    const { data, errors } = await actOnOpenAction({ variables: { request } })
+    const { data, errors } = await actOnOpenAction({ variables: { request } });
 
-    if (errors?.toString().includes('has already acted on')) {
-      return
+    if (errors?.toString().includes("has already acted on")) {
+      return;
     }
 
     if (
       !data?.actOnOpenAction ||
-      data?.actOnOpenAction.__typename === 'LensProfileManagerRelayError'
+      data?.actOnOpenAction.__typename === "LensProfileManagerRelayError"
     ) {
-      return await createActOnOpenActionTypedData({ variables: { request } })
+      return await createActOnOpenActionTypedData({ variables: { request } });
     }
-  }
+  };
 
   // Collect via Lens Manager
   const legacyCollectViaLensManager = async (request: LegacyCollectRequest) => {
-    const { data, errors } = await legacyCollect({ variables: { request } })
+    const { data, errors } = await legacyCollect({ variables: { request } });
 
-    if (errors?.toString().includes('has already collected on')) {
-      return
+    if (errors?.toString().includes("has already collected on")) {
+      return;
     }
 
     if (
       !data?.legacyCollect ||
-      data?.legacyCollect.__typename === 'LensProfileManagerRelayError'
+      data?.legacyCollect.__typename === "LensProfileManagerRelayError"
     ) {
       return await createLegacyCollectTypedData({
         variables: {
           options: { overrideSigNonce: lensHubOnchainSigNonce },
           request
         }
-      })
+      });
     }
-  }
+  };
 
   const collectNow = async () => {
     if (!activeProfile?.id) {
-      return toast.error(SIGN_IN_REQUIRED)
+      return toast.error(SIGN_IN_REQUIRED);
     }
 
-    await handleWrongNetwork()
+    await handleWrongNetwork();
 
-    setCollecting(true)
+    setCollecting(true);
 
     if (isLegacyCollectModule) {
       const legacyCollectRequest: LegacyCollectRequest = {
         on: publication?.id
-      }
+      };
 
       if (canUseLensManager && isFreeForAnyone) {
-        return await legacyCollectViaLensManager(legacyCollectRequest)
+        return await legacyCollectViaLensManager(legacyCollectRequest);
       }
 
       return await createLegacyCollectTypedData({
@@ -424,16 +443,16 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
           options: { overrideSigNonce: lensHubOnchainSigNonce },
           request: legacyCollectRequest
         }
-      })
+      });
     }
 
     const actOnRequest: ActOnOpenActionLensManagerRequest = {
       for: publication?.id,
       actOn: { [getOpenActionActOnKey(action?.type)]: true }
-    }
+    };
 
     if (canUseLensManager && isFreeForAnyone) {
-      return await actViaLensManager(actOnRequest)
+      return await actViaLensManager(actOnRequest);
     }
 
     return await createActOnOpenActionTypedData({
@@ -441,8 +460,12 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
         options: { overrideSigNonce: lensHubOnchainSigNonce },
         request: actOnRequest
       }
-    })
-  }
+    });
+  };
+
+  const hasTapeFees = details?.recipients?.some(
+    (split) => split.recipient === TAPE_ADMIN_ADDRESS
+  );
 
   return (
     <div className="pt-2">
@@ -462,10 +485,47 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
           {amount ? (
             <div className="mb-3 flex flex-col">
               <span className="font-bold">Price</span>
-              <span className="space-x-1">
-                <span className="text-2xl">{details?.amount.value}</span>
-                <span>{details?.amount.assetSymbol}</span>
-              </span>
+              <div className="flex items-end space-x-1.5">
+                <span className="space-x-1">
+                  <span className="text-2xl">{details?.amount.value}</span>
+                  <span className="inline-flex items-center">
+                    <span>{details?.amount.assetSymbol}</span>
+                    {details?.amount.fiat && (
+                      <>
+                        <span className="middot" />
+                        <span>${details?.amount.fiat}</span>
+                      </>
+                    )}
+                  </span>
+                </span>
+                <Tooltip
+                  content={
+                    <div className="space-y-2 p-3">
+                      <h6 className="font-bold">Collect Fees</h6>
+                      <div className="flex items-center justify-between gap-6">
+                        <div>Lens Protocol</div>
+                        <b>
+                          {(amount * 0.05).toFixed(2)}{" "}
+                          {details?.amount.assetSymbol} (5%)
+                        </b>
+                      </div>
+                      {hasTapeFees && (
+                        <div className="flex items-center justify-between gap-6">
+                          <div>{TAPE_APP_NAME}</div>
+                          <b>
+                            {(amount * 0.05).toFixed(2)}{" "}
+                            {details?.amount.assetSymbol} (5%)
+                          </b>
+                        </div>
+                      )}
+                    </div>
+                  }
+                >
+                  <span className="pb-1.5">
+                    <InfoOutline className="size-3.5" />
+                  </span>
+                </Tooltip>
+              </div>
             </div>
           ) : null}
           {details?.endsAt ? (
@@ -474,7 +534,7 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
               <span className="text-lg">
                 <Countdown
                   timestamp={details.endsAt}
-                  endText={`Ended ${getRelativeTime(details.endsAt)}`}
+                  endText={`Ended ${getTimeAgo(details.endsAt)}`}
                 />
               </span>
             </div>
@@ -483,7 +543,7 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
             <div className="mb-3 flex flex-col">
               <span className="font-bold">Revenue</span>
               <span className="space-x-1">
-                <span className="text-2xl font-bold">
+                <span className="text-2xl">
                   {revenueData?.revenueFromPublication?.revenue[0].total
                     .value ?? 0}
                 </span>
@@ -498,7 +558,7 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
           ) : null}
           {details?.recipients?.length ? (
             <div className="mb-3 flex flex-col">
-              <span className="mb-0.5 font-bold">Recipients</span>
+              <span className="mb-0.5 font-bold">Fee Recipients</span>
               {action.type ===
                 OpenActionModuleType.MultirecipientFeeCollectOpenActionModule &&
               details?.recipients?.length
@@ -513,8 +573,8 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
                 <div className="flex-1">
                   <Callout icon={<UserOutline className="size-3.5" />}>
                     <div className="flex items-center gap-2">
-                      This publication can only be collected by the creator's
-                      followers.
+                      This publication can only be collected by the
+                      creator&apos;s followers.
                     </div>
                   </Callout>
                 </div>
@@ -528,7 +588,7 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
                   disabled={collecting || alreadyCollected}
                   onClick={() => (!alreadyCollected ? collectNow() : null)}
                 >
-                  {alreadyCollected ? 'Collected' : 'Collect'}
+                  {alreadyCollected ? "Collected" : "Collect"}
                 </Button>
               ) : (
                 <BalanceAlert
@@ -554,7 +614,7 @@ const CollectPublication: FC<Props> = ({ publication, action }) => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CollectPublication
+export default CollectPublication;

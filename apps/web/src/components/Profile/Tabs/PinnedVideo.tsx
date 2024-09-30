@@ -1,5 +1,9 @@
-import PinnedVideoShimmer from '@components/Shimmers/PinnedVideoShimmer'
-import { LENSHUB_PROXY_ABI } from '@dragverse/abis'
+import PinnedVideoShimmer from "@/components/Shimmers/PinnedVideoShimmer";
+import useHandleWrongNetwork from "@/hooks/useHandleWrongNetwork";
+import useSw from "@/hooks/useSw";
+import { getTimeAgo } from "@/lib/formatTime";
+import useProfileStore from "@/lib/store/idb/profile";
+import { LENSHUB_PROXY_ABI } from "@dragverse/abis";
 import {
   ERROR_MESSAGE,
   LENSHUB_PROXY_ADDRESS,
@@ -7,10 +11,10 @@ import {
   REQUESTING_SIGNATURE_MESSAGE,
   SIGN_IN_REQUIRED,
   TAPE_APP_ID
-} from '@dragverse/constants'
+} from "@dragverse/constants";
 import {
-  checkLensManagerPermissions,
   EVENTS,
+  checkLensManagerPermissions,
   getIsSensitiveContent,
   getProfileCoverPicture,
   getProfilePictureUri,
@@ -23,142 +27,136 @@ import {
   isWatchable,
   logger,
   sanitizeDStorageUrl,
-  Tower,
   trimify,
   uploadToAr
-} from '@dragverse/generic'
-import type {
-  AnyPublication,
-  OnchainSetProfileMetadataRequest,
-  Profile
-} from '@dragverse/lens'
+} from "@dragverse/generic";
 import {
+  type AnyPublication,
+  MetadataAttributeType,
+  type OnchainSetProfileMetadataRequest,
+  type Profile,
   useBroadcastOnchainMutation,
   useCreateOnchainSetProfileMetadataTypedDataMutation,
   usePublicationQuery,
   useSetProfileMetadataMutation
-} from '@dragverse/lens'
-import type { CustomErrorWithData } from '@dragverse/lens/custom-types'
-import { Button, VideoPlayer } from '@dragverse/ui'
-import useHandleWrongNetwork from '@hooks/useHandleWrongNetwork'
-import type { ProfileOptions } from '@lens-protocol/metadata'
-import { MetadataAttributeType, profile } from '@lens-protocol/metadata'
-import { getRelativeTime } from '@lib/formatTime'
-import useProfileStore from '@lib/store/idb/profile'
-import Link from 'next/link'
-import type { FC } from 'react'
-import { memo } from 'react'
-import toast from 'react-hot-toast'
-import { useSignTypedData, useWriteContract } from 'wagmi'
+} from "@dragverse/lens";
+import type { CustomErrorWithData } from "@dragverse/lens/custom-types";
+import { Button, VideoPlayer } from "@dragverse/ui";
+import { type ProfileOptions, profile } from "@lens-protocol/metadata";
+import Link from "next/link";
+import { type FC, memo } from "react";
+import toast from "react-hot-toast";
+import { useSignTypedData, useWriteContract } from "wagmi";
 
 type Props = {
-  id: string
-}
+  id: string;
+};
 
 const PinnedVideo: FC<Props> = ({ id }) => {
-  const { activeProfile } = useProfileStore()
-  const handleWrongNetwork = useHandleWrongNetwork()
+  const { activeProfile } = useProfileStore();
+  const handleWrongNetwork = useHandleWrongNetwork();
   const { canUseLensManager, canBroadcast } =
-    checkLensManagerPermissions(activeProfile)
+    checkLensManagerPermissions(activeProfile);
+  const { addEventToQueue } = useSw();
 
   const { data, error, loading } = usePublicationQuery({
     variables: {
       request: { forId: id }
     }
-  })
+  });
 
   const onError = (error: CustomErrorWithData) => {
-    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE)
-  }
+    toast.error(error?.data?.message ?? error?.message ?? ERROR_MESSAGE);
+  };
 
   const onCompleted = (
-    __typename?: 'RelayError' | 'RelaySuccess' | 'LensProfileManagerRelayError'
+    __typename?: "RelayError" | "RelaySuccess" | "LensProfileManagerRelayError"
   ) => {
     if (
-      __typename === 'RelayError' ||
-      __typename === 'LensProfileManagerRelayError'
+      __typename === "RelayError" ||
+      __typename === "LensProfileManagerRelayError"
     ) {
-      return
+      return;
     }
-    toast.success(`Transaction submitted`)
-    Tower.track(EVENTS.PUBLICATION.UNPIN)
-  }
+    toast.success("Transaction submitted");
+    addEventToQueue(EVENTS.PUBLICATION.UNPIN);
+  };
 
   const { signTypedDataAsync } = useSignTypedData({
     mutation: { onError }
-  })
+  });
 
   const { writeContractAsync } = useWriteContract({
     mutation: {
       onError,
       onSuccess: () => onCompleted()
     }
-  })
+  });
 
   const write = async ({ args }: { args: any[] }) => {
     return await writeContractAsync({
       address: LENSHUB_PROXY_ADDRESS,
       abi: LENSHUB_PROXY_ABI,
-      functionName: 'setProfileMetadataURI',
+      functionName: "setProfileMetadataURI",
       args
-    })
-  }
+    });
+  };
 
   const [broadcast] = useBroadcastOnchainMutation({
     onError,
     onCompleted: ({ broadcastOnchain }) =>
       onCompleted(broadcastOnchain.__typename)
-  })
+  });
 
   const [createOnchainSetProfileMetadataTypedData] =
     useCreateOnchainSetProfileMetadataTypedDataMutation({
       onCompleted: async ({ createOnchainSetProfileMetadataTypedData }) => {
-        const { typedData, id } = createOnchainSetProfileMetadataTypedData
-        const { profileId, metadataURI } = typedData.value
-        const args = [profileId, metadataURI]
+        const { typedData, id } = createOnchainSetProfileMetadataTypedData;
+        const { profileId, metadataURI } = typedData.value;
+        const args = [profileId, metadataURI];
         try {
-          toast.loading(REQUESTING_SIGNATURE_MESSAGE)
+          toast.loading(REQUESTING_SIGNATURE_MESSAGE);
           if (canBroadcast) {
-            const signature = await signTypedDataAsync(getSignature(typedData))
+            const signature = await signTypedDataAsync(getSignature(typedData));
             const { data } = await broadcast({
               variables: { request: { id, signature } }
-            })
-            if (data?.broadcastOnchain?.__typename === 'RelayError') {
-              return await write({ args })
+            });
+            if (data?.broadcastOnchain?.__typename === "RelayError") {
+              return await write({ args });
             }
-            return
+            return;
           }
-          return await write({ args })
+          return await write({ args });
         } catch {}
       },
       onError
-    })
+    });
 
   const [setProfileMetadata] = useSetProfileMetadataMutation({
     onCompleted: ({ setProfileMetadata }) =>
       onCompleted(setProfileMetadata.__typename),
     onError
-  })
+  });
 
   const otherAttributes =
     activeProfile?.metadata?.attributes
-      ?.filter((attr) => !['pinnedPublicationId', 'app'].includes(attr.key))
+      ?.filter((attr) => !["pinnedPublicationId", "app"].includes(attr.key))
       .map(({ key, value, type }) => ({
         key,
         value,
         type: MetadataAttributeType[type] as any
-      })) ?? []
+      })) ?? [];
 
   const unpinVideo = async () => {
     if (!activeProfile) {
-      return toast.error(SIGN_IN_REQUIRED)
+      return toast.error(SIGN_IN_REQUIRED);
     }
-    await handleWrongNetwork()
+    await handleWrongNetwork();
 
     try {
-      toast.loading(`Unpinning video...`)
-      const pfp = getProfilePictureUri(activeProfile as Profile)
-      const coverPicture = getProfileCoverPicture(activeProfile as Profile)
+      toast.loading("Unpinning video...");
+      const pfp = getProfilePictureUri(activeProfile as Profile);
+      const coverPicture = getProfileCoverPicture(activeProfile as Profile);
       const metadata: ProfileOptions = {
         ...(activeProfile?.metadata?.displayName && {
           name: activeProfile?.metadata?.displayName
@@ -176,71 +174,69 @@ const PinnedVideo: FC<Props> = ({ id }) => {
           ...otherAttributes,
           {
             type: MetadataAttributeType.STRING,
-            key: 'app',
+            key: "app",
             value: TAPE_APP_ID
           }
         ]
-      }
+      };
       metadata.attributes = metadata.attributes?.filter(
         (m) => Boolean(trimify(m.key)) && Boolean(trimify(m.value))
-      )
-      const metadataURI = await uploadToAr(profile(metadata))
+      );
+      const metadataURI = await uploadToAr(profile(metadata));
       const request: OnchainSetProfileMetadataRequest = {
         metadataURI
-      }
+      };
 
       if (canUseLensManager) {
         const { data } = await setProfileMetadata({
           variables: { request }
-        })
+        });
         if (
           data?.setProfileMetadata?.__typename ===
-          'LensProfileManagerRelayError'
+          "LensProfileManagerRelayError"
         ) {
           return await createOnchainSetProfileMetadataTypedData({
             variables: { request }
-          })
+          });
         }
-        return
+        return;
       }
       return createOnchainSetProfileMetadataTypedData({
         variables: { request }
-      })
+      });
     } catch (error) {
-      logger.error('[UnPin Video]', error)
+      logger.error("[UnPin Video]", error);
     }
-  }
+  };
 
   if (loading) {
-    return <PinnedVideoShimmer />
+    return <PinnedVideoShimmer />;
   }
 
-  const publication = data?.publication as AnyPublication
-  const pinnedPublication = getPublication(publication)
+  const publication = data?.publication as AnyPublication;
+  const pinnedPublication = getPublication(publication);
 
   if (error || !publication || !isWatchable(pinnedPublication)) {
-    return null
+    return null;
   }
 
   const isBytesVideo =
-    pinnedPublication?.publishedOn?.id === LENSTUBE_BYTES_APP_ID
-  const isVideoOwner = activeProfile?.id === pinnedPublication?.by.id
+    pinnedPublication?.publishedOn?.id === LENSTUBE_BYTES_APP_ID;
+  const isVideoOwner = activeProfile?.id === pinnedPublication?.by.id;
 
-  const isSensitiveContent = getIsSensitiveContent(
-    pinnedPublication?.metadata,
-    pinnedPublication?.id
-  )
+  const isSensitiveContent = getIsSensitiveContent(pinnedPublication?.metadata);
   const thumbnailUrl = imageCdn(
     sanitizeDStorageUrl(getThumbnailUrl(pinnedPublication?.metadata, true)),
-    isBytesVideo ? 'THUMBNAIL_V' : 'THUMBNAIL'
-  )
+    isBytesVideo ? "THUMBNAIL_V" : "THUMBNAIL"
+  );
 
   return (
-    <div className="mb-4 mt-6">
-      <h1 className="text-brand-400 pb-4 text-xl font-bold">Featured</h1>
+    <div className="mt-6 mb-4">
+      <h1 className="pb-4 font-bold text-brand-400 text-xl">Featured</h1>
       <div className="grid gap-5 overflow-hidden md:grid-cols-2 lg:grid-cols-3">
         <div className="overflow-hidden rounded-xl">
           <VideoPlayer
+            pid={pinnedPublication.id}
             address={activeProfile?.ownedBy.address}
             url={getPublicationMediaUrl(pinnedPublication.metadata)}
             posterUrl={thumbnailUrl}
@@ -257,10 +253,10 @@ const PinnedVideo: FC<Props> = ({ id }) => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Link
-                className="inline break-words text-lg font-medium"
+                className="inline break-words font-medium text-lg"
                 href={`/watch/${pinnedPublication.id}`}
                 title={
-                  getPublicationData(pinnedPublication.metadata)?.title ?? ''
+                  getPublicationData(pinnedPublication.metadata)?.title ?? ""
                 }
               >
                 {getPublicationData(pinnedPublication.metadata)?.title}
@@ -268,7 +264,7 @@ const PinnedVideo: FC<Props> = ({ id }) => {
               {isVideoOwner && (
                 <Button
                   variant="danger"
-                  className="invisible hover:!bg-red-200 group-hover:visible dark:hover:!bg-red-800"
+                  className="hover:!bg-red-200 dark:hover:!bg-red-800 invisible group-hover:visible"
                   onClick={() => unpinVideo()}
                 >
                   Unpin
@@ -282,7 +278,7 @@ const PinnedVideo: FC<Props> = ({ id }) => {
               <span className="middot" />
               {pinnedPublication.createdAt && (
                 <span className="whitespace-nowrap">
-                  {getRelativeTime(pinnedPublication.createdAt)}
+                  {getTimeAgo(pinnedPublication.createdAt)}
                 </span>
               )}
             </div>
@@ -291,7 +287,7 @@ const PinnedVideo: FC<Props> = ({ id }) => {
             </p>
           </div>
           <Link
-            className="text-brand-500 font-medium"
+            className="font-medium text-brand-500"
             href={`/watch/${pinnedPublication.id}`}
           >
             Watch video
@@ -299,7 +295,7 @@ const PinnedVideo: FC<Props> = ({ id }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default memo(PinnedVideo)
+export default memo(PinnedVideo);

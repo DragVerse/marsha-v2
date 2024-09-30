@@ -1,28 +1,31 @@
-import { STATIC_ASSETS, TWITTER_ICON_URL } from '@dragverse/constants'
-import { getValueFromKeyInAttributes, imageCdn } from '@dragverse/generic'
-import type { ProfileMetadata } from '@dragverse/lens'
-import { GlobeOutline, LocationOutline } from '@dragverse/ui'
-import Link from 'next/link'
-import { useTheme } from 'next-themes'
+import { STATIC_ASSETS, TWITTER_ICON_URL } from "@dragverse/constants";
+import { getValueFromKeyInAttributes, imageCdn } from "@dragverse/generic";
+import type { ProfileMetadata } from "@dragverse/lens";
+import { GlobeOutline, LocationOutline } from "@dragverse/ui";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 
 const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
-  const { resolvedTheme } = useTheme()
-  const location = getValueFromKeyInAttributes(metadata?.attributes, 'location')
-  const website = getValueFromKeyInAttributes(metadata?.attributes, 'website')
-  const youtube = getValueFromKeyInAttributes(metadata?.attributes, 'youtube')
-  const spotify = getValueFromKeyInAttributes(metadata?.attributes, 'spotify')
-  const x = getValueFromKeyInAttributes(metadata?.attributes, 'x')
+  const { resolvedTheme } = useTheme();
+  const location = getValueFromKeyInAttributes(
+    metadata?.attributes,
+    "location"
+  );
+  const website = getValueFromKeyInAttributes(metadata?.attributes, "website");
+  const youtube = getValueFromKeyInAttributes(metadata?.attributes, "youtube");
+  const spotify = getValueFromKeyInAttributes(metadata?.attributes, "spotify");
+  const x = getValueFromKeyInAttributes(metadata?.attributes, "x");
 
   return (
     <div className="flex space-x-2">
       {website && (
         <Link
           href={`https://${website
-            ?.replace('https://', '')
-            .replace('http://', '')}`}
+            ?.replace("https://", "")
+            .replace("http://", "")}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="dark:bg-brand-250 rounded-lg bg-white bg-opacity-80 p-1.5"
+          className="rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
         >
           <GlobeOutline className="size-4" />
         </Link>
@@ -32,7 +35,7 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
           href={`https://www.google.com/maps/search/?api=1&query=${location}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="dark:bg-brand-250 rounded-lg bg-white bg-opacity-80 p-1.5"
+          className="rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
         >
           <LocationOutline className="size-4" />
         </Link>
@@ -40,16 +43,16 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
       {spotify && (
         <Link
           href={`https://open.spotify.com/${spotify
-            ?.replace('https://open.spotify.com/', '')
-            .replace('http://open.spotify.com/', '')}`}
+            ?.replace("https://open.spotify.com/", "")
+            .replace("http://open.spotify.com/", "")}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="dark:bg-brand-250 rounded-lg bg-white bg-opacity-80 p-1.5"
+          className="rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
         >
           <img
             src={imageCdn(
               `${STATIC_ASSETS}/images/social/spotify.png`,
-              'AVATAR'
+              "AVATAR"
             )}
             className="size-4 object-contain"
             height={16}
@@ -62,11 +65,11 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
       {youtube && (
         <Link
           href={`https://youtube.com/${youtube
-            ?.replace('https://youtube.com/', '')
-            .replace('http://youtube.com/', '')}`}
+            ?.replace("https://youtube.com/", "")
+            .replace("http://youtube.com/", "")}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="dark:bg-brand-250 rounded-lg bg-white bg-opacity-80 p-1.5"
+          className="rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
         >
           <img
             src={`${STATIC_ASSETS}/images/social/youtube.png`}
@@ -81,15 +84,15 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
       {x && (
         <Link
           href={`https://x.com/${x
-            ?.replace('https://twitter.com/', '')
-            .replace('http://twitter.com/', '')}`}
+            ?.replace("https://twitter.com/", "")
+            .replace("https://x.com/", "")}`}
           target="_blank"
           rel="noreferer noreferrer"
-          className="dark:bg-brand-250 flex items-center justify-center rounded-lg bg-white bg-opacity-80 p-1.5"
+          className="flex items-center justify-center rounded-lg bg-white bg-opacity-80 p-1.5 dark:bg-brand-250"
         >
-          {resolvedTheme === 'dark' ? (
+          {resolvedTheme === "dark" ? (
             <img
-              src={imageCdn(`${TWITTER_ICON_URL}`, 'AVATAR')}
+              src={imageCdn(`${TWITTER_ICON_URL}`, "AVATAR")}
               className="size-3.5"
               height={16}
               width={16}
@@ -98,7 +101,7 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
             />
           ) : (
             <img
-              src={imageCdn(`${TWITTER_ICON_URL}`, 'AVATAR')}
+              src={imageCdn(`${TWITTER_ICON_URL}`, "AVATAR")}
               className="size-3.5"
               height={16}
               width={16}
@@ -109,7 +112,7 @@ const CoverLinks = ({ metadata }: { metadata: ProfileMetadata }) => {
         </Link>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CoverLinks
+export default CoverLinks;

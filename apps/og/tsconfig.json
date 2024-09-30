@@ -1,5 +1,5 @@
 {
-  "extends": "@dragverse/config/react.tsconfig.json",
+  "extends": "@dragverse/tsconfig/nextjs.json",
   "compilerOptions": {
     "baseUrl": ".",
     "target": "es5",

@@ -1,7 +1,6 @@
-import MetaTags from '@components/Common/MetaTags'
-import React from 'react'
+import MetaTags from "@/components/Common/MetaTags";
 
-import ModuleAllowance from './Modules'
+import ModuleAllowance from "./Modules";
 
 const Allowance = () => {
   return (
@@ -9,7 +8,7 @@ const Allowance = () => {
       <MetaTags title="Allowance" />
       <ModuleAllowance />
     </>
-  )
-}
+  );
+};
 
-export default Allowance
+export default Allowance;

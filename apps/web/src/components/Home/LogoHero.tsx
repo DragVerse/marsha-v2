@@ -1,4 +1,4 @@
-import React from 'react'
+import type React from "react";
 
 const LogoHero: React.FC = () => {
   return (
@@ -9,7 +9,7 @@ const LogoHero: React.FC = () => {
         className="h-full w-auto object-contain"
       />
     </div>
-  )
-}
+  );
+};
 
-export default LogoHero
+export default LogoHero;

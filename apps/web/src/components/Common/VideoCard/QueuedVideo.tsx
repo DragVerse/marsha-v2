@@ -1,72 +1,71 @@
-import { tw, useAverageColor } from '@dragverse/browser'
-import { STATIC_ASSETS } from '@dragverse/constants'
+import usePendingTxn from "@/hooks/usePendingTxn";
+import useAppStore, { UPLOADED_VIDEO_FORM_DEFAULTS } from "@/lib/store";
+import useProfileStore from "@/lib/store/idb/profile";
+import usePersistStore from "@/lib/store/persist";
+import { tw, useAverageColor } from "@dragverse/browser";
+import { STATIC_ASSETS } from "@dragverse/constants";
 import {
   getLennyPicture,
   getProfile,
   getProfilePicture,
   imageCdn,
   sanitizeDStorageUrl
-} from '@dragverse/generic'
+} from "@dragverse/generic";
 import {
   PublicationDocument,
   usePublicationQuery,
   useTxIdToTxHashQuery
-} from '@dragverse/lens'
-import { useApolloClient } from '@dragverse/lens/apollo'
-import type { QueuedVideoType } from '@dragverse/lens/custom-types'
-import { Tooltip } from '@dragverse/ui'
-import usePendingTxn from '@hooks/usePendingTxn'
-import useAppStore, { UPLOADED_VIDEO_FORM_DEFAULTS } from '@lib/store'
-import useProfileStore from '@lib/store/idb/profile'
-import usePersistStore from '@lib/store/persist'
-import type { FC } from 'react'
-
-import Badge from '../Badge'
+} from "@dragverse/lens";
+import { useApolloClient } from "@dragverse/lens/apollo";
+import type { QueuedVideoType } from "@dragverse/lens/custom-types";
+import { Tooltip } from "@dragverse/ui";
+import type { FC } from "react";
+import Badge from "../Badge";
 
 type Props = {
-  queuedVideo: QueuedVideoType
-}
+  queuedVideo: QueuedVideoType;
+};
 
 const QueuedVideo: FC<Props> = ({ queuedVideo }) => {
-  const { activeProfile } = useProfileStore()
-  const uploadedMedia = useAppStore((state) => state.uploadedMedia)
-  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia)
-  const queuedVideos = usePersistStore((state) => state.queuedVideos)
-  const setQueuedVideos = usePersistStore((state) => state.setQueuedVideos)
+  const { activeProfile } = useProfileStore();
+  const uploadedMedia = useAppStore((state) => state.uploadedMedia);
+  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia);
+  const queuedVideos = usePersistStore((state) => state.queuedVideos);
+  const setQueuedVideos = usePersistStore((state) => state.setQueuedVideos);
 
-  const { cache } = useApolloClient()
+  const { cache } = useApolloClient();
 
   const thumbnailUrl = imageCdn(
     uploadedMedia.isSensitiveContent
       ? `${STATIC_ASSETS}/images/sensor-blur.webp`
       : sanitizeDStorageUrl(queuedVideo.thumbnailUrl),
-    uploadedMedia.isByteVideo ? 'THUMBNAIL_V' : 'THUMBNAIL'
-  )
+    uploadedMedia.isByteVideo ? "THUMBNAIL_V" : "THUMBNAIL"
+  );
   const { color: backgroundColor } = useAverageColor(
     thumbnailUrl,
     uploadedMedia.isByteVideo
-  )
+  );
 
   const removeFromQueue = () => {
-    setUploadedMedia(UPLOADED_VIDEO_FORM_DEFAULTS)
+    setUploadedMedia(UPLOADED_VIDEO_FORM_DEFAULTS);
     if (!queuedVideo.txnId) {
       return setQueuedVideos(
         queuedVideos.filter((q) => q.txnHash !== queuedVideo.txnHash)
-      )
+      );
     }
-    setQueuedVideos(queuedVideos.filter((q) => q.txnId !== queuedVideo.txnId))
-  }
+    setQueuedVideos(queuedVideos.filter((q) => q.txnId !== queuedVideo.txnId));
+  };
 
   const { indexed } = usePendingTxn({
     txId: queuedVideo.txnId
-  })
+  });
 
   const { data: txHashData } = useTxIdToTxHashQuery({
     variables: {
       for: queuedVideo.txnId
     },
     skip: !indexed || !queuedVideo.txnId?.length
-  })
+  });
 
   const { stopPolling } = usePublicationQuery({
     variables: {
@@ -75,37 +74,37 @@ const QueuedVideo: FC<Props> = ({ queuedVideo }) => {
     skip: !txHashData?.txIdToTxHash?.length && !queuedVideo.txnHash?.length,
     pollInterval: 1000,
     notifyOnNetworkStatusChange: true,
-    onCompleted: async (data) => {
+    onCompleted: (data) => {
       if (data?.publication?.txHash) {
-        stopPolling()
+        stopPolling();
         cache.modify({
           fields: {
             publications() {
               cache.writeQuery({
                 data: { publication: data?.publication },
                 query: PublicationDocument
-              })
+              });
             }
           }
-        })
-        removeFromQueue()
+        });
+        removeFromQueue();
       }
     }
-  })
+  });
 
   if (!queuedVideo?.txnId && !queuedVideo?.txnHash) {
-    return null
+    return null;
   }
 
   return (
     <div className="cursor-wait">
       <Tooltip content="Indexing, please wait..." placement="top">
-        <div className="aspect-w-16 aspect-h-9 relative overflow-hidden">
+        <div className="relative aspect-h-9 aspect-w-16 overflow-hidden">
           <img
             src={thumbnailUrl}
             className={tw(
-              'dark:bg-brand-250000 h-full w-full bg-gray-100 object-center md:rounded-xl lg:h-full lg:w-full',
-              uploadedMedia.isByteVideo ? 'object-contain' : 'object-cover'
+              "h-full w-full bg-gray-100 object-center md:rounded-xl lg:h-full lg:w-full dark:bg-gray-900",
+              uploadedMedia.isByteVideo ? "object-contain" : "object-cover"
             )}
             style={{
               backgroundColor: backgroundColor && `${backgroundColor}95`
@@ -119,17 +118,17 @@ const QueuedVideo: FC<Props> = ({ queuedVideo }) => {
         <div className="flex items-start space-x-2.5">
           <img
             className="size-8 rounded-full"
-            src={getProfilePicture(activeProfile, 'AVATAR')}
+            src={getProfilePicture(activeProfile, "AVATAR")}
             alt={getProfile(activeProfile)?.slug}
             draggable={false}
             onError={({ currentTarget }) => {
-              currentTarget.src = getLennyPicture(activeProfile?.id)
+              currentTarget.src = getLennyPicture(activeProfile?.id);
             }}
           />
           <div className="grid flex-1">
             <div className="flex w-full min-w-0 items-start justify-between space-x-1.5 pb-1">
               <span
-                className="ultrawide:line-clamp-1 ultrawide:break-all line-clamp-2 break-words font-bold"
+                className="line-clamp-2 ultrawide:line-clamp-1 break-words ultrawide:break-all font-bold"
                 title={queuedVideo.title}
               >
                 {queuedVideo.title}
@@ -137,8 +136,8 @@ const QueuedVideo: FC<Props> = ({ queuedVideo }) => {
               <div className="p-1">
                 <Tooltip content="Indexing" placement="top">
                   <span className="relative flex size-2 items-center justify-center">
-                    <span className="bg-brand-500 absolute inline-flex size-2 animate-ping rounded-full opacity-75" />
-                    <span className="bg-brand-500 relative inline-flex size-1.5 rounded-full" />
+                    <span className="absolute inline-flex size-2 animate-ping rounded-full bg-brand-500 opacity-75" />
+                    <span className="relative inline-flex size-1.5 rounded-full bg-brand-500" />
                   </span>
                 </Tooltip>
               </div>
@@ -151,7 +150,7 @@ const QueuedVideo: FC<Props> = ({ queuedVideo }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default QueuedVideo
+export default QueuedVideo;

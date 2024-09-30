@@ -1,23 +1,23 @@
-import HoverableProfile from '@components/Common/HoverableProfile'
+import { getShortHandTime } from "@/lib/formatTime";
 import {
   getLennyPicture,
   getProfile,
   getProfilePicture,
   getPublicationData
-} from '@dragverse/generic'
-import type { MentionNotification } from '@dragverse/lens'
-import { MentionOutline } from '@dragverse/ui'
-import { getShortHandTime } from '@lib/formatTime'
-import Link from 'next/link'
-import type { FC } from 'react'
+} from "@dragverse/generic";
+import type { MentionNotification } from "@dragverse/lens";
+import { MentionOutline } from "@dragverse/ui";
+import Link from "next/link";
+import type { FC } from "react";
+import HoverableProfile from "../Common/HoverableProfile";
 
 type Props = {
-  notification: MentionNotification
-}
+  notification: MentionNotification;
+};
 
 const Mentioned: FC<Props> = ({ notification: { publication } }) => {
   const videoId =
-    publication.__typename === 'Comment' ? publication.root.id : publication.id
+    publication.__typename === "Comment" ? publication.root.id : publication.id;
   return (
     <div className="flex justify-between">
       <span className="flex space-x-4">
@@ -25,15 +25,15 @@ const Mentioned: FC<Props> = ({ notification: { publication } }) => {
           <MentionOutline className="size-5" />
         </div>
         <div>
-          <span className="flex -space-x-1.5">
+          <span className="-space-x-1.5 flex">
             <HoverableProfile profile={publication.by} key={publication.by?.id}>
               <img
                 className="size-7 rounded-full border dark:border-gray-700/80"
-                src={getProfilePicture(publication.by, 'AVATAR')}
+                src={getProfilePicture(publication.by, "AVATAR")}
                 draggable={false}
                 alt={getProfile(publication.by)?.displayName}
                 onError={({ currentTarget }) => {
-                  currentTarget.src = getLennyPicture(publication.by?.id)
+                  currentTarget.src = getLennyPicture(publication.by?.id);
                 }}
               />
             </HoverableProfile>
@@ -41,7 +41,7 @@ const Mentioned: FC<Props> = ({ notification: { publication } }) => {
           <div className="py-2">mentioned you</div>
           <Link
             href={`/watch/${videoId}`}
-            className="text-dust line-clamp-2 font-medium"
+            className="line-clamp-2 font-medium text-dust"
           >
             {getPublicationData(publication.metadata)?.content}
           </Link>
@@ -51,7 +51,7 @@ const Mentioned: FC<Props> = ({ notification: { publication } }) => {
         {getShortHandTime(publication.createdAt)}
       </span>
     </div>
-  )
-}
+  );
+};
 
-export default Mentioned
+export default Mentioned;

@@ -1,32 +1,30 @@
-import MetaTags from '@components/Common/MetaTags'
-import Timeline from '@components/Home/Timeline'
-import TimelineShimmer from '@components/Shimmers/TimelineShimmer'
-import { NoDataFound } from '@components/UIElements/NoDataFound'
+import MetaTags from "@/components/Common/MetaTags";
+import Timeline from "@/components/Home/Timeline";
+import TimelineShimmer from "@/components/Shimmers/TimelineShimmer";
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
+import Custom404 from "@/pages/404";
 import {
   ALLOWED_APP_IDS,
   INFINITE_SCROLL_ROOT_MARGIN,
   IS_MAINNET,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID
-} from '@dragverse/constants'
-import type {
-  PrimaryPublication,
-  PublicationSearchRequest
-} from '@dragverse/lens'
+} from "@dragverse/constants";
 import {
   CustomFiltersType,
   LimitType,
+  type PrimaryPublication,
   PublicationMetadataMainFocusType,
+  type PublicationSearchRequest,
   useSearchPublicationsQuery
-} from '@dragverse/lens'
-import { Spinner } from '@dragverse/ui'
-import { useRouter } from 'next/router'
-import { useInView } from 'react-cool-inview'
-import Custom404 from 'src/pages/404'
+} from "@dragverse/lens";
+import { Spinner } from "@dragverse/ui";
+import { useRouter } from "next/router";
+import { useInView } from "react-cool-inview";
 
 const ExploreHashtag = () => {
-  const { query } = useRouter()
-  const hashtag = query.hashtag as string
+  const { query } = useRouter();
+  const hashtag = query.hashtag as string;
 
   const request: PublicationSearchRequest = {
     where: {
@@ -40,18 +38,18 @@ const ExploreHashtag = () => {
     },
     query: hashtag,
     limit: LimitType.Fifty
-  }
+  };
 
   const { data, loading, error, fetchMore } = useSearchPublicationsQuery({
     variables: {
       request
     },
     skip: !hashtag
-  })
+  });
 
   const videos = data?.searchPublications
-    ?.items as unknown as PrimaryPublication[]
-  const pageInfo = data?.searchPublications?.pageInfo
+    ?.items as unknown as PrimaryPublication[];
+  const pageInfo = data?.searchPublications?.pageInfo;
 
   const { observe } = useInView({
     rootMargin: INFINITE_SCROLL_ROOT_MARGIN,
@@ -63,12 +61,12 @@ const ExploreHashtag = () => {
             cursor: pageInfo?.next
           }
         }
-      })
+      });
     }
-  })
+  });
 
   if (!hashtag) {
-    return <Custom404 />
+    return <Custom404 />;
   }
 
   return (
@@ -79,11 +77,7 @@ const ExploreHashtag = () => {
         <div className="my-4">
           {loading && <TimelineShimmer />}
           {videos?.length === 0 && (
-            <NoDataFound
-              isCenter
-              withImage
-              text={`No DRAG content to consume yet 🌕 Share your drag make-up tutorial, music videos, and more with your community!`}
-            />
+            <NoDataFound isCenter withImage text="No videos found" />
           )}
           {!error && !loading && (
             <>
@@ -98,7 +92,7 @@ const ExploreHashtag = () => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default ExploreHashtag
+export default ExploreHashtag;

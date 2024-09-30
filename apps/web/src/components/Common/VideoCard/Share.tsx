@@ -1,42 +1,40 @@
-import { useCopyToClipboard } from '@dragverse/browser'
+import useSw from "@/hooks/useSw";
+import { useCopyToClipboard } from "@dragverse/browser";
 import {
-  HEY_LOGO,
-  LINKEDIN_ICON_URL,
-  REDDIT_ICON_URL,
+  STATIC_ASSETS,
   TAPE_WEBSITE_URL,
-  TAPEXYZ_LOGO,
   TWITTER_ICON_URL
-} from '@dragverse/constants'
-import { EVENTS, getSharableLink, imageCdn, Tower } from '@dragverse/generic'
-import type { PrimaryPublication } from '@dragverse/lens'
-import { CopyOutline, MirrorOutline, Tooltip } from '@dragverse/ui'
-import Link from 'next/link'
-import { useTheme } from 'next-themes'
-import type { FC } from 'react'
-
-import EmbedMedia from '../EmbedMedia'
-import MirrorPublication from '../MirrorPublication'
+} from "@dragverse/constants";
+import { EVENTS, getSharableLink, imageCdn } from "@dragverse/generic";
+import type { PrimaryPublication } from "@dragverse/lens";
+import { CopyOutline, MirrorOutline, Tooltip } from "@dragverse/ui";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import type { FC } from "react";
+import EmbedMedia from "../EmbedMedia";
+import MirrorPublication from "../MirrorPublication";
 
 type Props = {
-  publication: PrimaryPublication
-}
+  publication: PrimaryPublication;
+};
 
 const Share: FC<Props> = ({ publication }) => {
-  const [copy] = useCopyToClipboard()
-  const { resolvedTheme } = useTheme()
-  const url = `${TAPE_WEBSITE_URL}/watch/${publication.id}`
+  const [copy] = useCopyToClipboard();
+  const { resolvedTheme } = useTheme();
+  const { addEventToQueue } = useSw();
+  const url = `${TAPE_WEBSITE_URL}/watch/${publication.id}`;
 
   const onCopyVideoUrl = async () => {
-    await copy(url)
-    Tower.track(EVENTS.PUBLICATION.PERMALINK)
-  }
+    await copy(url);
+    addEventToQueue(EVENTS.PUBLICATION.PERMALINK);
+  };
 
   return (
     <div>
       <div className="no-scrollbar mb-4 flex flex-nowrap items-center space-x-3 overflow-x-auto">
         <EmbedMedia publicationId={publication.id} />
         <MirrorPublication video={publication}>
-          <div className="dark:bg-brand-250/50 rounded-full bg-gray-200 p-3">
+          <div className="rounded-full bg-gray-200 p-3 dark:bg-brand-250/50">
             <MirrorOutline className="size-5" />
           </div>
         </MirrorPublication>
@@ -44,26 +42,14 @@ const Share: FC<Props> = ({ publication }) => {
           className="rounded-full"
           target="_blank"
           rel="noreferrer"
-          onClick={() => Tower.track(EVENTS.PUBLICATION.SHARE.TAPE)}
-          href={getSharableLink('tape', publication)}
+          onClick={() => addEventToQueue(EVENTS.PUBLICATION.SHARE.HEY)}
+          href={getSharableLink("hey", publication)}
         >
           <img
-            src={imageCdn(`${TAPEXYZ_LOGO}`, 'AVATAR_LG')}
-            className="h-12 w-12 max-w-none rounded-full"
-            loading="eager"
-            alt="tape"
-            draggable={false}
-          />
-        </Link>
-        <Link
-          className="rounded-full"
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => Tower.track(EVENTS.PUBLICATION.SHARE.HEY)}
-          href={getSharableLink('hey', publication)}
-        >
-          <img
-            src={imageCdn(`${HEY_LOGO}`, 'AVATAR_LG')}
+            src={imageCdn(
+              `${STATIC_ASSETS}/images/social/hey-logo.svg`,
+              "AVATAR_LG"
+            )}
             className="size-10 max-w-none"
             loading="eager"
             alt="hey"
@@ -75,14 +61,14 @@ const Share: FC<Props> = ({ publication }) => {
           className="rounded-full"
           target="_blank"
           rel="noreferrer"
-          href={getSharableLink('x', publication)}
-          onClick={() => Tower.track(EVENTS.PUBLICATION.SHARE.X)}
+          href={getSharableLink("x", publication)}
+          onClick={() => addEventToQueue(EVENTS.PUBLICATION.SHARE.X)}
         >
-          <div className="dark:bg-brand-250/50 rounded-full bg-gray-200 p-3">
-            {resolvedTheme === 'dark' ? (
+          <div className="rounded-full bg-gray-200 p-3 dark:bg-gray-800">
+            {resolvedTheme === "dark" ? (
               <img
-                src={imageCdn(`${TWITTER_ICON_URL}`, 'AVATAR')}
-                className="size-8"
+                src={imageCdn(`${TWITTER_ICON_URL}`, "AVATAR")}
+                className="size-4"
                 height={16}
                 width={16}
                 alt="X Logo"
@@ -90,8 +76,8 @@ const Share: FC<Props> = ({ publication }) => {
               />
             ) : (
               <img
-                src={imageCdn(`${TWITTER_ICON_URL}`, 'AVATAR')}
-                className="size-8"
+                src={imageCdn(`${TWITTER_ICON_URL}`, "AVATAR")}
+                className="size-4"
                 height={16}
                 width={16}
                 alt="X Logo"
@@ -101,13 +87,16 @@ const Share: FC<Props> = ({ publication }) => {
           </div>
         </Link>
         <Link
-          href={getSharableLink('reddit', publication)}
-          onClick={() => Tower.track(EVENTS.PUBLICATION.SHARE.REDDIT)}
+          href={getSharableLink("reddit", publication)}
+          onClick={() => addEventToQueue(EVENTS.PUBLICATION.SHARE.REDDIT)}
           target="_blank"
           rel="noreferrer"
         >
           <img
-            src={imageCdn(`${REDDIT_ICON_URL}`, 'AVATAR_LG')}
+            src={imageCdn(
+              `${STATIC_ASSETS}/images/social/reddit-logo.webp`,
+              "AVATAR_LG"
+            )}
             className="size-10 max-w-none rounded-full"
             loading="eager"
             alt="reddit"
@@ -115,13 +104,16 @@ const Share: FC<Props> = ({ publication }) => {
           />
         </Link>
         <Link
-          href={getSharableLink('linkedin', publication)}
+          href={getSharableLink("linkedin", publication)}
           target="_blank"
-          onClick={() => Tower.track(EVENTS.PUBLICATION.SHARE.LINKEDIN)}
+          onClick={() => addEventToQueue(EVENTS.PUBLICATION.SHARE.LINKEDIN)}
           rel="noreferrer"
         >
           <img
-            src={imageCdn(`${LINKEDIN_ICON_URL}`, 'AVATAR_LG')}
+            src={imageCdn(
+              `${STATIC_ASSETS}/images/social/linkedin-logo.png`,
+              "AVATAR_LG"
+            )}
             loading="eager"
             alt="linkedin"
             className="size-10 max-w-none rounded-full"
@@ -133,6 +125,7 @@ const Share: FC<Props> = ({ publication }) => {
         <div className="select-all truncate text-sm">{url}</div>
         <Tooltip content="Copy" placement="top">
           <button
+            type="button"
             className="ml-2 hover:opacity-60 focus:outline-none"
             onClick={() => onCopyVideoUrl()}
           >
@@ -141,7 +134,7 @@ const Share: FC<Props> = ({ publication }) => {
         </Tooltip>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Share
+export default Share;

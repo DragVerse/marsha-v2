@@ -1,25 +1,28 @@
-'use client'
+"use client";
 
-import { getLivepeerClient, setFingerprint, tapeFont } from '@dragverse/browser'
-import { getPublication } from '@dragverse/generic'
-import type { AnyPublication } from '@dragverse/lens'
-import { LivepeerConfig } from '@livepeer/react'
-import type { FC } from 'react'
-import { useEffect } from 'react'
+import {
+  getLivepeerClient,
+  setFingerprint,
+  tapeFont
+} from "@dragverse/browser";
+import { getPublication } from "@dragverse/generic";
+import type { AnyPublication } from "@dragverse/lens";
+import { LivepeerConfig } from "@livepeer/react";
+import type { FC } from "react";
+import { useEffect } from "react";
 
-import Video from './Video'
+import Video from "./Video";
 
 type Props = {
-  publication: AnyPublication
-}
+  publication: AnyPublication;
+};
 
 const Publication: FC<Props> = ({ publication }) => {
   useEffect(() => {
-    setFingerprint()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    setFingerprint();
+  }, []);
 
-  const target = getPublication(publication)
+  const target = getPublication(publication);
 
   return (
     <div className={tapeFont.className}>
@@ -27,7 +30,7 @@ const Publication: FC<Props> = ({ publication }) => {
         <Video video={target} />
       </LivepeerConfig>
     </div>
-  )
-}
+  );
+};
 
-export default Publication
+export default Publication;

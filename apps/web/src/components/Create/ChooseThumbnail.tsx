@@ -1,94 +1,94 @@
-import ThumbnailsShimmer from '@components/Shimmers/ThumbnailsShimmer'
-import { generateVideoThumbnails, tw } from '@dragverse/browser'
-import { logger } from '@dragverse/generic'
-import { AddImageOutline, CheckOutline, Spinner } from '@dragverse/ui'
-import useAppStore from '@lib/store'
-import type { ChangeEvent, FC } from 'react'
-import { useEffect, useState } from 'react'
+import ThumbnailsShimmer from "@/components/Shimmers/ThumbnailsShimmer";
+import useAppStore from "@/lib/store";
+import { generateVideoThumbnails, tw } from "@dragverse/browser";
+import { logger } from "@dragverse/generic";
+import { AddImageOutline, CheckOutline, Spinner } from "@dragverse/ui";
+import type { ChangeEvent, FC } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
-  file: File | null
+  file: File | null;
 }
 
-const DEFAULT_THUMBNAIL_INDEX = 0
-export const THUMBNAIL_GENERATE_COUNT = 9
+const DEFAULT_THUMBNAIL_INDEX = 0;
+export const THUMBNAIL_GENERATE_COUNT = 9;
 
 type Thumbnail = {
-  blobUrl: string
-  mimeType: string
-}
+  blobUrl: string;
+  mimeType: string;
+};
 
 const ChooseThumbnail: FC<Props> = ({ file }) => {
-  const [thumbnails, setThumbnails] = useState<Thumbnail[]>([])
-  const [selectedThumbnailIndex, setSelectedThumbnailIndex] = useState(-1)
-  const uploadedMedia = useAppStore((state) => state.uploadedMedia)
-  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia)
+  const [thumbnails, setThumbnails] = useState<Thumbnail[]>([]);
+  const [selectedThumbnailIndex, setSelectedThumbnailIndex] = useState(-1);
+  const uploadedMedia = useAppStore((state) => state.uploadedMedia);
+  const setUploadedMedia = useAppStore((state) => state.setUploadedMedia);
 
-  const onSelectThumbnail = async (index: number) => {
+  const onSelectThumbnail = (index: number) => {
     if (uploadedMedia.durationInSeconds === 0) {
-      return
+      return;
     }
-    setSelectedThumbnailIndex(index)
+    setSelectedThumbnailIndex(index);
     setUploadedMedia({
       thumbnailBlobUrl: thumbnails[index]?.blobUrl
-    })
-  }
+    });
+  };
 
   const generateThumbnails = async (fileToGenerate: File) => {
     try {
       const thumbnailArray = await generateVideoThumbnails(
         fileToGenerate,
         THUMBNAIL_GENERATE_COUNT
-      )
-      const thumbnailList: Thumbnail[] = []
-      thumbnailArray.forEach((thumbnailBlob) => {
+      );
+      const thumbnailList: Thumbnail[] = [];
+      thumbnailArray.map((thumbnailBlob) => {
         thumbnailList.push({
           blobUrl: thumbnailBlob,
-          mimeType: 'image/jpeg'
-        })
-      })
-      setThumbnails(thumbnailList)
-      setSelectedThumbnailIndex(DEFAULT_THUMBNAIL_INDEX)
+          mimeType: "image/jpeg"
+        });
+      });
+      setThumbnails(thumbnailList);
+      setSelectedThumbnailIndex(DEFAULT_THUMBNAIL_INDEX);
     } catch {}
-  }
+  };
 
   useEffect(() => {
-    onSelectThumbnail(selectedThumbnailIndex)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedThumbnailIndex])
+    onSelectThumbnail(selectedThumbnailIndex);
+  }, [selectedThumbnailIndex]);
 
   useEffect(() => {
     if (file) {
       generateThumbnails(file).catch((error) =>
-        logger.error('[Error Generate Thumbnails from File]', error)
-      )
+        logger.error("[Error Generate Thumbnails from File]", error)
+      );
     }
     return () => {
-      setSelectedThumbnailIndex(-1)
-      setThumbnails([])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file])
+      setSelectedThumbnailIndex(-1);
+      setThumbnails([]);
+    };
+  }, [file]);
 
-  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
-      setSelectedThumbnailIndex(-1)
-      const file = e.target.files[0]
-      const preview = URL?.createObjectURL(file)
+      setSelectedThumbnailIndex(-1);
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const preview = URL?.createObjectURL(file);
       setThumbnails([
         {
           blobUrl: preview,
-          mimeType: file.type || 'image/jpeg'
+          mimeType: file?.type || "image/jpeg"
         },
         ...thumbnails
-      ])
+      ]);
       setUploadedMedia({
         thumbnailBlobUrl: preview,
-        thumbnailType: file.type || 'image/jpeg'
-      })
-      setSelectedThumbnailIndex(0)
+        thumbnailType: file.type || "image/jpeg"
+      });
+      setSelectedThumbnailIndex(0);
     }
-  }
+  };
 
   return (
     <div className="grid grid-cols-5 gap-2">
@@ -111,23 +111,23 @@ const ChooseThumbnail: FC<Props> = ({ file }) => {
       {thumbnails.map((thumbnail, idx) => {
         return (
           <button
-            key={idx}
+            key={thumbnail.blobUrl}
             type="button"
             onClick={() => onSelectThumbnail(idx)}
             className="tape-border relative h-full w-full flex-none overflow-hidden rounded-md dark:ring-black"
           >
             <img
               className={tw(
-                'h-full w-full rounded-md',
-                uploadedMedia.isByteVideo ? 'object-contain' : 'object-cover'
+                "h-full w-full rounded-md",
+                uploadedMedia.isByteVideo ? "object-contain" : "object-cover"
               )}
               src={thumbnail.blobUrl}
               alt="thumbnail"
               draggable={false}
             />
             {selectedThumbnailIndex === idx && (
-              <div className="bg-brand- 600/80 absolute inset-0 grid place-items-center bg-opacity-50">
-                <CheckOutline className="text-brand-500 size-4" />
+              <div className="absolute inset-0 grid place-items-center bg-gray-800 bg-opacity-50">
+                <CheckOutline className="size-4 text-brand-500" />
               </div>
             )}
             {uploadedMedia.uploadingThumbnail &&
@@ -137,10 +137,10 @@ const ChooseThumbnail: FC<Props> = ({ file }) => {
                 </div>
               )}
           </button>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default ChooseThumbnail
+export default ChooseThumbnail;

@@ -1,18 +1,19 @@
-import { NoDataFound } from '@components/UIElements/NoDataFound'
-import { tw, useDebounce, useOutsideClick } from '@dragverse/browser'
+import { NoDataFound } from "@/components/UIElements/NoDataFound";
+import useSw from "@/hooks/useSw";
+import { tw, useDebounce, useOutsideClick } from "@dragverse/browser";
 import {
   LENSTUBE_APP_ID,
   LENSTUBE_BYTES_APP_ID,
   TAPE_APP_ID,
   TAPE_BYTES_APP_ID
-} from '@dragverse/constants'
-import { EVENTS, Tower } from '@dragverse/generic'
+} from "@dragverse/constants";
+import { EVENTS } from "@dragverse/generic";
 import type {
   PrimaryPublication,
   Profile,
   ProfileSearchRequest,
   PublicationSearchRequest
-} from '@dragverse/lens'
+} from "@dragverse/lens";
 import {
   CustomFiltersType,
   LimitType,
@@ -20,31 +21,34 @@ import {
   SearchPublicationType,
   useSearchProfilesLazyQuery,
   useSearchPublicationsLazyQuery
-} from '@dragverse/lens'
-import { Input, SearchOutline, Spinner } from '@dragverse/ui'
-import { useEffect, useRef, useState } from 'react'
-
-import Profiles from './Profiles'
-import Publications from './Publications'
+} from "@dragverse/lens";
+import { Input, SearchOutline, Spinner } from "@dragverse/ui";
+import { useTheme } from "next-themes";
+import { useEffect, useRef, useState } from "react";
+import Profiles from "./Profiles";
+import Publications from "./Publications";
 
 const GlobalSearch = () => {
-  const [showSearchBar, setShowSearchBar] = useState(false)
-  const [keyword, setKeyword] = useState('')
+  const { setTheme } = useTheme();
+  setTheme("dark");
+  const [showSearchBar, setShowSearchBar] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const { addEventToQueue } = useSw();
 
-  const debouncedValue = useDebounce<string>(keyword, 500)
-  const resultsRef = useRef(null)
+  const debouncedValue = useDebounce<string>(keyword, 500);
+  const resultsRef = useRef(null);
   useOutsideClick(resultsRef, () => {
-    setKeyword('')
-    setShowSearchBar(false)
-  })
+    setKeyword("");
+    setShowSearchBar(false);
+  });
 
   const [
     searchPublications,
     { data: publicationsData, loading: publicationsLoading }
-  ] = useSearchPublicationsLazyQuery()
+  ] = useSearchPublicationsLazyQuery();
 
   const [searchProfiles, { data: profilesData, loading: profilesLoading }] =
-    useSearchProfilesLazyQuery()
+    useSearchProfilesLazyQuery();
 
   const publicationSearchRequest: PublicationSearchRequest = {
     limit: LimitType.Ten,
@@ -65,7 +69,7 @@ const GlobalSearch = () => {
       publicationTypes: [SearchPublicationType.Post],
       customFilters: [CustomFiltersType.Gardeners]
     }
-  }
+  };
 
   const profileSearchRequest: ProfileSearchRequest = {
     limit: LimitType.Ten,
@@ -73,7 +77,7 @@ const GlobalSearch = () => {
     where: {
       customFilters: [CustomFiltersType.Gardeners]
     }
-  }
+  };
 
   const onDebounce = () => {
     if (keyword.trim().length) {
@@ -81,53 +85,53 @@ const GlobalSearch = () => {
         variables: {
           request: publicationSearchRequest
         }
-      })
+      });
       searchProfiles({
         variables: {
           request: profileSearchRequest
         }
-      })
-      Tower.track(EVENTS.SEARCH)
+      });
+      addEventToQueue(EVENTS.SEARCH);
     }
-  }
+  };
 
-  const profiles = profilesData?.searchProfiles?.items as Profile[]
+  const profiles = profilesData?.searchProfiles?.items as Profile[];
   const publications = publicationsData?.searchPublications
-    ?.items as unknown as PrimaryPublication[]
+    ?.items as unknown as PrimaryPublication[];
 
   useEffect(() => {
-    onDebounce()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedValue])
+    onDebounce();
+  }, [debouncedValue]);
 
   const Trigger = () => (
     <button
-      className="dark:bg-brand-250 rounded-full bg-gray-100 p-2.5 outline-none"
+      type="button"
+      className="rounded-full bg-brand-250 p-2.5 outline-none dark:bg-brand-250"
       onClick={() => setShowSearchBar(true)}
     >
-      <SearchOutline className="size-3.5" />
+      <SearchOutline className="size-3.5 text-white" />
       <span className="sr-only">Search</span>
     </button>
-  )
+  );
 
   const Content = () => (
-    <div className="laptop:w-[800px] absolute -top-[18px] right-0 z-20 w-[250px] rounded-full">
+    <div className="-top-[18px] absolute right-0 z-20 laptop:w-[800px] w-[250px] rounded-full">
       <Input
         autoFocus
         type="search"
         value={keyword}
         onChange={(event) => setKeyword(event.target.value)}
         placeholder="Search"
-        className="focus:outline-brand-400"
+        className="bg-black focus:text-white focus:outline-brand-400"
       />
       <div
         className={tw(
-          'rounded-medium tape-border no-scrollbar dark:bg-brand-850 top-10 z-10 mt-1 w-full overflow-y-auto bg-white text-base shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none md:absolute',
+          "dragverse-border no-scrollbar top-10 z-10 mt-1 w-full overflow-y-auto rounded-medium bg-black text-base shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none md:absolute dark:bg-black",
           { hidden: debouncedValue.length === 0 }
         )}
-        style={{ top: '100%' }} // Adjust the top position for mobile
+        style={{ top: "100%" }} // Adjust the top position for mobile
       >
-        <div style={{ maxHeight: '80vh' }}>
+        <div style={{ maxHeight: "80vh" }}>
           <div className="p-4">
             {profilesLoading || publicationsLoading ? (
               <div className="flex justify-center p-5">
@@ -135,15 +139,15 @@ const GlobalSearch = () => {
               </div>
             ) : (
               <>
-                <div className="space-y-2 pb-2 focus:outline-none">
+                <div className="space-y-2 pb-2 text-white focus:outline-none">
                   <span className="font-bold">Creators</span>
                   {profiles?.length ? (
                     <Profiles
                       results={profiles}
                       loading={profilesLoading}
                       clearSearch={() => {
-                        setShowSearchBar(false)
-                        setKeyword('')
+                        setShowSearchBar(false);
+                        setKeyword("");
                       }}
                     />
                   ) : (
@@ -157,8 +161,8 @@ const GlobalSearch = () => {
                       results={publications}
                       loading={publicationsLoading}
                       clearSearch={() => {
-                        setShowSearchBar(false)
-                        setKeyword('')
+                        setShowSearchBar(false);
+                        setKeyword("");
                       }}
                     />
                   ) : (
@@ -171,7 +175,7 @@ const GlobalSearch = () => {
         </div>
       </div>
     </div>
-  )
+  );
 
   return (
     <div>
@@ -179,7 +183,7 @@ const GlobalSearch = () => {
         {showSearchBar ? <Content /> : <Trigger />}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GlobalSearch
+export default GlobalSearch;

@@ -1,24 +1,24 @@
-import { useAverageColor } from '@dragverse/browser'
+import { useAverageColor } from "@dragverse/browser";
 import {
   getThumbnailUrl,
   imageCdn,
   sanitizeDStorageUrl
-} from '@dragverse/generic'
-import type { PrimaryPublication } from '@dragverse/lens'
-import type { FC } from 'react'
-import React from 'react'
+} from "@dragverse/generic";
+import type { PrimaryPublication } from "@dragverse/lens";
+import type { FC } from "react";
+import type React from "react";
 
 type Props = {
-  children: React.ReactNode
-  audio: PrimaryPublication
-}
+  children: React.ReactNode;
+  audio: PrimaryPublication;
+};
 
 const Background: FC<Props> = ({ audio, children }) => {
   const coverUrl = imageCdn(
     sanitizeDStorageUrl(getThumbnailUrl(audio.metadata, true)),
-    'SQUARE'
-  )
-  const { color: backgroundColor } = useAverageColor(coverUrl, true)
+    "SQUARE"
+  );
+  const { color: backgroundColor } = useAverageColor(coverUrl, true);
 
   return (
     <div style={{ backgroundColor }} className="relative h-1/4 overflow-hidden">
@@ -31,7 +31,7 @@ const Background: FC<Props> = ({ audio, children }) => {
       <div className="absolute inset-0 h-full w-full bg-black bg-opacity-40" />
       <div className="backdrop-blur-3xl">{children}</div>
     </div>
-  )
-}
+  );
+};
 
-export default Background
+export default Background;

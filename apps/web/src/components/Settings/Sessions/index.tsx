@@ -1,14 +1,13 @@
-import MetaTags from '@components/Common/MetaTags'
-import React from 'react'
+import MetaTags from "@/components/Common/MetaTags";
 
-import List from './List'
+import List from "./List";
 
 const Sessions = () => {
   return (
     <>
       <MetaTags title="Sessions" />
       <div className="mb-5 space-y-2">
-        <h1 className="text-brand-400 text-xl font-bold">
+        <h1 className="font-bold text-brand-400 text-xl">
           Authorized Sessions
         </h1>
         <p className="text opacity-80">
@@ -18,7 +17,7 @@ const Sessions = () => {
       </div>
       <List />
     </>
-  )
-}
+  );
+};
 
-export default Sessions
+export default Sessions;

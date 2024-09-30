@@ -1,66 +1,66 @@
 export const CREATOR_VIDEO_CATEGORIES = [
   {
-    name: 'Comedy',
-    tag: 'comedy'
+    name: "Comedy",
+    tag: "comedy"
   },
   {
-    name: 'Makeup',
-    tag: 'makeup'
+    name: "Makeup",
+    tag: "makeup"
   },
   {
-    name: 'Fashion',
-    tag: 'fashion'
+    name: "Fashion",
+    tag: "fashion"
   },
   {
-    name: 'Sewing',
-    tag: 'sewing'
+    name: "Sewing",
+    tag: "sewing"
   },
   {
-    name: 'Styling',
-    tag: 'styling'
+    name: "Styling",
+    tag: "styling"
   },
   {
-    name: 'Music',
-    tag: 'music'
+    name: "Music",
+    tag: "music"
   },
   {
-    name: 'Performances',
-    tag: 'performances'
+    name: "Performances",
+    tag: "performances"
   },
   {
-    name: 'Inspiration',
-    tag: 'inspiration'
+    name: "Inspiration",
+    tag: "inspiration"
   },
   {
-    name: 'Metaverse',
-    tag: 'metaverse'
+    name: "Metaverse",
+    tag: "metaverse"
   },
   {
-    name: 'Branding',
-    tag: 'branding'
+    name: "Branding",
+    tag: "branding"
   },
   {
-    name: 'Storytime',
-    tag: 'storytime'
+    name: "Storytime",
+    tag: "storytime"
   },
   {
-    name: 'Drag Race',
-    tag: 'drag-race'
+    name: "Drag Race",
+    tag: "drag-race"
   },
   {
-    name: 'Gaming',
-    tag: 'gaming'
+    name: "Gaming",
+    tag: "gaming"
   },
   {
-    name: 'Education',
-    tag: 'education'
+    name: "Education",
+    tag: "education"
   },
   {
-    name: 'Activism',
-    tag: 'activism'
+    name: "Activism",
+    tag: "activism"
   },
   {
-    name: 'Dance',
-    tag: 'dance'
+    name: "Dance",
+    tag: "dance"
   }
-]
+];

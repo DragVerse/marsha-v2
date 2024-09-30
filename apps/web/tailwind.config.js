@@ -1,11 +1,11 @@
-const base = require('@dragverse/ui/tailwind-preset')
+const base = require("@dragverse/ui/tailwind-preset");
 
 /** @type {import ('tailwindcss').Config} */
 module.exports = {
   ...base,
-  content: ['./src/**/*.{js,ts,jsx,tsx}', '../../packages/**/*.{ts,tsx}'],
+  content: ["./src/**/*.{ts,tsx}", "../../packages/ui/src/**/*.{ts,tsx}"],
   plugins: [
-    require('@tailwindcss/aspect-ratio'),
-    require('@tailwindcss/typography')
+    require("@tailwindcss/aspect-ratio"),
+    require("@tailwindcss/typography")
   ]
-}
+};

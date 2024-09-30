@@ -22,12 +22,12 @@ body {
   @apply min-h-screen bg-brand-850 text-brand-850 antialiased dark:bg-brand-850 dark:text-white;
 }
 
-.tape-border {
+.dragverse-border {
   @apply border border-[#18122D] dark:border-[#18122D];
 }
 
 .text-dust {
-  @apply text-[#666666] dark:text-[#F0B5F0];
+  @apply text-[#F0B5F0] dark:text-[#F0B5F0];
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -40,7 +40,7 @@ body {
 }
 
 .middot:after {
-  content: '•';
+  content: "•";
   @apply mx-1.5 flex text-[10px] opacity-60;
 }
 
@@ -52,7 +52,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type='number'] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 

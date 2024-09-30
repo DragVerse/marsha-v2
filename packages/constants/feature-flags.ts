@@ -1,27 +1,17 @@
-import { IS_MAINNET } from './general'
+import { IS_MAINNET } from "./general";
 
 export enum FEATURE_FLAGS {
-  POST_WITH_SOURCE_URL = 'PostWithSource',
-  PROFILE_NFTS = 'ProfileNfts',
-  BANGERS = 'Bangers'
+  POST_WITH_SOURCE_URL = "PostWithSource"
 }
 
 type FeatureFlag = {
-  flag: string
-  enabledFor: string[]
-}
+  flag: string;
+  enabledFor: string[];
+};
 
 export const featureFlags: FeatureFlag[] = [
   {
     flag: FEATURE_FLAGS.POST_WITH_SOURCE_URL,
-    enabledFor: IS_MAINNET ? ['0x2d'] : []
-  },
-  {
-    flag: FEATURE_FLAGS.PROFILE_NFTS,
-    enabledFor: IS_MAINNET ? ['0x2d'] : []
-  },
-  {
-    flag: FEATURE_FLAGS.BANGERS,
-    enabledFor: IS_MAINNET ? ['0x2d'] : []
+    enabledFor: IS_MAINNET ? ["0x2d"] : []
   }
-]
+];

@@ -5,21 +5,25 @@
   "main": "./generated.ts",
   "private": true,
   "scripts": {
-    "codegen": "graphql-codegen"
+    "codegen": "graphql-codegen",
+    "codegenv3": "graphql-codegen --config codegenv3.ts",
+    "typecheck": "tsc --pretty --noEmit"
   },
   "dependencies": {
-    "@apollo/client": "3.10.4",
-    "@irys/sdk": "^0.2.1",
+    "@apollo/client": "3.11.8",
+    "@graphql-codegen/client-preset": "^4.3.3",
     "@lens-protocol/metadata": "^1.2.0"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^5.0.2",
     "@graphql-codegen/fragment-matcher": "^5.0.2",
-    "@graphql-codegen/typescript": "^4.0.7",
-    "@graphql-codegen/typescript-operations": "^4.2.1",
-    "@graphql-codegen/typescript-react-apollo": "^4.3.0",
-    "@dragverse/config": "workspace:*",
+    "@graphql-codegen/typescript": "^4.0.9",
+    "@graphql-codegen/typescript-operations": "^4.2.3",
+    "@graphql-codegen/typescript-react-apollo": "^4.3.2",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@dragverse/constants": "workspace:*",
-    "typescript": "5.4.5"
+    "@dragverse/tsconfig": "workspace:*",
+    "@types/node": "^22.6.1",
+    "typescript": "^5.6.2"
   }
 }

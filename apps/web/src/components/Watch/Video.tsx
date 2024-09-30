@@ -1,5 +1,6 @@
-import InterweaveContent from '@components/Common/InterweaveContent'
-import { tw } from '@dragverse/browser'
+import useAppStore from "@/lib/store";
+import useProfileStore from "@/lib/store/idb/profile";
+import { tw } from "@dragverse/browser";
 import {
   getCategoryName,
   getIsSensitiveContent,
@@ -9,49 +10,47 @@ import {
   getThumbnailUrl,
   imageCdn,
   sanitizeDStorageUrl
-} from '@dragverse/generic'
-import type { PrimaryPublication, VideoMetadataV3 } from '@dragverse/lens'
+} from "@dragverse/generic";
+import type { PrimaryPublication, VideoMetadataV3 } from "@dragverse/lens";
 import {
   Badge,
   ChevronDownOutline,
   ChevronUpOutline,
   VideoPlayer
-} from '@dragverse/ui'
-import useAppStore from '@lib/store'
-import useProfileStore from '@lib/store/idb/profile'
-import Link from 'next/link'
-import type { FC } from 'react'
-import { memo, useEffect, useState } from 'react'
-
-import PublicationActions from '../Common/Publication/PublicationActions'
-import VideoMeta from './VideoMeta'
+} from "@dragverse/ui";
+import Link from "next/link";
+import { type FC, memo, useEffect, useState } from "react";
+import InterweaveContent from "../Common/InterweaveContent";
+import PublicationActions from "../Common/Publication/PublicationActions";
+import VideoMeta from "./VideoMeta";
 
 type Props = {
-  video: PrimaryPublication
-}
+  video: PrimaryPublication;
+};
 
-const RenderPlayer = memo(function ({ video }: { video: PrimaryPublication }) {
-  const metadata = video.metadata as VideoMetadataV3
-  const isSensitiveContent = getIsSensitiveContent(metadata, video.id)
-  const videoWatchTime = useAppStore((state) => state.videoWatchTime)
-  const { activeProfile } = useProfileStore()
+const RenderPlayer = memo(({ video }: { video: PrimaryPublication }) => {
+  const metadata = video.metadata as VideoMetadataV3;
+  const isSensitiveContent = getIsSensitiveContent(metadata);
+  const videoWatchTime = useAppStore((state) => state.videoWatchTime);
+  const { activeProfile } = useProfileStore();
 
-  const isBytesVideo = metadata.isShortVideo
+  const isBytesVideo = metadata.isShortVideo;
   const thumbnailUrl = imageCdn(
     sanitizeDStorageUrl(getThumbnailUrl(metadata, true)),
-    isBytesVideo ? 'THUMBNAIL_V' : 'THUMBNAIL'
-  )
-  const videoUrl = getPublicationMediaUrl(metadata)
+    isBytesVideo ? "THUMBNAIL_V" : "THUMBNAIL"
+  );
+  const videoUrl = getPublicationMediaUrl(metadata);
 
   const refCallback = (ref: HTMLMediaElement) => {
     if (ref) {
-      ref.autoplay = true
+      ref.autoplay = true;
     }
-  }
+  };
 
   return (
-    <div className="rounded-large overflow-hidden">
+    <div className="overflow-hidden rounded-large">
       <VideoPlayer
+        pid={video.id}
         address={activeProfile?.ownedBy.address}
         refCallback={refCallback}
         currentTime={videoWatchTime}
@@ -65,22 +64,22 @@ const RenderPlayer = memo(function ({ video }: { video: PrimaryPublication }) {
         shouldUpload={getShouldUploadVideo(video)}
       />
     </div>
-  )
-})
-RenderPlayer.displayName = 'RenderPlayer'
+  );
+});
+RenderPlayer.displayName = "RenderPlayer";
 
 const Video: FC<Props> = ({ video }) => {
-  const [clamped, setClamped] = useState(false)
-  const [showMore, setShowMore] = useState(false)
+  const [clamped, setClamped] = useState(false);
+  const [showMore, setShowMore] = useState(false);
 
-  const metadata = video.metadata as VideoMetadataV3
+  const metadata = video.metadata as VideoMetadataV3;
 
   useEffect(() => {
     if (metadata?.content?.trim().length > 500) {
-      setClamped(true)
-      setShowMore(true)
+      setClamped(true);
+      setShowMore(true);
     }
-  }, [metadata?.content])
+  }, [metadata?.content]);
 
   return (
     <div>
@@ -88,7 +87,7 @@ const Video: FC<Props> = ({ video }) => {
       <div>
         <h1 className="mt-4 line-clamp-2 font-bold md:text-xl">
           <InterweaveContent
-            content={getPublicationData(video.metadata)?.title || ''}
+            content={getPublicationData(video.metadata)?.title || ""}
           />
         </h1>
         <VideoMeta video={video} />
@@ -97,9 +96,9 @@ const Video: FC<Props> = ({ video }) => {
         <hr className="my-4 border-[0.5px] border-gray-200 dark:border-gray-800" />
         <div className="flex flex-1 flex-col overflow-hidden break-words">
           {getPublicationData(metadata)?.content ? (
-            <p className={tw({ 'line-clamp-3': clamped })}>
+            <p className={tw({ "line-clamp-3": clamped })}>
               <InterweaveContent
-                content={getPublicationData(metadata)?.content || ''}
+                content={getPublicationData(metadata)?.content || ""}
               />
             </p>
           ) : null}
@@ -125,14 +124,14 @@ const Video: FC<Props> = ({ video }) => {
           <div className="mt-3 flex items-center">
             {video?.metadata?.tags && (
               <Link href={`/explore/${video.metadata.tags[0]}`}>
-                <Badge>{getCategoryName(video.metadata.tags[0])}</Badge>
+                <Badge>{getCategoryName(video.metadata.tags[0] ?? "")}</Badge>
               </Link>
             )}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default memo(Video)
+export default memo(Video);

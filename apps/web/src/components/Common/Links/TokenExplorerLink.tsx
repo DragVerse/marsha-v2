@@ -1,13 +1,13 @@
-import { POLYGONSCAN_URL } from '@dragverse/constants'
-import Link from 'next/link'
-import type { ReactElement } from 'react'
+import { POLYGONSCAN_URL } from "@dragverse/constants";
+import Link from "next/link";
+import type { ReactElement } from "react";
 
 const TokenExplorerLink = ({
   address,
   children
 }: {
-  address: string
-  children: ReactElement
+  address: string;
+  children: ReactElement;
 }) => {
   return (
     <Link
@@ -17,7 +17,7 @@ const TokenExplorerLink = ({
     >
       {children}
     </Link>
-  )
-}
+  );
+};
 
-export default TokenExplorerLink
+export default TokenExplorerLink;

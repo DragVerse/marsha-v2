@@ -1,36 +1,34 @@
-import type {
-  QueuedCommentType,
-  QueuedVideoType
-} from '@dragverse/lens/custom-types'
 import {
   CustomNotificationsFilterEnum,
-  LocalStore
-} from '@dragverse/lens/custom-types'
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+  LocalStore,
+  type QueuedCommentType,
+  type QueuedVideoType
+} from "@dragverse/lens/custom-types";
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface AppPerisistState {
-  lastOpenedNotificationId: string
-  setLastOpenedNotificationId: (id: string) => void
-  latestNotificationId: string
-  setLatestNotificationId: (id: string) => void
-  queuedVideos: QueuedVideoType[]
-  queuedComments: QueuedCommentType[]
-  selectedNotificationsFilter: CustomNotificationsFilterEnum
-  setQueuedComments: (queuedComments: QueuedCommentType[]) => void
-  setQueuedVideos: (queuedVideos: QueuedVideoType[]) => void
+  lastOpenedNotificationId: string;
+  setLastOpenedNotificationId: (id: string) => void;
+  latestNotificationId: string;
+  setLatestNotificationId: (id: string) => void;
+  queuedVideos: QueuedVideoType[];
+  queuedComments: QueuedCommentType[];
+  selectedNotificationsFilter: CustomNotificationsFilterEnum;
+  setQueuedComments: (queuedComments: QueuedCommentType[]) => void;
+  setQueuedVideos: (queuedVideos: QueuedVideoType[]) => void;
   setSelectedNotificationsFilter: (
     filter: CustomNotificationsFilterEnum
-  ) => void
+  ) => void;
 }
 
 export const usePersistStore = create(
   persist<AppPerisistState>(
     (set) => ({
-      latestNotificationId: '',
+      latestNotificationId: "",
       setLatestNotificationId: (latestNotificationId) =>
         set({ latestNotificationId }),
-      lastOpenedNotificationId: '',
+      lastOpenedNotificationId: "",
       setLastOpenedNotificationId: (id) =>
         set({ lastOpenedNotificationId: id }),
       queuedComments: [],
@@ -43,9 +41,9 @@ export const usePersistStore = create(
         set({ selectedNotificationsFilter })
     }),
     {
-      name: LocalStore.TAPE_STORE
+      name: LocalStore.DRAGVERSE_STORE
     }
   )
-)
+);
 
-export default usePersistStore
+export default usePersistStore;

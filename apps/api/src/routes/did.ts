@@ -1,25 +1,36 @@
-import { zValidator } from '@hono/zod-validator'
-import { Hono } from 'hono'
-import { createPublicClient, http, isAddress } from 'viem'
-import { mainnet } from 'viem/chains'
-import type { z } from 'zod'
-import { array, object, string } from 'zod'
-
 import {
   ERROR_MESSAGE,
   LENS_API_URL,
-  PUBLIC_ETHEREUM_NODE
-} from '@/helpers/constants'
-import { resolverAbi } from '@/helpers/did/resolverAbi'
+  TAPE_USER_AGENT
+} from "@dragverse/constants";
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { http, createPublicClient, fallback, isAddress } from "viem";
+import { mainnet } from "viem/chains";
+import type { z } from "zod";
+import { array, object, string } from "zod";
 
-const app = new Hono()
+import { resolverAbi } from "@/helpers/did/resolverAbi";
+
+const app = new Hono();
 
 const validationSchema = object({
   addresses: array(string().regex(/^(0x)?[\da-f]{40}$/i)).max(50, {
-    message: 'Too many addresses!'
+    message: "Too many addresses!"
   })
-})
-type RequestInput = z.infer<typeof validationSchema>
+});
+type RequestInput = z.infer<typeof validationSchema>;
+
+type ProfileResult = {
+  data: {
+    profiles: {
+      items: {
+        id: string;
+        handle: { fullHandle: string; ownedBy: string };
+      }[];
+    };
+  };
+};
 
 const PROFILES_QUERY = `query Profiles($ownedBy: [EvmAddress!]) {
   profiles(request: { where: { ownedBy: $ownedBy } }) {
@@ -31,7 +42,7 @@ const PROFILES_QUERY = `query Profiles($ownedBy: [EvmAddress!]) {
       }
     }
   }
-}`
+}`;
 
 const replaceAddressesWithHandles = (
   profiles: { handle: { fullHandle: string; ownedBy: string }; id: string }[],
@@ -40,31 +51,35 @@ const replaceAddressesWithHandles = (
   const handleMap = profiles.reduce(
     (acc: { [address: string]: string }, profile) => {
       if (!acc[profile.handle.ownedBy]) {
-        acc[profile.handle.ownedBy] = profile.handle.fullHandle || profile.id
+        acc[profile.handle.ownedBy] = profile.handle.fullHandle || profile.id;
       }
-      return acc
+      return acc;
     },
     {}
-  )
-  return addresses.map((address) => handleMap[address] || address)
-}
+  );
+  return addresses.map((address) => handleMap[address] || address);
+};
 
 const resolveENS = async (address: string): Promise<string> => {
   const client = createPublicClient({
     chain: mainnet,
-    transport: http(PUBLIC_ETHEREUM_NODE)
-  })
+    transport: fallback([
+      http("https://ethereum.publicnode.com"),
+      http("https://rpc.ankr.com/eth"),
+      http("https://eth.merkle.io")
+    ])
+  });
   const data = await client.readContract({
-    address: '0x3671ae578e63fdf66ad4f3e12cc0c0d71ac7510c',
+    address: "0x3671ae578e63fdf66ad4f3e12cc0c0d71ac7510c",
     abi: resolverAbi,
     args: [[address]],
-    functionName: 'getNames'
-  })
+    functionName: "getNames"
+  });
 
-  const results: string[] = (data as []) ?? []
-  const dids = results?.map((d: string) => (Boolean(d.trim()) ? d : address))
-  return dids[0]
-}
+  const results: string[] = (data as []) ?? [];
+  const dids = results?.map((d: string) => (d.trim().length ? d : address));
+  return dids[0] ?? address;
+};
 
 const resolveAllAddresses = async (
   transformedAddresses: string[]
@@ -72,45 +87,46 @@ const resolveAllAddresses = async (
   const resolvedAddresses = await Promise.all(
     transformedAddresses.map(async (addrOrHandle) => {
       if (isAddress(addrOrHandle)) {
-        return await resolveENS(addrOrHandle)
+        return await resolveENS(addrOrHandle);
       }
-      return addrOrHandle
+      return addrOrHandle;
     })
-  )
-  return resolvedAddresses
-}
+  );
+  return resolvedAddresses;
+};
 
-app.post('/', zValidator('json', validationSchema), async (c) => {
+app.post("/", zValidator("json", validationSchema), async (c) => {
   try {
-    const { addresses } = await c.req.json<RequestInput>()
+    const { addresses } = await c.req.json<RequestInput>();
 
     const response = await fetch(LENS_API_URL, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Tape'
+        "Content-Type": "application/json",
+        "User-Agent": TAPE_USER_AGENT
       },
       body: JSON.stringify({
-        operationName: 'Profiles',
+        operationName: "Profiles",
         query: PROFILES_QUERY,
         variables: {
           ownedBy: addresses
         }
       })
-    })
-    const result: any = await response.json()
-    const profiles = result?.data?.profiles.items
+    });
+    const result = (await response.json()) as ProfileResult;
+    const profiles = result?.data?.profiles.items;
     const transformedAddresses = replaceAddressesWithHandles(
       profiles,
       addresses
-    )
+    );
 
-    const dids = await resolveAllAddresses(transformedAddresses)
+    const dids = await resolveAllAddresses(transformedAddresses);
 
-    return c.json({ success: true, dids })
-  } catch {
-    return c.json({ success: false, message: ERROR_MESSAGE })
+    return c.json({ success: true, dids });
+  } catch (error) {
+    console.error("[DID] Error:", error);
+    return c.json({ success: false, message: ERROR_MESSAGE });
   }
-})
+});
 
-export default app
+export default app;
